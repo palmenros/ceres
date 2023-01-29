@@ -11,10 +11,20 @@
 //
 
 #include <iostream>
+#include <string>
 
 #include "antlr4-runtime.h"
 #include "TLexer.h"
 #include "TParser.h"
+
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/Value.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/ADT/APFloat.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/Verifier.h"
 
 using namespace antlrgenerated;
 using namespace antlr4;
@@ -31,6 +41,11 @@ int main(int argc, const char * argv[]) {
 
     auto s = tree->toStringTree(&parser);
     std::cout << "Parse Tree: " << s << std::endl;
+
+    llvm::LLVMContext llvmContext;
+    auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
+    std::cout << "LLVM says: " << module->getName().str() << std::endl;
+
 
     return 0;
 }
