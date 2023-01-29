@@ -31,17 +31,15 @@ You can install install `llvm-15` from the official repositories. Currently, the
 
 You can install LLVM using Chocolatey [https://community.chocolatey.org/packages/llvm](https://community.chocolatey.org/packages/llvm).
 
-
-
-### Building from source
-
-You can install LLVM from source following the instructions at [https://llvm.org/docs/GettingStarted.html](https://llvm.org/docs/GettingStarted.html).
-
 Run in the command line interpreter of powershell
 
 ```
 choco install llvm --version 15
 ```
+
+### Building from source
+
+You can install LLVM from source following the instructions at [https://llvm.org/docs/GettingStarted.html](https://llvm.org/docs/GettingStarted.html).
 
 ## Building
 
