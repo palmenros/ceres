@@ -29,13 +29,9 @@ You can install install `llvm-15` from the official repositories. Currently, the
 
 ### Windows
 
-You can install LLVM using Chocolatey [https://community.chocolatey.org/packages/llvm](https://community.chocolatey.org/packages/llvm).
+You can follow the instructions on [https://llvm.org/docs/GettingStartedVS.html](https://llvm.org/docs/GettingStartedVS.html) to build LLVM from source.
 
-Run in the command line interpreter of powershell
-
-```
-choco install llvm --version 15
-```
+Note that you may have to build LLVM twice if you want to execute SLC compiler as both Release and Debug, or you will find MSVC Linker errors regarding MSRT mismatch. Also note that the debug version of LLVM is quite heavy, around 70 gigabytes.
 
 ### Building from source
 
@@ -43,10 +39,24 @@ You can install LLVM from source following the instructions at [https://llvm.org
 
 ## Building
 
+If after following this section you get LLVM not detected errors from CMake, follow the section CMAKE_PREFIX_PATH.
+
 Once all the prerrequisites have been installed, execute the following commands from the `compiler` folder to build the compiler:
 ```
 mkdir cmake-build
 cd cmake-build
 cmake ..
+cmake --build .
+```
+
+### CMAKE_PREFIX_PATH
+
+CMake has not been able to detect LLVM in the default paths, so you have to point the folder where LLVM is installed directly to it.
+Execute the following commands from the `compiler` folder:
+
+```
+mkdir cmake-build
+cd cmake-build
+cmake -DCMAKE_PREFIX_PATH=/path/to/llvm ..
 cmake --build .
 ```
