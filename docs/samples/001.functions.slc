@@ -1,0 +1,52 @@
+
+/*
+    This is a comment
+    /*
+        They can be nested.
+    */
+*/
+
+// By default, the parameters are const
+fn function_name(a: i32, b: i32) i16 {
+}
+
+fn mutable_parameters(var a: i32) i16 {
+    a *= 2;
+    return a;
+}
+
+// If no return type, void
+fn returns_void() {
+}
+
+fn gcd(a: i32, b: i32) i32 {
+    var max = a;
+    var min = b;    
+    
+    if b > a {
+        max = b;
+        min = a;
+    }
+
+    if min == 0 {
+        return max;
+    }
+
+    return gcd(b, a % b);
+}
+
+fn iterative_gcd(var a: i32, var b: i32) i32 {
+    var q: i32;
+    var r: i32;
+    // var q, r : i32;    
+    
+    while b > 0 {
+        q = a / b;
+        r = a % b;
+
+        a = b;
+        b = r;
+    }
+
+    return a;
+}

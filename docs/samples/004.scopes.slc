@@ -1,0 +1,27 @@
+
+struct A {
+    a: i32,
+    b: i32
+}
+
+const global_var: i32;
+
+type NewAlias = A;
+
+// Different namespace for types and values
+
+fn test_fun(a: i32) {
+    // TODO: Maybe add multiple declaration:
+    // var a, b : i32 = 0;
+
+    var local = 2;
+    var b = 1;
+
+    {
+        let a = 0;
+    }
+
+    {
+        const b = 3;
+    }
+} 

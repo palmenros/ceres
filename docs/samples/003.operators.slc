@@ -1,0 +1,79 @@
+fn operators(a: i32, b: i32) i32 {
+    var res: i32;
+
+    // Left - associative
+
+    res = a + b;
+    res = a - b;
+    res = a * b;
+    res = a / b;
+    res = a % b;
+    res = a.pow(b);
+
+    // Bools
+    var b1: bool = true;
+    var b2: bool = false; 
+
+    var res_bool : bool;
+    res_bool = b1 && b2;
+    res_bool = b1 || b2;
+    res_bool = !b1;
+    res_bool = b1 ^^ b2;
+    res_bool = b1 == b2;
+    res_bool = b1 != b2;
+    res_bool = a > b;
+    res_bool = a >= b;
+    res_bool = a < b;
+    res_bool = a <= b;   
+
+    // Bitwise
+
+    var i : i32;
+    i = a << b; // Logic
+    i = a >> b; // Logic
+    i = a & b;
+    i = a | b;
+    i = a ^ b;
+ 
+    i = a.sra(b); // Rotate, arithmetic shift, etc
+
+    // Associativity:
+
+    // if ((a & b) == 2)
+    if a & b == 2 {
+
+    }
+
+    // Constants
+    i32::MAX, i32::MIN
+
+    // Literals
+    232492;
+    0x423AF;
+    0b010101010;
+    0o666;
+    
+    // Suffix
+
+    321321u64;
+    54423u32;
+
+    const a: u32 = 2322;
+    var b: i32;
+
+
+    // TODO: Literal types
+
+    // Assign non representable num type to constants, then coerce to 
+    // known variable type when backtraversing tree
+    // Note: Error if literal does not fit the target type
+    const d = (232232131321412 - 3421412412) + b;
+
+    const i = 328323273728u64;
+
+    // a would be i32 by default
+    const a = 68944;
+
+    return 0;
+}
+
