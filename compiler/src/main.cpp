@@ -16,7 +16,7 @@
 #include "TLexer.h"
 #include "TParser.h"
 
-using namespace antlrcpptest;
+using namespace antlrgenerated;
 using namespace antlr4;
 
 int main(int argc, const char * argv[]) {

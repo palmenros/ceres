@@ -7,5 +7,5 @@ To build the compiler execute the following commands from the `compiler` folder:
 mkdir cmake-build
 cd cmake-build
 cmake ..
-make
+cmake --build .
 ```
