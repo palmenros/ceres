@@ -1,0 +1,310 @@
+
+/*
+    This is a comment
+    /*
+        They can be nested.
+    */
+*/
+
+// By default, the parameters are const
+fn function_name(a: i32, b: i32) i16 {
+}
+
+fn mutable_parameters(var a: i32) i16 {
+    a *= 2;
+    return a;
+}
+
+// If no return type, void
+fn returns_void() {
+	if (something) { return 0; }
+}
+
+fn goto() {
+
+	var labels : [label;] = [
+		l1, l2
+	];
+
+	goto labels[1];
+
+loop1: while() {
+		   while() {
+				continue loop1;
+		   }
+	   }
+
+
+	l1:
+		handle_error();
+	l2:
+		other_error();
+}
+
+fn printf(format_str: [u8], args: [*void]...) {
+
+	for(var i = 0; i < format_str.length(); i++) {
+		var u8 = format_str[i];
+
+	}
+
+	foreach(var u8 in format_str) {
+		
+	}
+
+	args.size();
+
+	(T*)args[0]
+}
+
+pub struct Hello<T> {
+	
+	i : i32,
+	j : i32,
+	
+	// call
+	// call_hello
+	pub fn call(self: *Hello) i32 {
+		return 3;
+	}
+
+	pub fn new() Hello {
+		return Hello {
+			i: 0,
+			j: 0
+		}
+	}
+
+	pub fn new(i: i32) -> Hello {
+		return Hello {
+			i: i,
+			j: i
+		};
+	}
+}
+
+Hello::new()
+
+struct Hello2 {
+	fn call(self: *void) i32 {
+		
+	}
+}
+
+import Hello;
+
+namespace Test {
+	struct Hola {
+
+	}
+}
+
+// [u8] -> { *u8, size_t len }
+
+fn strcmp(a: [u8], b: [u8]) {
+	const a = Hello::new(3);
+}
+
+type Tuple = [u8; 2]; 
+
+fn takes_array(a: [u8; 2]) {
+
+}
+
+fn tes() {
+	var arr = [1, 2, 3];
+	
+	strcmp("a, b", "c,  d");
+}
+
+extern "C" {
+	fn tet(a : u8, b: u8) -> *u8;
+}
+
+import T.h;
+extern fn from_c(a: c_int, b: c_float) -> ?*u8;
+
+struct ? *u8{
+	T* t;
+}
+
+struct ?u8 {
+	bool has_something;
+	T t;
+}
+
+fn malloc(num_bytes : u8) -> ? *u8 {
+	// Hace su cosa
+	if OOM {
+		return null;
+	} else {
+		//
+	}
+}
+
+fn fun(a: ? *u8) {
+	if(a.has_value()) {
+		const b: *u8 = a.value();
+	}
+}
+
+
+error Error {
+	EINTR,
+	EUSR,
+	EPERM
+}
+
+enum{
+	Ok(i32),
+	Error(Error)
+}
+
+fn otra_fun() ! *Hola {
+
+}
+
+fn add(a : u8, b: u32 = 3) {
+
+} 
+
+fn atoi(str: ?*u8) !u32 {
+	const str_no_null = str ?? "Hola";
+
+	const str : *u8  = str?;
+
+	if (str == null) {
+		return null;
+	}
+	const str = str.value();
+}
+
+addrspace {
+	__user,
+	__kernel
+}
+
+fn goto( __user *u8, *u32) {
+	ptr_cast<__user *u8>(b);
+}
+
+fn kernel_fun() Error !i32 {
+	
+	const a = otra_fun()?.a;
+
+	if intr {
+		throw EINTR;
+	} else {
+		return 42;
+	}
+}
+
+enum Scope {
+	Hello,
+	World
+}
+
+struct IPV4_Address {
+	addr: [u8; 4]
+}
+
+struct IPV6_Address {
+	addr: [u8; 4*4]
+}
+
+enum IP_Address {
+	IPV4(IPV4_Address),
+	IPV6(IPV6_Address)
+}
+
+union __IP_Address {
+	ipv4_data: IPV4_Address,
+	ipv6_data: IPV6_Address
+}
+
+struct IP_Address {
+	enum {
+		IPV4,
+		IPV6
+	}
+
+	union __IP_Address {
+		
+	}
+
+}
+
+type mialias = u8;
+
+constraint Catalan {
+	fn haz_algo();
+}
+
+struct Vector<T: Catalan> {
+	data: *u8,
+	size: usize,
+
+	pub fn add(t: T){
+		t.haz_algo();
+	}
+}
+
+Vector_u8;
+
+fn get_addr_info(addr: IP_Address) {
+	switch (addr) {
+		case IPV4(addr):
+		break;
+		case IPV6(addr):
+		break;
+	}
+}
+
+
+fn main() {
+	var enudawm = Scope::Hello;
+
+	var s : Hello = struct Hello {
+		i: 4,
+		j: 3
+	};
+	
+	var j = Test::Hola {nombre: "Hola"}
+
+
+	Hello1::call(&s);
+
+	s.call();
+}
+
+fn gcd(a: i32, b: i32) i32 {
+    var max = a;
+    var min = b;    
+    
+    if b > a {
+        max = b;
+        min = a;
+    }
+
+    if min == 0 {
+        return max;
+    }
+
+    return gcd(b, a % b);
+}
+
+fn iterative_gcd(var a: i32, var b: i32) i32 {
+    var q: i32;
+    var r: i32;
+    // var q, r : i32;    
+    
+    while b > 0 {
+        q = a / b;
+        r = a % b;
+
+        a = b;
+        b = r;
+    }
+
+    return a;
+}
