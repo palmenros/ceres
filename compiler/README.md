@@ -31,7 +31,7 @@ You can install install `llvm-15` from the official repositories. Currently, the
 
 You can follow the instructions on [https://llvm.org/docs/GettingStartedVS.html](https://llvm.org/docs/GettingStartedVS.html) to build LLVM from source.
 
-Note that you may have to build LLVM twice if you want to execute SLC compiler as both Release and Debug, or you will find MSVC Linker errors regarding MSRT mismatch. Also note that the debug version of LLVM is quite heavy, around 70 gigabytes.
+Note that you may have to build LLVM twice if you want to execute SLC compiler as both Release and Debug, or you will find MSVC Linker errors regarding MSRT mismatch. Also note that the debug version of LLVM is quite heavy, around 70 gigabytes. You can also compile SLC in RelWithDebInfo and link against the Release LLVM libraries. 
 
 ### Building from source
 
