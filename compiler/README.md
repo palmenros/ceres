@@ -7,7 +7,9 @@ The SLC Compiler uses ANTLR4 as its lexer and parser generator. It uses LLVM to 
 - `Java`: Java 11 or later needed.
 - `llvm-dev`: LLVM 15 with static libraries and includes must be installed.
 - `git`
-- `cmake`
+- `cmake`: cmake 3.7 or later required.
+- `gcc`: gcc 8 or later needed.
+- `g++`: g++ 8 or later needed.
 
 ## Installing llvm-15-dev
 
