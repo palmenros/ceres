@@ -104,9 +104,9 @@ Whitespace is defined as per the ASCII specification, whitespace in source code 
 |`^`| Caret |
 |`!`| Not |
 |`&`| And |
-|`|`| Or |
+|`\|`| Or |
 |`&&`| Andand |
-|`||`| Oror |
+|`\|\|`| Oror |
 | `^^`| Caretcaret |
 |`>>`| Shl |
 |`<<`| Shr |
