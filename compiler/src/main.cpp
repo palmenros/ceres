@@ -12,10 +12,12 @@
 
 #include <iostream>
 #include <string>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "antlr4-runtime.h"
-#include "TLexer.h"
-#include "TParser.h"
+#include "SLCLexer.h"
+#include "SLCParser.h"
 
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/Value.h"
@@ -29,23 +31,32 @@
 using namespace antlrgenerated;
 using namespace antlr4;
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[])
+{
+    if (argc < 2)
+	return -1;
 
-//    ANTLRInputStream input("a = b + \"c\";(((x * d))) * e + f; a + (x * (y ? 0 : 1) + z);");
-    ANTLRInputStream input("a = pedro; c = h + d * b;");
-    TLexer lexer(&input);
+    std::ifstream file(argv[1], std::ios::binary | std::ios::ate);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(size);
+    if (!file.read(buffer.data(), size))
+    	return -1;
+
+    ANTLRInputStream input(buffer.data());
+    SLCLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
-    TParser parser(&tokens);
-    tree::ParseTree *tree = parser.main();
+    SLCParser parser(&tokens);
+    tree::ParseTree *tree = parser.start();
 
     auto s = tree->toStringTree(&parser);
-    std::cout << "Parse Tree: " << s << std::endl;
+    std::cout << s << std::endl;
 
     llvm::LLVMContext llvmContext;
     auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
-    std::cout << "LLVM says: " << module->getName().str() << std::endl;
-
+//    std::cout << "LLVM says: " << module->getName().str() << std::endl;
 
     return 0;
 }
