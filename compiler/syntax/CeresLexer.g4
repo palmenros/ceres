@@ -1,5 +1,4 @@
-// name is temporary
-lexer grammar SLCLexer;
+lexer grammar CeresLexer;
 
 // Keywords
 

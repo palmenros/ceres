@@ -1,6 +1,5 @@
-// the name is temporary
-parser grammar SLCParser;
-options { tokenVocab=SLCLexer; }
+parser grammar CeresParser;
+options { tokenVocab=CeresLexer; }
 
 // https://github.com/antlr/antlr4/issues/606
 start

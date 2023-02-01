@@ -1,4 +1,4 @@
-# SLC (Temporal name)
+# Ceres
 
 ## Lexical structure
 

@@ -1,23 +1,9 @@
-/* Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
- * Use of this file is governed by the BSD 3-clause license that
- * can be found in the LICENSE.txt file in the project root.
- */
-
-//
-//  main.cpp
-//  antlr4-cpp-demo
-//
-//  Created by Mike Lischke on 13.03.16.
-//
-
 #include <iostream>
 #include <string>
-#include <unistd.h>
-#include <fcntl.h>
 
 #include "antlr4-runtime.h"
-#include "SLCLexer.h"
-#include "SLCParser.h"
+#include "CeresLexer.h"
+#include "CeresParser.h"
 
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/Value.h"
@@ -45,10 +31,10 @@ int main(int argc, const char *argv[])
     	return -1;
 
     ANTLRInputStream input(buffer.data());
-    SLCLexer lexer(&input);
+    CeresLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
-    SLCParser parser(&tokens);
+    CeresParser parser(&tokens);
     tree::ParseTree *tree = parser.start();
 
     auto s = tree->toStringTree(&parser);

@@ -1,10 +1,10 @@
-# SLC Compiler
+# Ceres Compiler
 
-The SLC Compiler uses ANTLR4 as its lexer and parser generator. It uses LLVM to generate code. It also uses CMake as its build system.
+The Ceres Compiler uses ANTLR4 as its lexer and parser generator. It uses LLVM to generate code. It also uses CMake as its build system.
 
-## Prerrequisites
+## Prerequisites
 
-- `Java`: Java 11 or later needed.
+- `java`: Java 11 or later needed.
 - `compiler`: A C++17 compatible compiler. If using `g++` this means at least version 8 is required.
 - `llvm-dev`: LLVM 15 with static libraries and includes must be installed.
 - `git`
@@ -32,7 +32,7 @@ You can install install `llvm-15` from the official repositories. Currently, the
 
 You can follow the instructions on [https://llvm.org/docs/GettingStartedVS.html](https://llvm.org/docs/GettingStartedVS.html) to build LLVM from source.
 
-Note that you may have to build LLVM twice if you want to execute SLC compiler as both Release and Debug, or you will find MSVC Linker errors regarding MSRT mismatch. Also note that the debug version of LLVM is quite heavy, around 70 gigabytes. You can also compile SLC in RelWithDebInfo and link against the Release LLVM libraries. 
+Note that you may have to build LLVM twice if you want to execute Ceres compiler as both Release and Debug, or you will find MSVC Linker errors regarding MSRT mismatch. Also note that the debug version of LLVM is quite heavy, around 70 gigabytes. You can also compile Ceres in RelWithDebInfo and link against the Release LLVM libraries. 
 
 ### Building from source
 
