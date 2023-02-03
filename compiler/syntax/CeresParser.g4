@@ -110,8 +110,8 @@ expression
     | expression mult_expr=(MOD_OP | DIV_OP | MULT_OP) expression
     | expression sum_expr=(MINUS_OP | SUM_OP) expression
     | expression cmp_expr=(GREATER_EQUAL_OP | LOWER_EQUAL_OP | GREATER_OP | LOWER_OP) expression
-    | expression log_expr=(LOGICAL_AND_OP | LOGICAL_OR_OP) expression
     | expression equ_expr=(NOT_EQUAL_OP | EQUAL_OP) expression
+    | expression log_expr=(LOGICAL_AND_OP | LOGICAL_OR_OP) expression
     | OPEN_PARENS expression CLOSE_PARENS
     ;
 
