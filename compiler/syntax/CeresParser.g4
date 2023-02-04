@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Daniel Martin Gomez
+ * Copyright (C) 2023 Daniel Martin Gomez, Pedro Palacios Almendros
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,108 +19,96 @@
 parser grammar CeresParser;
 options { tokenVocab=CeresLexer; }
 
-// https://github.com/antlr/antlr4/issues/606
-start
-    : program EOF
+compilationUnit
+    : (functionDefinition
+    | varDeclaration SEMICOLON )* EOF
     ;
 
-program
-    : function_definition
-    | function_definition program
+functionDefinition
+    : FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
     ;
 
-function_definition
-    : FN IDENTIFIER OPEN_PARENS CLOSE_PARENS block
-    | FN IDENTIFIER OPEN_PARENS CLOSE_PARENS type block
-    | FN IDENTIFIER OPEN_PARENS declaration_list CLOSE_PARENS block
-    | FN IDENTIFIER OPEN_PARENS declaration_list CLOSE_PARENS type block
+formalParameters
+    : parameter (COMMA parameter)*
+    ;
+
+parameter
+    : VAR? IDENTIFIER COLON type
     ;
 
 block
-    : OPEN_BRACES statement_list CLOSE_BRACES
-    | OPEN_BRACES CLOSE_BRACES
+    : OPEN_BRACES (statement)* CLOSE_BRACES
     ;
 
+// Note: We don't have special parsing for primitive types, they will be handled in code via
+//       the type symbol table.
 type
-    : TYPE_U8
-    | TYPE_I32
-    | TYPE_I16
-    | IDENTIFIER
+    : IDENTIFIER
     ;
 
-declaration
-    : IDENTIFIER COLON type
-    | VAR IDENTIFIER COLON type
-    ;
-
-declaration_list
-    : declaration
-    | declaration COMMA declaration_list
-    ;
-
-declaration_statement
-    : VAR IDENTIFIER COLON type SEMICOLON
-    | VAR IDENTIFIER ASSIGN_OP expression SEMICOLON
-    | VAR IDENTIFIER COLON type ASSIGN_OP expression SEMICOLON
+varDeclaration
+    : (VAR|CONST) IDENTIFIER (COLON type)? (ASSIGN_OP expression)?
     ;
 
 statement
-    : declaration_statement
-    | assignment SEMICOLON
-    | return_statement
-    | if_statement
-    | function_call SEMICOLON
-    | while_statement
-    | for_statement
-    | expression
+    : varDeclaration SEMICOLON
+    | returnStatement SEMICOLON
+    | expression SEMICOLON
+    | ifStatement
+    | whileStatement
+    | forStatement
+    | block
+    | SEMICOLON
     ;
 
-assignment
-    : IDENTIFIER ASSIGN_OP expression
+returnStatement
+    : RETURN expression
     ;
 
-return_statement
-    : RETURN expression SEMICOLON
-    ;
-
-if_statement
+ifStatement
     : IF expression block
     | IF expression block ELSE block
-    | IF expression block ELSE if_statement
+    | IF expression block ELSE ifStatement
     ;
 
-while_statement
+whileStatement
     : WHILE expression block
     ;
 
-for_statement
-    : FOR expression SEMICOLON expression SEMICOLON expression block
-    ;
-
-statement_list
-    : (statement)+
+forStatement
+    : FOR (varDeclaration | expression)? SEMICOLON (expression)? SEMICOLON (expression)? block
+    | FOR OPEN_PARENS (varDeclaration | expression)? SEMICOLON (expression)? SEMICOLON (expression)? CLOSE_PARENS block // Allow parenthesis
     ;
 
 // Implicit rule precedence (the first that matches)
 // See The Definitive ANTLR 4 Reference, 5.4 Dealing with Precedence, Left Recursion, and Associativity
 expression
-    : function_call
-    | IDENTIFIER
-    | DECIMAL_LITERAL
-    | expression mult_expr=(MOD_OP | DIV_OP | MULT_OP) expression
-    | expression sum_expr=(MINUS_OP | SUM_OP) expression
-    | expression cmp_expr=(GREATER_EQUAL_OP | LOWER_EQUAL_OP | GREATER_OP | LOWER_OP) expression
-    | expression equ_expr=(NOT_EQUAL_OP | EQUAL_OP) expression
-    | expression log_expr=(LOGICAL_AND_OP | LOGICAL_OR_OP) expression
+    : primaryExpression
+    | functionCall
+    | expression postfix=('++' | '--')
+    | prefix=('+' | '-' |'++'|'--') expression
+    | prefix=('~'|'!') expression
+    | expression binary_op=('*'|'/'|'%') expression
+    | expression binary_op=('+'|'-') expression
+    | expression ('<' '<' | '>' '>') expression
+    | expression binary_op=('<=' | '>=' | '>' | '<') expression
+    | expression binary_op='&' expression
+    | expression binary_op='^' expression
+    | expression binary_op='|' expression
+    | expression binary_op=('==' | '!=') expression
+    | expression binary_op='&&' expression
+    | expression binary_op='||' expression
+    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') expression
     | OPEN_PARENS expression CLOSE_PARENS
+ ;
+
+primaryExpression
+    : IDENTIFIER
+    | DECIMAL_LITERAL
+    | TRUE
+    | FALSE
     ;
 
-function_call
-    : IDENTIFIER OPEN_PARENS CLOSE_PARENS
-    | IDENTIFIER OPEN_PARENS expression_list CLOSE_PARENS
-    ;
-
-expression_list
-    : expression
-    | expression COMMA expression_list
+functionCall
+    : IDENTIFIER OPEN_PARENS ( expression (COMMA expression)* )? CLOSE_PARENS
     ;

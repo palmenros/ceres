@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Daniel Martin Gomez
+ * Copyright (C) 2023 Daniel Martin Gomez, Pedro Palacios Almendros
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,15 @@ lexer grammar CeresLexer;
 
 FN : 'fn';
 VAR : 'var';
+CONST : 'const';
 RETURN : 'return';
 IF : 'if';
 ELSE : 'else';
 FOR : 'for';
 WHILE : 'while';
+
+TRUE : 'true';
+FALSE : 'false';
 
 // Identifier
 
@@ -36,11 +40,8 @@ IDENTIFIER : [a-zA-Z_][a-zA-Z_0-9]*;
 
 DECIMAL_LITERAL : [0-9]+;
 
-// Types
-
-TYPE_U8 : 'u8';
-TYPE_I16 : 'i16';
-TYPE_I32 : 'i32';
+// Note: We don't have special parsing for primitive types, they will be handled in code via
+//       the type symbol table.
 
 // Comments
 
@@ -49,26 +50,48 @@ COMMENT : '/*' (COMMENT|.)*? '*/' -> skip;
 
 // Arithmetic operators
 
-SUM_OP : '+';
+UNARY_PLUS_PLUS_OP : '++';
+UNARY_MINUS_MINUS_OP : '--';
+
+PLUS_OP : '+';
 MINUS_OP : '-';
 MULT_OP : '*';
 DIV_OP : '/';
 MOD_OP : '%';
 
+BITWISE_OR : '|';
+BITWISE_AND : '&';
+BITWISE_XOR : '^';
+BITWISE_NOT : '~';
+
 // Logical operators
 
+LOGICAL_NOT : '!';
 LOGICAL_AND_OP : '&&';
 LOGICAL_OR_OP : '||';
 
-// Relation operators
+// Relational operators
 
-ASSIGN_OP : '=';
 EQUAL_OP : '==';
 NOT_EQUAL_OP : '!=';
 GREATER_EQUAL_OP : '>=';
 LOWER_EQUAL_OP : '<=';
 GREATER_OP : '>';
 LOWER_OP : '<';
+
+// Assignment operators
+
+ASSIGN_OP : '=';
+PLUS_ASSIGN_OP: '+=';
+MINUS_ASSIGN_OP: '-=';
+MULT_ASSIGN_OP : '*=';
+DIV_ASSIGN_OP : '/=';
+MOD_ASSIGN_OP : '%=';
+BITWISE_AND_ASSIGN_OP : '&=';
+BITWISE_OR_ASSIGN_OP : '|=';
+BITWISE_XOR_ASSIGN_OP : '^=';
+BITWISE_RIGHT_SHIFT_ASSIGN_OP : '>>=';
+BITWISE_LEFT_SHIFT_ASSIGN_OP : '<<=';
 
 // Punctuation
 DOT : '.';
