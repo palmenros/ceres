@@ -16,16 +16,15 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "IntLiteral.h"
+#include "IntLiteralExpression.h"
 #include <unordered_map>
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
-        IntLiteral::IntLiteral(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type,
-                               const std::string &str) : Expression(sourceSpan), base(base), type(type), str(str) {}
+        IntLiteralExpression::IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type,
+                                                   std::string str) : Expression(sourceSpan), base(base), type(type), str(std::move(str)) {}
 
-        IntLiteralType IntLiteral::stringToIntLiteralType(const std::string & str) {
+        IntLiteralType IntLiteralExpression::stringToIntLiteralType(const std::string & str) {
 
             static const std::unordered_map<std::string, IntLiteralType> intLiteralStrings {
                     { "u8", IntLiteralType::U8 },
@@ -45,5 +44,4 @@ namespace Ceres {
 
             return it->second;
         }
-    } // Ceres
-} // AST
+    } // AST

@@ -33,6 +33,11 @@ namespace Ceres {
             Private
         };
 
+        enum class VariableScope {
+            Local,              // Defined inside a function
+            Global              // Defined as a global variable, outside any function
+        };
+
         enum class VariableConstness {
             Const,
             NonConst
@@ -42,6 +47,7 @@ namespace Ceres {
         public:
             VariableVisibility visibility;
             VariableConstness constness;
+            VariableScope scope;
 
             Type type;
             std::string identifier;
@@ -55,8 +61,8 @@ namespace Ceres {
         public:
             VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
                                 std::unique_ptr<Expression> &&initializerExpression,
-                                VariableVisibility visibility, VariableConstness constness,
-                                const Type& type, std::string identifier, const SourceSpan &typeSourceSpan,
+                                VariableVisibility visibility, VariableConstness constness, VariableScope scope,
+                                const Type &type, std::string identifier, const SourceSpan &typeSourceSpan,
                                 const SourceSpan &identifierSourceSpan);
 
         };

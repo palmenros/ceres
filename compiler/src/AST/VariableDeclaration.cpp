@@ -23,12 +23,13 @@ namespace Ceres {
         VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
                                                  std::unique_ptr<Expression> &&initializerExpression,
                                                  VariableVisibility visibility, VariableConstness constness,
-                                                 const Type& type, std::string identifier,
+                                                 VariableScope scope,
+                                                 const Type &type, std::string identifier,
                                                  const SourceSpan &typeSourceSpan,
                                                  const SourceSpan &identifierSourceSpan)
                 : Node(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
                   constness(constness), type(type), identifier(identifier), typeSourceSpan(typeSourceSpan),
-                  identifierSourceSpan(identifierSourceSpan) {}
+                  identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
     } // AST
 } // Node

@@ -24,7 +24,7 @@
 
 namespace Ceres::AST {
 
-    class AntlrASTGeneratorVisitor : public antlrgenerated::CeresParserBaseVisitor {
+    class AntlrASTGeneratorVisitor : public antlrgenerated::CeresParserVisitor {
 
     private:
 
@@ -92,6 +92,11 @@ namespace Ceres::AST {
 
         std::any visitFunctionCall(antlrgenerated::CeresParser::FunctionCallContext *ctx) override;
 
+        static SourceSpan getSourceSpan(const antlr4::Token *token);
+
+        static SourceSpan getSourceSpan(const antlr4::Token *first, const antlr4::Token *second);
+
+        static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start, const antlr4::tree::TerminalNode &end);
     };
 
 } // Ceres
