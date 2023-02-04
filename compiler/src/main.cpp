@@ -37,18 +37,19 @@ using namespace antlr4;
 
 int main(int argc, const char *argv[])
 {
-    if (argc < 2)
-	return -1;
+    if (argc < 2) {
+        std::cerr << "Not enough arguments" << std::endl;
+        std::cerr << "Usage: '" << argv[0] << "' [filename]" << std::endl;
+        return 1;
+    }
 
-    std::ifstream file(argv[1], std::ios::binary | std::ios::ate);
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
+    std::ifstream file(argv[1]);
+    if (!file.is_open()) {
+        std::cerr << "Could not open file '"  << argv[1] << "'" << std::endl;
+        return 1;
+    }
 
-    std::vector<char> buffer(size);
-    if (!file.read(buffer.data(), size))
-    	return -1;
-
-    ANTLRInputStream input(buffer.data());
+    ANTLRInputStream input(file);
     CeresLexer lexer(&input);
     CommonTokenStream tokens(&lexer);
 
