@@ -26,7 +26,17 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
-add_executable(compiler src/main.cpp)
+add_executable(compiler src/main.cpp src/utils/log.hpp)
+
+##########################################
+#           START LLVM
+##########################################
+
+include_directories(${PROJECT_SOURCE_DIR}/thirdparty/spdlog/include)
+
+##########################################
+#           END LLVM
+##########################################
 
 ##########################################
 #           START LLVM
