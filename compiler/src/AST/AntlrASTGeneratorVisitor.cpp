@@ -22,6 +22,8 @@
 #include "VariableDeclaration.h"
 #include "CompilationUnit.h"
 #include "Type.h"
+#include "CommaExpression.h"
+#include "IntLiteral.h"
 
 using namespace antlrgenerated;
 
@@ -48,8 +50,6 @@ namespace Ceres::AST {
 
         return {tok->getLine(), tok->getLine(), tok->getStartIndex(), tok->getStopIndex()};
     }
-
-
 
     std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::CompilationUnitContext *ctx) {
 
@@ -122,6 +122,9 @@ namespace Ceres::AST {
     std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext *ctx) {
         ASSERT(ctx != nullptr);
 
+        // TODO: Handle float and integer suffix
+        NOT_IMPLEMENTED();
+
         return Type{ctx->getText()};
     }
 
@@ -137,11 +140,13 @@ namespace Ceres::AST {
             initializer_expression.reset(expr);
         }
 
-        VariableConstness constness = VariableConstness::Const;
+        VariableConstness constness;
         if(ctx->VAR() != nullptr) {
             constness = VariableConstness::NonConst;
+        } else if (ctx->CONSTANT() != nullptr) {
+            constness = VariableConstness::Const;
         } else {
-            ASSERT(ctx->CONSTANT() != nullptr);
+            NOT_IMPLEMENTED();
         }
 
         auto type = std::any_cast<Type>(visit(ctx->type()));
@@ -186,7 +191,8 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrimary_expr(CeresParser::Primary_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        return visit(ctx->primaryExpression());
     }
 
     std::any AntlrASTGeneratorVisitor::visitBinary_op_expr(CeresParser::Binary_op_exprContext *ctx) {
@@ -194,11 +200,33 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitExpression(CeresParser::ExpressionContext *ctx) {
-        NOT_IMPLEMENTED();
+
+        ASSERT(ctx != nullptr);
+
+        // We must at least have one expression. This are the number of expressions in the comma operator
+        size_t num_expressions = ctx->assignmentExpression().size();
+        ASSERT(num_expressions >= 1);
+
+        if (num_expressions == 1) {
+            return visit(ctx->assignmentExpression()[0]);
+        } else {
+            // Create a comma expression node and return it
+            std::vector<std::unique_ptr<Expression>> expressions;
+
+            for(auto exprCtx : ctx->assignmentExpression()) {
+                auto expr = std::any_cast<Expression*>(visit(exprCtx));
+                ASSERT(expr != nullptr);
+
+                expressions.push_back(std::unique_ptr<Expression>(expr));
+            }
+
+            return static_cast<Expression*>(new CommaExpression(getSourceSpan(*ctx), std::move(expressions)));
+        }
     }
 
     std::any AntlrASTGeneratorVisitor::visitParens_expr(CeresParser::Parens_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        return visit(ctx->expression());
     }
 
     std::any AntlrASTGeneratorVisitor::visitId_expr(CeresParser::Id_exprContext *ctx) {
@@ -206,7 +234,8 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitInt_literal_expr(CeresParser::Int_literal_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        return visit(ctx->intLiteral());
     }
 
     std::any AntlrASTGeneratorVisitor::visitFloat_literal_expr(CeresParser::Float_literal_exprContext *ctx) {
@@ -218,7 +247,34 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitIntLiteral(CeresParser::IntLiteralContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+
+        IntLiteralType type = IntLiteralType::None;
+        if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
+            type = IntLiteral::stringToIntLiteralType(ctx->INTEGER_LITERAL_SUFFIX()->getText());
+            ASSERT(type != IntLiteralType::None);
+        }
+
+        IntLiteralBase base;
+
+        std::string str;
+        if (ctx->DEC_LITERAL() != nullptr) {
+            base = IntLiteralBase::Dec;
+            str = ctx->DEC_LITERAL()->getText();
+        } else if (ctx->HEX_LITERAL() != nullptr) {
+            base = IntLiteralBase::Hex;
+            str = ctx->HEX_LITERAL()->getText().substr(2);
+        } else if (ctx->OCT_LITERAL() != nullptr) {
+            base = IntLiteralBase::Oct;
+            str = ctx->HEX_LITERAL()->getText().substr(2);
+        } else if (ctx->BIN_LITERAL() != nullptr) {
+            base = IntLiteralBase::Bin;
+            str = ctx->HEX_LITERAL()->getText().substr(2);
+        } else {
+            NOT_IMPLEMENTED();
+        }
+
+        return static_cast<Expression*>(new IntLiteral(getSourceSpan(*ctx), base, type, str));
     }
 
     std::any AntlrASTGeneratorVisitor::visitFloatLiteral(CeresParser::FloatLiteralContext *ctx) {

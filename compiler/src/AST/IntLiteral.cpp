@@ -17,8 +17,33 @@
  */
 
 #include "IntLiteral.h"
+#include <unordered_map>
 
 namespace Ceres {
     namespace AST {
+
+        IntLiteral::IntLiteral(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type,
+                               const std::string &str) : Expression(sourceSpan), base(base), type(type), str(str) {}
+
+        IntLiteralType IntLiteral::stringToIntLiteralType(const std::string & str) {
+
+            static const std::unordered_map<std::string, IntLiteralType> intLiteralStrings {
+                    { "u8", IntLiteralType::U8 },
+                    { "u16", IntLiteralType::U16 },
+                    { "u32", IntLiteralType::U32 },
+                    { "u64", IntLiteralType::U64 },
+                    { "i8", IntLiteralType::I8 },
+                    { "i16", IntLiteralType::I16 },
+                    { "i32", IntLiteralType::I32 },
+                    { "i64", IntLiteralType::I64 },
+            };
+
+            auto it = intLiteralStrings.find(str);
+            if(it == intLiteralStrings.end()) {
+                return IntLiteralType::None;
+            }
+
+            return it->second;
+        }
     } // Ceres
 } // AST

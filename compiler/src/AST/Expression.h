@@ -19,10 +19,15 @@
 #ifndef COMPILER_EXPRESSION_H
 #define COMPILER_EXPRESSION_H
 
+#include "Node.h"
+
 namespace Ceres {
     namespace AST {
 
-        class Expression {
+        class Expression : public Node {
+        public:
+
+            explicit Expression(const SourceSpan &sourceSpan);
 
         };
 

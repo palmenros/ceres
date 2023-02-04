@@ -48,6 +48,8 @@ block
 //       the type symbol table.
 type
     : IDENTIFIER
+    | INTEGER_LITERAL_SUFFIX
+    | FLOAT_LITERAL_SUFFIX
     ;
 
 varDeclaration

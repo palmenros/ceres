@@ -20,5 +20,8 @@
 
 namespace Ceres {
     namespace AST {
+        CommaExpression::CommaExpression(const SourceSpan &sourceSpan,
+                                         std::vector<std::unique_ptr<Expression>>&& expressions) : Expression(
+                sourceSpan), expressions(std::move(expressions)) {}
     } // Ceres
 } // AST

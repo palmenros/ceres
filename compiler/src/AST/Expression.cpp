@@ -20,5 +20,6 @@
 
 namespace Ceres {
     namespace AST {
+        Expression::Expression(const SourceSpan &sourceSpan) : Node(sourceSpan) {}
     } // Ceres
 } // AST

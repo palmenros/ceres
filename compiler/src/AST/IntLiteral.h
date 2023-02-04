@@ -19,10 +19,45 @@
 #ifndef COMPILER_INTLITERAL_H
 #define COMPILER_INTLITERAL_H
 
+#include <string>
+#include "Expression.h"
+
 namespace Ceres {
     namespace AST {
 
-        class IntLiteral {
+        enum class IntLiteralBase {
+            Dec,
+            Hex,
+            Oct,
+            Bin
+        };
+
+        enum class IntLiteralType {
+            None,
+            U8,
+            U16,
+            U32,
+            U64,
+            I8,
+            I16,
+            I32,
+            I64
+        };
+
+        class IntLiteral : public Expression {
+        public:
+
+            IntLiteralBase base;
+
+            IntLiteralType type;
+
+            // String containing the integer literal in base "base" without the introducer characters for the base
+            // and the type. For example: 0xfc783u32 -> fc783
+            std::string str;
+
+            IntLiteral(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type, const std::string &str);
+
+            static IntLiteralType stringToIntLiteralType(const std::string& str);
 
         };
 

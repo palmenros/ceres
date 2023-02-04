@@ -19,14 +19,22 @@
 #ifndef COMPILER_COMMAEXPRESSION_H
 #define COMPILER_COMMAEXPRESSION_H
 
+#include "Expression.h"
+#include <vector>
+#include <memory>
+
 namespace Ceres {
-namespace AST {
+    namespace AST {
 
-class CommaExpression {
+        class CommaExpression : public Expression {
+        public:
+            std::vector<std::unique_ptr<Expression>> expressions;
 
-};
+            CommaExpression(const SourceSpan &sourceSpan, std::vector<std::unique_ptr<Expression>> &&expressions);
 
-} // Ceres
+        };
+
+    } // Ceres
 } // AST
 
 #endif //COMPILER_COMMAEXPRESSION_H
