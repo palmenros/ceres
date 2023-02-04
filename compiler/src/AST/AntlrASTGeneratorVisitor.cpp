@@ -29,6 +29,7 @@
 #include "IdentifierExpression.h"
 #include "BinaryOperationExpression.h"
 #include "CeresLexer.h"
+#include "PostfixExpression.h"
 
 using namespace antlrgenerated;
 
@@ -205,7 +206,26 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitPostfix_expr(CeresParser::Postfix_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+
+        PostfixOp op;
+        ASSERT(ctx->postfix != nullptr);
+
+        switch(ctx->postfix->getType()) {
+            case CeresLexer::UNARY_PLUS_PLUS_OP:
+                op = PostfixOp::PostfixIncrement;
+                break;
+            case CeresLexer::UNARY_MINUS_MINUS_OP:
+                op = PostfixOp::PostfixDecrement;
+                break;
+            default:
+                NOT_IMPLEMENTED();
+        }
+
+        return static_cast<Expression*>(new PostfixExpression(getSourceSpan(*ctx), op,
+                                                               std::unique_ptr<Expression>(expr),
+                                                               getSourceSpan(ctx->postfix)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrefix_expr(CeresParser::Prefix_exprContext *ctx) {
