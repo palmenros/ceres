@@ -21,6 +21,7 @@ lexer grammar CeresLexer;
 // Keywords
 
 FN : 'fn';
+PUB: 'pub';
 VAR : 'var';
 CONST : 'const';
 RETURN : 'return';
