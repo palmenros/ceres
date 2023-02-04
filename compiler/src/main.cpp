@@ -54,7 +54,7 @@ int main(int argc, const char *argv[])
     CommonTokenStream tokens(&lexer);
 
     CeresParser parser(&tokens);
-    tree::ParseTree *tree = parser.start();
+    tree::ParseTree *tree = parser.compilationUnit();
 
     auto s = tree->toStringTree(&parser);
     std::cout << s << std::endl;
