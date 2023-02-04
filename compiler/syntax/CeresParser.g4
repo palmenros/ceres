@@ -21,11 +21,11 @@ options { tokenVocab=CeresLexer; }
 
 compilationUnit
     : (functionDefinition
-    | varDeclaration SEMICOLON )* EOF
+    | PUB? varDeclaration SEMICOLON )* EOF
     ;
 
 functionDefinition
-    : FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
+    : PUB? FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
     ;
 
 formalParameters
