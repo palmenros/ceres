@@ -23,8 +23,6 @@
 #include "CeresLexer.h"
 #include "CeresParser.h"
 
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/IR/Value.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/IR/Constants.h"
@@ -32,20 +30,26 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Verifier.h"
 
+#include "utils/log.hpp"
+
 using namespace antlrgenerated;
 using namespace antlr4;
+using namespace Ceres;
+
 
 int main(int argc, const char *argv[])
 {
+    Log::setupLogging();
+
     if (argc < 2) {
-        std::cerr << "Not enough arguments" << std::endl;
-        std::cerr << "Usage: '" << argv[0] << "' [filename]" << std::endl;
+        std::cout << "Not enough arguments" << std::endl;
+        std::cout << "Usage: '" << argv[0] << "' [filename]" << std::endl;
         return 1;
     }
 
     std::ifstream file(argv[1]);
     if (!file.is_open()) {
-        std::cerr << "Could not open file '"  << argv[1] << "'" << std::endl;
+        Log::error("Could not open file '{}'", argv[1]);
         return 1;
     }
 
