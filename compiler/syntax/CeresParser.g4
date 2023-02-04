@@ -82,33 +82,40 @@ forStatement
 
 // Implicit rule precedence (the first that matches)
 // See The Definitive ANTLR 4 Reference, 5.4 Dealing with Precedence, Left Recursion, and Associativity
-expression
+
+// AssignmentExpression is any expression that doesn't contains commas at the top level.
+// This is required to avoid ambiguities in function calls
+assignmentExpression
     : primaryExpression
     | functionCall
-    | expression postfix=('++' | '--')
-    | prefix=('+' | '-' |'++'|'--') expression
-    | prefix=('~'|'!') expression
-    | expression binary_op=('*'|'/'|'%') expression
-    | expression binary_op=('+'|'-') expression
-    | expression ('<' '<' | '>' '>') expression
-    | expression binary_op=('<=' | '>=' | '>' | '<') expression
-    | expression binary_op='&' expression
-    | expression binary_op='^' expression
-    | expression binary_op='|' expression
-    | expression binary_op=('==' | '!=') expression
-    | expression binary_op='&&' expression
-    | expression binary_op='||' expression
-    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') expression
-    | OPEN_PARENS expression CLOSE_PARENS
+    | assignmentExpression postfix=('++' | '--')
+    | prefix=('+' | '-' |'++'|'--') assignmentExpression
+    | prefix=('~'|'!') assignmentExpression
+    | assignmentExpression binary_op=('*'|'/'|'%') assignmentExpression
+    | assignmentExpression binary_op=('+'|'-') assignmentExpression
+    | assignmentExpression ('<' '<' | '>' '>') assignmentExpression
+    | assignmentExpression binary_op=('<=' | '>=' | '>' | '<') assignmentExpression
+    | assignmentExpression binary_op='&' assignmentExpression
+    | assignmentExpression binary_op='^' assignmentExpression
+    | assignmentExpression binary_op='|' assignmentExpression
+    | assignmentExpression binary_op=('==' | '!=') assignmentExpression
+    | assignmentExpression binary_op='&&' assignmentExpression
+    | assignmentExpression binary_op='||' assignmentExpression
+    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression
  ;
 
+expression
+    :   assignmentExpression (',' assignmentExpression)*
+    ;
+
 primaryExpression
-    : IDENTIFIER
+    : OPEN_PARENS expression CLOSE_PARENS
+    | IDENTIFIER
     | DECIMAL_LITERAL
     | TRUE
     | FALSE
     ;
 
 functionCall
-    : IDENTIFIER OPEN_PARENS ( expression (COMMA expression)* )? CLOSE_PARENS
+    : IDENTIFIER OPEN_PARENS ( assignmentExpression (COMMA assignmentExpression)* )? CLOSE_PARENS
     ;
