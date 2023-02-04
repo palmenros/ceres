@@ -30,16 +30,41 @@ ELSE : 'else';
 FOR : 'for';
 WHILE : 'while';
 
-TRUE : 'true';
-FALSE : 'false';
-
 // Identifier
 
 IDENTIFIER : [a-zA-Z_][a-zA-Z_0-9]*;
 
-// Number literals
+// Literals
 
-DECIMAL_LITERAL : [0-9]+;
+INTEGER_LITERAL_SUFFIX: 'u8'
+                      | 'u16'
+                      | 'u32'
+                      | 'u64'
+                      | 'i8'
+                      | 'i16'
+                      | 'i32'
+                      | 'i64'
+                      ;
+
+FLOAT_LITERAL_SUFFIX: 'f32'
+                    | 'f64'
+                    ;
+
+DECIMAL_LITERAL:    ('0' | [1-9] (Digits? | '_'+ Digits)) INTEGER_LITERAL_SUFFIX?;
+HEX_LITERAL:        '0' [xX] [0-9a-fA-F] ([0-9a-fA-F_]* [0-9a-fA-F])? INTEGER_LITERAL_SUFFIX?;
+OCT_LITERAL:        '0' 'oO'* [0-7] ([0-7_]* [0-7])? INTEGER_LITERAL_SUFFIX?;
+BINARY_LITERAL:     '0' [bB] [01] ([01_]* [01])? INTEGER_LITERAL_SUFFIX?;
+
+FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart? FLOAT_LITERAL_SUFFIX?
+             |       Digits (ExponentPart FLOAT_LITERAL_SUFFIX? | FLOAT_LITERAL_SUFFIX)
+             ;
+
+HEX_FLOAT_LITERAL:  '0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits FLOAT_LITERAL_SUFFIX?;
+
+BOOL_LITERAL: 'true'
+            | 'false'
+            ;
+
 
 // Note: We don't have special parsing for primitive types, they will be handled in code via
 //       the type symbol table.
@@ -109,3 +134,21 @@ CLOSE_PARENS : ')';
 // Whitespaces
 
 WHITESPACES : [ \t\n\r\f]+ -> skip;
+
+// Fragment rules
+
+fragment ExponentPart
+    : [eE] [+-]? Digits
+    ;
+
+fragment HexDigits
+    : HexDigit ((HexDigit | '_')* HexDigit)?
+    ;
+
+fragment HexDigit
+    : [0-9a-fA-F]
+    ;
+
+fragment Digits
+    : [0-9] ([0-9_]* [0-9])?
+    ;
