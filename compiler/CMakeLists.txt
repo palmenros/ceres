@@ -26,7 +26,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
-add_executable(compiler src/main.cpp src/utils/log.hpp)
+add_executable(compiler src/main.cpp src/utils/log.hpp src/AST/AntlrASTGeneratorVisitor.cpp src/AST/AntlrASTGeneratorVisitor.h src/AST/Node.cpp src/AST/Node.h src/AST/SourceSpan.cpp src/AST/SourceSpan.h src/AST/CompilationUnit.cpp src/AST/CompilationUnit.h src/AST/FunctionDefinition.cpp src/AST/FunctionDefinition.h src/AST/VariableDeclaration.cpp src/AST/VariableDeclaration.h src/AST/Expression.cpp src/AST/Expression.h src/AST/Type.cpp src/AST/Type.h)
 
 ##########################################
 #           START LLVM

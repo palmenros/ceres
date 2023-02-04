@@ -19,14 +19,20 @@
 #ifndef COMPILER_SOURCESPAN_H
 #define COMPILER_SOURCESPAN_H
 
-namespace Ceres {
-    namespace AST {
+#include <cstddef>
 
-        class SourceSpan {
+namespace Ceres::AST {
 
-        };
+    struct SourceSpan {
 
-    } // Ceres
-} // AST
+        size_t startLine, endLine;
+        size_t startCharacterIndex, endCharacterIndex;
+
+        SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
+                   size_t endCharacterIndex);
+
+    };
+}
+
 
 #endif //COMPILER_SOURCESPAN_H

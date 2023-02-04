@@ -16,23 +16,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_NODE_H
-#define COMPILER_NODE_H
+#ifndef COMPILER_TYPE_H
+#define COMPILER_TYPE_H
 
-#include "SourceSpan.h"
+#include <string>
 
-namespace Ceres::AST {
+namespace Ceres {
+    namespace AST {
 
-    class Node {
-    public:
+        class Type {
+        public:
+            std::string name;
 
-        SourceSpan sourceSpan;
+            Type(const std::string &name);
+        };
 
-    public:
+    } // Ceres
+} // AST
 
-        explicit Node(const SourceSpan &sourceSpan);
-
-    };
-
-}
-#endif //COMPILER_NODE_H
+#endif //COMPILER_TYPE_H

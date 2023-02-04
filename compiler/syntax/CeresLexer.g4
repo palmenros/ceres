@@ -23,7 +23,7 @@ lexer grammar CeresLexer;
 FN : 'fn';
 PUB: 'pub';
 VAR : 'var';
-CONST : 'const';
+CONSTANT : 'const';
 RETURN : 'return';
 IF : 'if';
 ELSE : 'else';

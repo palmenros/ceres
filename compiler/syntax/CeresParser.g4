@@ -51,7 +51,7 @@ type
     ;
 
 varDeclaration
-    : (VAR|CONST) IDENTIFIER (COLON type)? (ASSIGN_OP expression)?
+    : (VAR|CONSTANT) IDENTIFIER (COLON type)? (ASSIGN_OP expression)?
     ;
 
 statement

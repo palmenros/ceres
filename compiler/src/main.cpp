@@ -31,6 +31,8 @@
 #include "llvm/IR/Verifier.h"
 
 #include "utils/log.hpp"
+#include "AST/CompilationUnit.h"
+#include "AST/AntlrASTGeneratorVisitor.h"
 
 using namespace antlrgenerated;
 using namespace antlr4;
@@ -53,19 +55,30 @@ int main(int argc, const char *argv[])
         return 1;
     }
 
-    ANTLRInputStream input(file);
-    CeresLexer lexer(&input);
-    CommonTokenStream tokens(&lexer);
+    try {
 
-    CeresParser parser(&tokens);
-    tree::ParseTree *tree = parser.compilationUnit();
+        ANTLRInputStream input(file);
+        CeresLexer lexer(&input);
+        CommonTokenStream tokens(&lexer);
 
-    auto s = tree->toStringTree(&parser);
-    std::cout << s << std::endl;
+        CeresParser parser(&tokens);
+        tree::ParseTree *tree = parser.compilationUnit();
 
-    llvm::LLVMContext llvmContext;
-    auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
+        auto s = tree->toStringTree(&parser);
+        Log::debug("Parse tree: {}", s);
+
+        AST::AntlrASTGeneratorVisitor visitor;
+
+        auto res = std::any_cast<AST::CompilationUnit *>(tree->accept(&visitor));
+        ASSERT(res != nullptr);
+
+        auto AST = std::unique_ptr<AST::CompilationUnit>(res);
+
+        llvm::LLVMContext llvmContext;
+        auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
 //    std::cout << "LLVM says: " << module->getName().str() << std::endl;
-
+    } catch (std::exception& e) {
+        Log::critical("Uncaught Exception: {}", e.what());
+    }
     return 0;
 }

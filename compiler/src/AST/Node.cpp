@@ -18,7 +18,9 @@
 
 #include "Node.h"
 
-namespace Ceres {
-    namespace AST {
-    } // Ceres
-} // AST
+namespace Ceres::AST {
+
+    Node::Node(const SourceSpan &sourceSpan)
+        : sourceSpan(sourceSpan)
+        {}
+}

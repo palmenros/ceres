@@ -16,13 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "SourceSpan.h"
+#ifndef COMPILER_COMPILATIONUNIT_H
+#define COMPILER_COMPILATIONUNIT_H
+
+#include <vector>
+#include <memory>
+#include "Node.h"
+#include "FunctionDefinition.h"
+#include "VariableDeclaration.h"
 
 namespace Ceres {
     namespace AST {
-        SourceSpan::SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
-                               size_t endCharacterIndex) : startLine(startLine), endLine(endLine),
-                                                           startCharacterIndex(startCharacterIndex),
-                                                           endCharacterIndex(endCharacterIndex) {}
+
+        class CompilationUnit : public Node {
+        public:
+
+            std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
+            std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
+
+            CompilationUnit(const SourceSpan& sourceSpan,
+                            std::vector<std::unique_ptr<FunctionDefinition>>&& functionDefinitions,
+                            std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
+        };
+
     } // Ceres
 } // AST
+
+#endif //COMPILER_COMPILATIONUNIT_H
