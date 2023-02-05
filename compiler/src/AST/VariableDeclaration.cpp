@@ -30,7 +30,7 @@ namespace Ceres::AST {
                                                  Type type, std::string identifier,
                                                  const SourceSpan &typeSourceSpan,
                                                  const SourceSpan &identifierSourceSpan)
-                : Node(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
+                : Statement(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
                   constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
                   identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 

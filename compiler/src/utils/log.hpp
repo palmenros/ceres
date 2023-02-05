@@ -71,6 +71,8 @@ namespace Ceres::Log {
 
     // Macro for NOT_IMPLEMENTED
     #define NOT_IMPLEMENTED() ::Ceres::Log::panic("Not implemented: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
+    #define TODO() ::Ceres::Log::panic("TODO: Not implemented: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
+
 
     // TODO: Maybe define ASSERT only on DEBUG
     #define ASSERT(cond) do { \

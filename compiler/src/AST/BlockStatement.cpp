@@ -16,16 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "FunctionDefinition.h"
-
-#include <utility>
+#include "BlockStatement.h"
 
 namespace Ceres::AST {
-    FunctionDefinition::FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
-                                           std::string functionName,
-                                           std::vector<FunctionParameter> parameters, Type returnType,
-                                           std::unique_ptr<BlockStatement> &&block,
-                                           const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan) : Node(
-            sourceSpan), visibility(visibility), functionName(std::move(functionName)), parameters(std::move(parameters)), returnType(std::move(
-            returnType)), block(std::move(block)), returnTypeSpan(returnTypeSpan), functionNameSpan(functionNameSpan) {}
+    BlockStatement::BlockStatement(const SourceSpan &sourceSpan,
+                                   std::vector<std::unique_ptr<Statement>> &&statements) : Statement(sourceSpan),
+                                                                                           statements(std::move(statements)) {}
 } // AST

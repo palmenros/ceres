@@ -19,11 +19,37 @@
 #ifndef COMPILER_FUNCTIONDEFINITION_H
 #define COMPILER_FUNCTIONDEFINITION_H
 
+#include <string>
 #include "Node.h"
+#include "Type.h"
+#include "FunctionParameter.h"
+#include "BlockStatement.h"
+#include <vector>
+#include <memory>
 
 namespace Ceres::AST {
 
+        enum class FunctionVisibility {
+            Public,
+            Private
+        };
+
         class FunctionDefinition : public Node {
+        public:
+
+            FunctionVisibility visibility;
+            std::string functionName;
+            std::vector<FunctionParameter> parameters;
+            Type returnType;
+            std::unique_ptr<BlockStatement> block;
+
+            SourceSpan returnTypeSpan;
+            SourceSpan functionNameSpan;
+
+            FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
+                               std::string functionName, std::vector<FunctionParameter> parameters,
+                               Type returnType, std::unique_ptr<BlockStatement> &&block,
+                               const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan);
 
         };
 

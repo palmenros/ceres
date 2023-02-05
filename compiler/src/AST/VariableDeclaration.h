@@ -21,7 +21,7 @@
 
 #include <memory>
 #include <string>
-#include "Node.h"
+#include "Statement.h"
 #include "Expression.h"
 #include "Type.h"
 
@@ -42,7 +42,7 @@ namespace Ceres::AST {
             NonConst
         };
 
-        class VariableDeclaration : public Node {
+        class VariableDeclaration : public Statement {
         public:
             VariableVisibility visibility;
             VariableConstness constness;
