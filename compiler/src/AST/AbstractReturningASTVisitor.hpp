@@ -101,8 +101,6 @@ namespace Ceres::AST {
         virtual T doVisitVariableDeclaration(VariableDeclaration &decl) = 0;
         virtual T doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) = 0;
         virtual T doVisitWhileStatement(WhileStatement &stm) = 0;
-
-        friend class Node;
     };
 
 }
