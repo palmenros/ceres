@@ -18,7 +18,11 @@
 
 #include "IfStatement.h"
 
-namespace Ceres {
-    namespace AST {
-    } // Ceres
-} // AST
+namespace Ceres::AST {
+        IfStatement::IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                                 std::unique_ptr<BlockStatement> &&thenBlock,
+                                 std::unique_ptr<Statement> &&elseStatement) : Statement(sourceSpan),
+                                                                               condition(std::move(condition)),
+                                                                               thenBlock(std::move(thenBlock)),
+                                                                               maybeElseStatement(std::move(elseStatement)) {}
+    } // AST

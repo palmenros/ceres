@@ -23,7 +23,7 @@
 #include <string>
 #include "Statement.h"
 #include "Expression.h"
-#include "Type.h"
+#include "../Type.h"
 
 namespace Ceres::AST {
 

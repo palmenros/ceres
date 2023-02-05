@@ -20,5 +20,7 @@
 
 namespace Ceres {
     namespace AST {
+        ReturnStatement::ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr)
+                : Statement(sourceSpan), expr(std::move(expr)) {}
     } // Ceres
 } // AST

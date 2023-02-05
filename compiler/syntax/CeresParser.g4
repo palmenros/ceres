@@ -57,14 +57,14 @@ varDeclaration
     ;
 
 statement
-    : varDeclaration SEMICOLON
-    | returnStatement SEMICOLON
-    | expression SEMICOLON
-    | ifStatement
-    | whileStatement
-    | forStatement
-    | block
-    | SEMICOLON
+    : varDeclaration SEMICOLON      # var_decl_statement
+    | returnStatement SEMICOLON     # return_statement
+    | expression SEMICOLON          # expr_statement
+    | ifStatement                   # if_statement
+    | whileStatement                # while_statement
+    | forStatement                  # for_statement
+    | block                         # block_statement
+    | SEMICOLON                     # empty_statement
     ;
 
 returnStatement

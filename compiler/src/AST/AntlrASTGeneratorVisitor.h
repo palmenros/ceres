@@ -20,7 +20,7 @@
 #define COMPILER_ANTLRASTGENERATORVISITOR_H
 
 #include "CeresParserBaseVisitor.h"
-#include "SourceSpan.h"
+#include "nodes/SourceSpan.h"
 
 namespace Ceres::AST {
 
@@ -51,8 +51,6 @@ namespace Ceres::AST {
         std::any visitType(antlrgenerated::CeresParser::TypeContext *ctx) override;
 
         std::any visitVarDeclaration(antlrgenerated::CeresParser::VarDeclarationContext *ctx) override;
-
-        std::any visitStatement(antlrgenerated::CeresParser::StatementContext *ctx) override;
 
         std::any visitReturnStatement(antlrgenerated::CeresParser::ReturnStatementContext *ctx) override;
 
@@ -91,6 +89,22 @@ namespace Ceres::AST {
         std::any visitFloatLiteral(antlrgenerated::CeresParser::FloatLiteralContext *ctx) override;
 
         std::any visitFunctionCall(antlrgenerated::CeresParser::FunctionCallContext *ctx) override;
+
+        std::any visitVar_decl_statement(antlrgenerated::CeresParser::Var_decl_statementContext *context) override;
+
+        std::any visitReturn_statement(antlrgenerated::CeresParser::Return_statementContext *context) override;
+
+        std::any visitExpr_statement(antlrgenerated::CeresParser::Expr_statementContext *context) override;
+
+        std::any visitIf_statement(antlrgenerated::CeresParser::If_statementContext *context) override;
+
+        std::any visitWhile_statement(antlrgenerated::CeresParser::While_statementContext *context) override;
+
+        std::any visitFor_statement(antlrgenerated::CeresParser::For_statementContext *context) override;
+
+        std::any visitBlock_statement(antlrgenerated::CeresParser::Block_statementContext *context) override;
+
+        std::any visitEmpty_statement(antlrgenerated::CeresParser::Empty_statementContext *context) override;
 
         static SourceSpan getSourceSpan(const antlr4::Token *token);
 

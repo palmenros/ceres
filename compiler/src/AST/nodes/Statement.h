@@ -16,27 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
+#ifndef COMPILER_STATEMENT_H
+#define COMPILER_STATEMENT_H
 
-#include "Type.h"
-#include "VariableDeclaration.h"
+#include "Node.h"
 
 namespace Ceres::AST {
+    class Statement : public Node{
+    public:
 
-    struct FunctionParameter {
-        Type type;
-        std::string name;
-        VariableConstness constness;
+        explicit Statement(const SourceSpan &sourceSpan);
 
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
-
-        FunctionParameter(Type type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
-
+        virtual ~Statement() = default;
     };
 
 } // AST
 
-#endif //COMPILER_FUNCTIONPARAMETER_H
+#endif //COMPILER_STATEMENT_H

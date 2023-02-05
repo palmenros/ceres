@@ -21,7 +21,7 @@
 
 #include <string>
 #include "Node.h"
-#include "Type.h"
+#include "../Type.h"
 #include "FunctionParameter.h"
 #include "BlockStatement.h"
 #include <vector>

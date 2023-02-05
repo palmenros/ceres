@@ -16,9 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "VariableDeclarationStatement.h"
+#include "ExpressionStatement.h"
 
-namespace Ceres {
-    namespace AST {
-    } // Ceres
-} // AST
+namespace Ceres::AST {
+        ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
+                                                 std::unique_ptr<Expression>&&expression) : Statement(sourceSpan),
+                                                                                                  expression(std::move(expression)) {}
+    } // AST

@@ -31,7 +31,7 @@
 #include "llvm/IR/Verifier.h"
 
 #include "utils/log.hpp"
-#include "AST/CompilationUnit.h"
+#include "AST/nodes/CompilationUnit.h"
 #include "AST/AntlrASTGeneratorVisitor.h"
 
 using namespace antlrgenerated;

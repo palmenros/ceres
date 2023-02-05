@@ -16,19 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_STATEMENT_H
-#define COMPILER_STATEMENT_H
+#include "VariableDeclarationStatement.h"
 
-#include "Node.h"
-
-namespace Ceres::AST {
-    class Statement : public Node{
-    public:
-
-        Statement(const SourceSpan &sourceSpan);
-
-    };
-
+namespace Ceres {
+    namespace AST {
+        VariableDeclarationStatement::VariableDeclarationStatement(const SourceSpan &sourceSpan,
+                                                                   std::unique_ptr<VariableDeclaration> &&variableDeclaration)
+                : Statement(sourceSpan), variableDeclaration(std::move(variableDeclaration)) {}
+    } // Ceres
 } // AST
-
-#endif //COMPILER_STATEMENT_H

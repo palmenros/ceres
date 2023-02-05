@@ -19,14 +19,23 @@
 #ifndef COMPILER_WHILESTATEMENT_H
 #define COMPILER_WHILESTATEMENT_H
 
-namespace Ceres {
-    namespace AST {
+#include "Statement.h"
+#include "Expression.h"
+#include "BlockStatement.h"
+#include <memory>
 
-        class WhileStatement {
+namespace Ceres::AST {
+
+        class WhileStatement : public Statement {
+        public:
+            std::unique_ptr<Expression> condition;
+            std::unique_ptr<BlockStatement> body;
+
+            WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                           std::unique_ptr<BlockStatement> &&body);
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_WHILESTATEMENT_H

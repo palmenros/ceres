@@ -16,17 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_VARIABLEDECLARATIONSTATEMENT_H
-#define COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#ifndef COMPILER_RETURNSTATEMENT_H
+#define COMPILER_RETURNSTATEMENT_H
 
-namespace Ceres {
-    namespace AST {
+#include "Statement.h"
+#include "Expression.h"
+#include <memory>
 
-        class VariableDeclarationStatement {
+namespace Ceres::AST {
+
+        class ReturnStatement : public Statement {
+        public:
+
+            std::unique_ptr<Expression> expr;
+
+            ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
-#endif //COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#endif //COMPILER_RETURNSTATEMENT_H

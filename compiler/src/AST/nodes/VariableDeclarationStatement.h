@@ -16,17 +16,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_RETURNSTATEMENT_H
-#define COMPILER_RETURNSTATEMENT_H
+#ifndef COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#define COMPILER_VARIABLEDECLARATIONSTATEMENT_H
 
-namespace Ceres {
-    namespace AST {
+#include "Statement.h"
+#include <memory>
+#include "VariableDeclaration.h"
 
-        class ReturnStatement {
+namespace Ceres::AST {
 
+        // Class that wraps a Variable Declaration.
+        // It's intended for operations that should only be done on Variable Declaration Statement vs global
+        // variable declarations.
+        class VariableDeclarationStatement : public Statement {
+        public:
+            std::unique_ptr<VariableDeclaration> variableDeclaration;
+
+            VariableDeclarationStatement(const SourceSpan &sourceSpan,
+                                         std::unique_ptr<VariableDeclaration> &&variableDeclaration);
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
-#endif //COMPILER_RETURNSTATEMENT_H
+#endif //COMPILER_VARIABLEDECLARATIONSTATEMENT_H

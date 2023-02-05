@@ -16,9 +16,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "ExpressionStatement.h"
+#ifndef COMPILER_EXPRESSIONSTATEMENT_H
+#define COMPILER_EXPRESSIONSTATEMENT_H
 
-namespace Ceres {
-    namespace AST {
-    } // Ceres
-} // AST
+#include <memory>
+#include "Statement.h"
+#include "Expression.h"
+
+namespace Ceres::AST {
+
+        class ExpressionStatement : public Statement {
+        public:
+            std::unique_ptr<Expression> expression;
+
+            ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
+        };
+
+    } // AST
+
+#endif //COMPILER_EXPRESSIONSTATEMENT_H

@@ -19,14 +19,30 @@
 #ifndef COMPILER_IFSTATEMENT_H
 #define COMPILER_IFSTATEMENT_H
 
-namespace Ceres {
-    namespace AST {
+#include "Statement.h"
+#include "Expression.h"
+#include "BlockStatement.h"
+#include <memory>
 
-        class IfStatement {
+namespace Ceres::AST {
+
+        class IfStatement : public Statement {
+        public:
+
+            std::unique_ptr<Expression> condition;
+
+            std::unique_ptr<BlockStatement> thenBlock;
+
+            // Currently: the else statement can only be a BlockStatement, another IfStatement or a nullptr
+            // Note: maybeElseStatement can be a nullptr
+            std::unique_ptr<Statement> maybeElseStatement;
+
+            IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                        std::unique_ptr<BlockStatement> &&thenBlock,
+                        std::unique_ptr<Statement> &&elseStatement);
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_IFSTATEMENT_H

@@ -16,17 +16,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_EXPRESSIONSTATEMENT_H
-#define COMPILER_EXPRESSIONSTATEMENT_H
+#include "WhileStatement.h"
 
-namespace Ceres {
-    namespace AST {
-
-        class ExpressionStatement {
-
-        };
-
-    } // Ceres
+namespace Ceres::AST {
+    WhileStatement::WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                                   std::unique_ptr<BlockStatement> &&body) : Statement(sourceSpan),
+                                                                             condition(std::move(condition)), body(std::move(body)) {}
 } // AST
-
-#endif //COMPILER_EXPRESSIONSTATEMENT_H
