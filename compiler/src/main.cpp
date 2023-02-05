@@ -34,7 +34,7 @@
 #include "AST/nodes/CompilationUnit.h"
 #include "AST/AntlrASTGeneratorVisitor.h"
 #include "AST/ASTVisitor.h"
-#include "AST/ReturningASTVisitor.hpp"
+#include "AST/ASTStringifierVisitor.h"
 
 using namespace antlrgenerated;
 using namespace antlr4;
@@ -76,25 +76,9 @@ int main(int argc, const char *argv[])
 
         auto AST = std::unique_ptr<AST::CompilationUnit>(res);
 
-        class CountNumIds : public AST::ReturningASTVisitor<int> {
-        public:
-            int defaultValue() override {
-                return 0;
-            }
-
-            int aggregateValues(const int &accumulator, const int &next) override {
-                return accumulator + next;
-            }
-
-            int doVisitIdentifierExpression(AST::IdentifierExpression &expr) override {
-                int cnt = ReturningASTVisitor::doVisitIdentifierExpression(expr);
-                return cnt + 1;
-            }
-        };
-
-        CountNumIds cnt;
-        int res_int = cnt.visit(*AST);
-        Log::info("Num IDs: {}", res_int);
+        AST::ASTStringifierVisitor stringifierVisitor;
+        auto str = stringifierVisitor.visit(*AST);
+        Log::info("AST: {}", str);
 
         llvm::LLVMContext llvmContext;
         auto module = std::make_unique<llvm::Module>("Hello", llvmContext);

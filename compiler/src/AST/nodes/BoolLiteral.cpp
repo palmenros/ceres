@@ -30,4 +30,12 @@ namespace Ceres::AST {
     std::vector<Node *> BoolLiteral::getChildren() const {
         return {};
     }
+
+    std::string BoolLiteral::toStringBoolLiteralValue(BoolLiteralValue value) {
+        if(value == BoolLiteralValue::True) {
+            return "true";
+        } else {
+            return "false";
+        }
+    }
 } // AST

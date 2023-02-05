@@ -26,4 +26,12 @@ namespace Ceres::AST {
         Type Type::createUnspecifiedType() {
             return Type{""};
         }
-    } // AST
+
+    std::string Type::toString() const {
+        if (name != "") {
+            return name;
+        } else {
+            return "UNKNOWN";
+        }
+    }
+} // AST

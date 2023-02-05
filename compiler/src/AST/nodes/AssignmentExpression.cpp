@@ -19,6 +19,7 @@
 #include "AssignmentExpression.h"
 #include "../AbstractASTVisitor.h"
 #include <utility>
+#include "../../utils/log.hpp"
 
 namespace Ceres::AST {
     AssignmentExpression::AssignmentExpression(const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
@@ -34,5 +35,36 @@ namespace Ceres::AST {
     std::vector<Node *> AssignmentExpression::getChildren() const {
         // TODO: We will need to update this when our assignment expression takes an expression instead of identifier on the LHS
         return { expressionRHS.get() };
+    }
+
+    std::string AssignmentExpression::assignmentBinaryOpToString(std::optional<BinaryOp> &binOp) {
+        if (!binOp.has_value()) {
+            return "=";
+        }
+
+        switch(binOp.value()) {
+            case BinaryOp::Mult:
+                return "*=";
+            case BinaryOp::Div:
+                return "/=";
+            case BinaryOp::Modulo:
+                return "%=";
+            case BinaryOp::Sum:
+                return "+=";
+            case BinaryOp::Subtraction:
+                return "-=";
+            case BinaryOp::BitshiftLeft:
+                return "<<=";
+            case BinaryOp::BitshiftRight:
+                return ">>=";
+            case BinaryOp::BitwiseAnd:
+                return "&=";
+            case BinaryOp::BitwiseOr:
+                return "|=";
+            case BinaryOp::BitwiseXor:
+                return "^=";
+            default:
+                NOT_IMPLEMENTED();
+        }
     }
 } // AST

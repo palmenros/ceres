@@ -40,26 +40,26 @@ namespace Ceres::AST {
 
         // Default implementation for visiting children
 
-        T doVisitAssignmentExpression(AssignmentExpression &expr) override;
-        T doVisitBinaryOperationExpression(BinaryOperationExpression &expr) override;
-        T doVisitBlockStatement(BlockStatement &stm) override;
-        T doVisitBoolLiteral(BoolLiteral &lit) override;
-        T doVisitCommaExpression(CommaExpression &expr) override;
-        T doVisitCompilationUnit(CompilationUnit &unit) override;
-        T doVisitExpressionStatement(ExpressionStatement &stm) override;
-        T doVisitFloatLiteralExpression(FloatLiteralExpression &expr) override;
-        T doVisitForStatement(ForStatement &stm) override;
-        T doVisitFunctionCallExpression(FunctionCallExpression &expr) override;
-        T doVisitFunctionDefinition(FunctionDefinition &def) override;
-        T doVisitIdentifierExpression(IdentifierExpression &expr) override;
-        T doVisitIfStatement(IfStatement &stm) override;
-        T doVisitIntLiteralExpression(IntLiteralExpression &expr) override;
-        T doVisitPostfixExpression(PostfixExpression &expr) override;
-        T doVisitPrefixExpression(PrefixExpression &expr) override;
-        T doVisitReturnStatement(ReturnStatement &stm) override;
-        T doVisitVariableDeclaration(VariableDeclaration &decl) override;
-        T doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) override;
-        T doVisitWhileStatement(WhileStatement &stm) override;
+        virtual T doVisitAssignmentExpression(AssignmentExpression &expr) override;
+        virtual T doVisitBinaryOperationExpression(BinaryOperationExpression &expr) override;
+        virtual T doVisitBlockStatement(BlockStatement &stm) override;
+        virtual T doVisitBoolLiteral(BoolLiteral &lit) override;
+        virtual T doVisitCommaExpression(CommaExpression &expr) override;
+        virtual T doVisitCompilationUnit(CompilationUnit &unit) override;
+        virtual T doVisitExpressionStatement(ExpressionStatement &stm) override;
+        virtual T doVisitFloatLiteralExpression(FloatLiteralExpression &expr) override;
+        virtual T doVisitForStatement(ForStatement &stm) override;
+        virtual T doVisitFunctionCallExpression(FunctionCallExpression &expr) override;
+        virtual T doVisitFunctionDefinition(FunctionDefinition &def) override;
+        virtual T doVisitIdentifierExpression(IdentifierExpression &expr) override;
+        virtual T doVisitIfStatement(IfStatement &stm) override;
+        virtual T doVisitIntLiteralExpression(IntLiteralExpression &expr) override;
+        virtual T doVisitPostfixExpression(PostfixExpression &expr) override;
+        virtual T doVisitPrefixExpression(PrefixExpression &expr) override;
+        virtual T doVisitReturnStatement(ReturnStatement &stm) override;
+        virtual T doVisitVariableDeclaration(VariableDeclaration &decl) override;
+        virtual T doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) override;
+        virtual T doVisitWhileStatement(WhileStatement &stm) override;
     };
 
     template<class T>

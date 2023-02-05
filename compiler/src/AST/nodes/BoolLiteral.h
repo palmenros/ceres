@@ -20,6 +20,7 @@
 #define COMPILER_BOOLLITERAL_H
 
 #include "Expression.h"
+#include<string>
 
 namespace Ceres::AST {
 
@@ -37,6 +38,8 @@ namespace Ceres::AST {
             void accept(AbstractASTVisitor &visitor) override;
 
             std::vector<Node *> getChildren() const override;
+
+            static std::string toStringBoolLiteralValue(BoolLiteralValue value);
         };
 
     } // AST

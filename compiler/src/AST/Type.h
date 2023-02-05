@@ -33,6 +33,8 @@ namespace Ceres::AST {
 
             // Called by the AST generator to create a type when none has been given by the user
             static Type createUnspecifiedType();
+
+            std::string toString() const;
         };
 
     } // AST
