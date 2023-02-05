@@ -27,6 +27,7 @@ namespace Ceres::AST {
             return Type{""};
         }
 
+        // TODO: Consider where should the toString methods be. Should they be centralized?
     std::string Type::toString() const {
         if (name != "") {
             return name;

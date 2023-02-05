@@ -20,6 +20,7 @@
 #define COMPILER_ABSTRACTRETURNINGASTVISITOR_HPP
 
 #include "AbstractASTVisitor.h"
+#include "../utils/log.hpp"
 
 namespace Ceres::AST {
 
@@ -56,6 +57,26 @@ namespace Ceres::AST {
         T visit(Node& node) {
             node.accept(*this);
             return _result;
+        }
+
+        T visitChildren(Node& node) {
+            T accumulator = defaultValue();
+            for(auto& childrenPtr : node.getChildren()) {
+                ASSERT(childrenPtr != nullptr);
+                accumulator = aggregateValues(accumulator, this->visit(*childrenPtr));
+            }
+            return accumulator;
+        }
+
+        // This function should construct the first initialization for the accu,ulator when visiting children
+        T defaultValue() {
+            return T{};
+        }
+
+        // This function should return a way to aggregate the values when calling visitChildren() to multiple children
+        // By default, only the last value is preserved and returned to the parent
+        virtual T aggregateValues(const T& accumulator, const T& next) {
+            return next;
         }
 
         // Functions that the visitor should overload that return the selected type

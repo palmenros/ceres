@@ -25,9 +25,6 @@ namespace Ceres::AST {
 
         class ASTVisitor : public AbstractASTVisitor {
         public:
-            // This function should not be overriden, automatically calls the children
-            virtual void visitChildren(Node& node);
-
             // These functions should be overriden to do the required functionality
             virtual void visitAssignmentExpression(AssignmentExpression &expr) override;
             virtual void visitBinaryOperationExpression(BinaryOperationExpression &expr) override;

@@ -21,13 +21,6 @@
 
 namespace Ceres::AST {
 
-    void ASTVisitor::visitChildren(Node &node) {
-        for(auto childPtr : node.getChildren()) {
-            ASSERT(childPtr != nullptr);
-            visit(*childPtr);
-        }
-    }
-
     void ASTVisitor::visitAssignmentExpression(AssignmentExpression &expr) {
         visitChildren(expr);
     }
