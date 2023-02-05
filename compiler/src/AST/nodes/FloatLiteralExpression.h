@@ -48,6 +48,8 @@ namespace Ceres::AST {
             FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, std::string str);
 
             static FloatLiteralType stringToFloatLiteralType(const std::string& str);
+
+            void accept(ASTVisitor &visitor) override;
         };
 
     } // AST

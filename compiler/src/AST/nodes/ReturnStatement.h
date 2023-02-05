@@ -32,6 +32,8 @@ namespace Ceres::AST {
 
             ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
 
+            void accept(ASTVisitor &visitor) override;
+
         };
 
     } // AST

@@ -17,6 +17,7 @@
  */
 
 #include "CompilationUnit.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         CompilationUnit::CompilationUnit(const SourceSpan &sourceSpan,
@@ -26,4 +27,8 @@ namespace Ceres::AST {
                                          functionDefinitions(std::move(functionDefinitions)),
                                          globalVariableDeclarations(std::move(globalVariableDeclarations))
                                          {}
-    } // AST
+
+    void CompilationUnit::accept(ASTVisitor &visitor) {
+        visitor.visitCompilationUnit(*this);
+    }
+} // AST

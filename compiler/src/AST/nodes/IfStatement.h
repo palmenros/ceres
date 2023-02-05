@@ -41,6 +41,8 @@ namespace Ceres::AST {
                         std::unique_ptr<BlockStatement> &&thenBlock,
                         std::unique_ptr<Statement> &&elseStatement);
 
+            void accept(ASTVisitor &visitor) override;
+
         };
 
     } // AST

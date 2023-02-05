@@ -17,10 +17,13 @@
  */
 
 #include "ReturnStatement.h"
+#include "../ASTVisitor.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         ReturnStatement::ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr)
                 : Statement(sourceSpan), expr(std::move(expr)) {}
-    } // Ceres
+
+    void ReturnStatement::accept(ASTVisitor &visitor) {
+        visitor.visitReturnStatement(*this);
+    }
 } // AST

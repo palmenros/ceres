@@ -18,8 +18,6 @@
 
 #include "Statement.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         Statement::Statement(const SourceSpan &sourceSpan) : Node(sourceSpan) {}
-    } // Ceres
-} // AST
+    } // AST

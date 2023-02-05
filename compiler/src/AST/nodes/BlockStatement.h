@@ -30,6 +30,8 @@ namespace Ceres::AST {
         std::vector<std::unique_ptr<Statement>> statements;
 
         BlockStatement(const SourceSpan &sourceSpan, std::vector<std::unique_ptr<Statement>> &&statements);
+
+        void accept(ASTVisitor &visitor) override;
     };
 
 } // AST

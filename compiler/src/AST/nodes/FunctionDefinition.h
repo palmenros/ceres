@@ -51,6 +51,8 @@ namespace Ceres::AST {
                                Type returnType, std::unique_ptr<BlockStatement> &&block,
                                const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan);
 
+            void accept(ASTVisitor &visitor) override;
+
         };
 
     } // AST

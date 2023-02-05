@@ -33,6 +33,8 @@ namespace Ceres::AST {
             BoolLiteralValue value;
 
             BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
+
+            void accept(ASTVisitor &visitor) override;
         };
 
     } // AST

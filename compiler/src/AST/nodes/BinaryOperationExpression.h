@@ -57,6 +57,8 @@ namespace Ceres::AST {
                                   std::unique_ptr<Expression> &&left,
                                   std::unique_ptr<Expression> &&right, BinaryOp op,
                                   SourceSpan opSpan);
+
+        void accept(ASTVisitor &visitor) override;
     };
 
 } // AST

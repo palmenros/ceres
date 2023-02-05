@@ -36,6 +36,8 @@ namespace Ceres::AST {
             CompilationUnit(const SourceSpan& sourceSpan,
                             std::vector<std::unique_ptr<FunctionDefinition>>&& functionDefinitions,
                             std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
+
+            void accept(ASTVisitor &visitor) override;
         };
 
     } // AST

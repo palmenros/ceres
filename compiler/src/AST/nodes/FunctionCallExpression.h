@@ -38,6 +38,8 @@ namespace Ceres::AST {
                                std::vector<std::unique_ptr<Expression>> &&arguments,
                                SourceSpan functionIdentifierSourceSpan);
 
+        void accept(ASTVisitor &visitor) override;
+
     };
 
 } // AST

@@ -17,9 +17,14 @@
  */
 
 #include "BlockStatement.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
     BlockStatement::BlockStatement(const SourceSpan &sourceSpan,
                                    std::vector<std::unique_ptr<Statement>> &&statements) : Statement(sourceSpan),
                                                                                            statements(std::move(statements)) {}
+
+    void BlockStatement::accept(ASTVisitor &visitor) {
+        visitor.visitBlockStatement(*this);
+    }
 } // AST

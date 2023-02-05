@@ -17,8 +17,13 @@
  */
 
 #include "BoolLiteral.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
                                                                                          value(value) {}
-    } // AST
+
+    void BoolLiteral::accept(ASTVisitor &visitor) {
+        visitor.visitBoolLiteral(*this);
+    }
+} // AST

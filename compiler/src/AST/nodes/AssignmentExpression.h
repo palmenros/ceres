@@ -45,6 +45,8 @@ namespace Ceres::AST {
         AssignmentExpression(const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
                              std::string identifierLhs, std::unique_ptr<Expression> &&expressionRhs,
                              SourceSpan opSourceSpan);
+
+        void accept(ASTVisitor &visitor) override;
     };
 
 } // AST

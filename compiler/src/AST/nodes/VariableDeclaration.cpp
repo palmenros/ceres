@@ -21,6 +21,7 @@
 #include <utility>
 
 #include <utility>
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
@@ -34,4 +35,8 @@ namespace Ceres::AST {
                   constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
                   identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
-    } // Node
+
+    void VariableDeclaration::accept(ASTVisitor &visitor) {
+        visitor.visitVariableDeclaration(*this);
+    }
+} // Node

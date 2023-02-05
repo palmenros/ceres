@@ -17,9 +17,14 @@
  */
 
 #include "WhileStatement.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
     WhileStatement::WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
                                    std::unique_ptr<BlockStatement> &&body) : Statement(sourceSpan),
                                                                              condition(std::move(condition)), body(std::move(body)) {}
+
+    void WhileStatement::accept(ASTVisitor &visitor) {
+        visitor.visitWhileStatement(*this);
+    }
 } // AST

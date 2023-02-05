@@ -17,6 +17,7 @@
  */
 
 #include "PostfixExpression.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         PostfixExpression::PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
@@ -24,4 +25,8 @@ namespace Ceres::AST {
                                              SourceSpan opSourceSpan) : Expression(sourceSpan), op(op),
                                                                         expr(std::move(expr)),
                                                                         opSourceSpan(opSourceSpan) {}
-    } // AST
+
+    void PostfixExpression::accept(ASTVisitor &visitor) {
+            visitor.visitPostfixExpression(*this);
+    }
+} // AST

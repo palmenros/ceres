@@ -17,9 +17,14 @@
  */
 
 #include "CommaExpression.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         CommaExpression::CommaExpression(const SourceSpan &sourceSpan,
                                          std::vector<std::unique_ptr<Expression>>&& expressions) : Expression(
                 sourceSpan), expressions(std::move(expressions)) {}
-    } // AST
+
+    void CommaExpression::accept(ASTVisitor &visitor) {
+        visitor.visitCommaExpression(*this);
+    }
+} // AST

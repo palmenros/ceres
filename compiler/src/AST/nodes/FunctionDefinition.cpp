@@ -19,6 +19,7 @@
 #include "FunctionDefinition.h"
 
 #include <utility>
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
     FunctionDefinition::FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
@@ -28,4 +29,8 @@ namespace Ceres::AST {
                                            const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan) : Node(
             sourceSpan), visibility(visibility), functionName(std::move(functionName)), parameters(std::move(parameters)), returnType(std::move(
             returnType)), block(std::move(block)), returnTypeSpan(returnTypeSpan), functionNameSpan(functionNameSpan) {}
+
+    void FunctionDefinition::accept(ASTVisitor &visitor) {
+        visitor.visitFunctionDefinition(*this);
+    }
 } // AST

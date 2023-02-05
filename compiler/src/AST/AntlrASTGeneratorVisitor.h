@@ -20,7 +20,7 @@
 #define COMPILER_ANTLRASTGENERATORVISITOR_H
 
 #include "CeresParserBaseVisitor.h"
-#include "nodes/SourceSpan.h"
+#include "SourceSpan.h"
 
 namespace Ceres::AST {
 

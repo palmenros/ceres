@@ -31,6 +31,7 @@ namespace Ceres::AST {
 
             IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier);
 
+            void accept(ASTVisitor &visitor) override;
         };
 
     } // AST

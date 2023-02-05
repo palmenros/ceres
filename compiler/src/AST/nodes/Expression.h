@@ -28,6 +28,7 @@ namespace Ceres::AST {
 
             explicit Expression(const SourceSpan &sourceSpan);
 
+            virtual ~Expression() = default;
         };
 
     } // AST

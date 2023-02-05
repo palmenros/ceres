@@ -17,11 +17,14 @@
  */
 
 #include "VariableDeclarationStatement.h"
+#include "../ASTVisitor.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         VariableDeclarationStatement::VariableDeclarationStatement(const SourceSpan &sourceSpan,
                                                                    std::unique_ptr<VariableDeclaration> &&variableDeclaration)
                 : Statement(sourceSpan), variableDeclaration(std::move(variableDeclaration)) {}
-    } // Ceres
+
+    void VariableDeclarationStatement::accept(ASTVisitor &visitor) {
+        visitor.visitVariableDeclarationStatement(*this);
+    }
 } // AST

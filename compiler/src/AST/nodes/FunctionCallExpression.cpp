@@ -19,6 +19,7 @@
 #include "FunctionCallExpression.h"
 
 #include <utility>
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
     FunctionCallExpression::FunctionCallExpression(const SourceSpan &sourceSpan, std::string functionIdentifier,
@@ -26,4 +27,8 @@ namespace Ceres::AST {
                                                    SourceSpan functionIdentifierSourceSpan)
             : Expression(sourceSpan), functionIdentifier(std::move(functionIdentifier)), arguments(std::move(arguments)),
               functionIdentifierSourceSpan(functionIdentifierSourceSpan) {}
+
+    void FunctionCallExpression::accept(ASTVisitor &visitor) {
+        visitor.visitFunctionCallExpression(*this);
+    }
 } // AST

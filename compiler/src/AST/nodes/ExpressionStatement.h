@@ -30,7 +30,10 @@ namespace Ceres::AST {
             std::unique_ptr<Expression> expression;
 
             ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
+
+            void accept(ASTVisitor &visitor) override;
         };
+
 
     } // AST
 

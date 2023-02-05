@@ -17,6 +17,7 @@
  */
 
 #include "ForStatement.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         ForStatement::ForStatement(const SourceSpan &sourceSpan,
@@ -30,4 +31,8 @@ namespace Ceres::AST {
                                                                              maybeConditionExpr(std::move(conditionExpr)),
                                                                              maybeUpdateExpr(std::move(updateExpr)),
                                                                              body(std::move(body)) {}
-    } // AST
+
+    void ForStatement::accept(ASTVisitor &visitor) {
+        visitor.visitForStatement(*this);
+    }
+} // AST

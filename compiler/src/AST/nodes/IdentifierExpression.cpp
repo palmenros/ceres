@@ -17,8 +17,13 @@
  */
 
 #include "IdentifierExpression.h"
+#include "../ASTVisitor.h"
 
 namespace Ceres::AST {
         IdentifierExpression::IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier)
                 : Expression(sourceSpan), identifier(std::move(identifier)) {}
-    } // AST
+
+    void IdentifierExpression::accept(ASTVisitor &visitor) {
+        visitor.visitIdentifierExpression(*this);
+    }
+} // AST

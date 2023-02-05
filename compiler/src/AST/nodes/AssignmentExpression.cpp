@@ -17,7 +17,7 @@
  */
 
 #include "AssignmentExpression.h"
-
+#include "../ASTVisitor.h"
 #include <utility>
 
 namespace Ceres::AST {
@@ -26,4 +26,8 @@ namespace Ceres::AST {
                                                SourceSpan opSourceSpan) : Expression(
             sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
                                                                           opSourceSpan(opSourceSpan) {}
+
+    void AssignmentExpression::accept(ASTVisitor &visitor) {
+        visitor.visitAssignmentExpression(*this);
+    }
 } // AST

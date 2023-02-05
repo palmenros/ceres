@@ -34,6 +34,8 @@ namespace Ceres::AST {
 
             VariableDeclarationStatement(const SourceSpan &sourceSpan,
                                          std::unique_ptr<VariableDeclaration> &&variableDeclaration);
+
+            void accept(ASTVisitor &visitor) override;
         };
 
     } // AST

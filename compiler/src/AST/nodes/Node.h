@@ -19,9 +19,11 @@
 #ifndef COMPILER_NODE_H
 #define COMPILER_NODE_H
 
-#include "SourceSpan.h"
+#include "../SourceSpan.h"
 
 namespace Ceres::AST {
+
+    class ASTVisitor;
 
     class Node {
     public:
@@ -32,6 +34,8 @@ namespace Ceres::AST {
 
         explicit Node(const SourceSpan &sourceSpan);
 
+        virtual void accept(ASTVisitor& visitor) = 0;
+        virtual ~Node() = default;
     };
 
 }
