@@ -31,7 +31,9 @@ namespace Ceres::AST {
 
             ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
         };
 
 

@@ -16,26 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_COMMAEXPRESSION_H
-#define COMPILER_COMMAEXPRESSION_H
+#ifndef COMPILER_FUNCTIONPARAMETER_H
+#define COMPILER_FUNCTIONPARAMETER_H
 
-#include "Expression.h"
-#include <vector>
-#include <memory>
+#include "Type.h"
+#include "nodes/VariableDeclaration.h"
 
 namespace Ceres::AST {
 
-        class CommaExpression : public Expression {
-        public:
-            std::vector<std::unique_ptr<Expression>> expressions;
+    struct FunctionParameter {
+        Type type;
+        std::string name;
+        VariableConstness constness;
 
-            CommaExpression(const SourceSpan &sourceSpan, std::vector<std::unique_ptr<Expression>> &&expressions);
+        SourceSpan typeSourceSpan;
+        SourceSpan parameterNameSourceSpan;
 
-            void accept(AbstractASTVisitor &visitor) override;
+        FunctionParameter(Type type, std::string name, VariableConstness constness,
+                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
 
-            std::vector<Node *> getChildren() const override;
-        };
+    };
 
-    } // AST
+} // AST
 
-#endif //COMPILER_COMMAEXPRESSION_H
+#endif //COMPILER_FUNCTIONPARAMETER_H

@@ -18,7 +18,7 @@
 
 #include "IntLiteralExpression.h"
 #include <unordered_map>
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
 
@@ -46,7 +46,11 @@ namespace Ceres::AST {
             return it->second;
         }
 
-    void IntLiteralExpression::accept(ASTVisitor &visitor) {
+    void IntLiteralExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitIntLiteralExpression(*this);
+    }
+
+    std::vector<Node *> IntLiteralExpression::getChildren() const {
+        return {};
     }
 } // AST

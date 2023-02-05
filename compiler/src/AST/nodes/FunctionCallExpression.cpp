@@ -19,7 +19,7 @@
 #include "FunctionCallExpression.h"
 
 #include <utility>
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
     FunctionCallExpression::FunctionCallExpression(const SourceSpan &sourceSpan, std::string functionIdentifier,
@@ -28,7 +28,18 @@ namespace Ceres::AST {
             : Expression(sourceSpan), functionIdentifier(std::move(functionIdentifier)), arguments(std::move(arguments)),
               functionIdentifierSourceSpan(functionIdentifierSourceSpan) {}
 
-    void FunctionCallExpression::accept(ASTVisitor &visitor) {
+    void FunctionCallExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitFunctionCallExpression(*this);
+    }
+
+    std::vector<Node *> FunctionCallExpression::getChildren() const {
+        // TODO: In the future, when we add support for function calls to pointers, we need to add the expression
+        //          resolving to the function pointer to the children
+        std::vector<Node*> v;
+        v.reserve(arguments.size());
+        for(auto& a : arguments) {
+            v.push_back(a.get());
+        }
+        return v;
     }
 } // AST

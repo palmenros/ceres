@@ -64,7 +64,9 @@ namespace Ceres::AST {
                                 Type type, std::string identifier, const SourceSpan &typeSourceSpan,
                                 const SourceSpan &identifierSourceSpan);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
 
         };
 

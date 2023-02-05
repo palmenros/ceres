@@ -17,7 +17,7 @@
  */
 
 #include "IfStatement.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         IfStatement::IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
@@ -27,8 +27,18 @@ namespace Ceres::AST {
                                                                                thenBlock(std::move(thenBlock)),
                                                                                maybeElseStatement(std::move(elseStatement)) {}
 
-    void IfStatement::accept(ASTVisitor &visitor) {
+    void IfStatement::accept(AbstractASTVisitor &visitor) {
         visitor.visitIfStatement(*this);
+    }
+
+    std::vector<Node *> IfStatement::getChildren() const {
+        std::vector<Node*> v;
+        v.push_back(condition.get());
+        v.push_back(thenBlock.get());
+        if (maybeElseStatement != nullptr) {
+            v.push_back(maybeElseStatement.get());
+        }
+        return v;
     }
 
 } // AST

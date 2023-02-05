@@ -17,13 +17,17 @@
  */
 
 #include "IdentifierExpression.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         IdentifierExpression::IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier)
                 : Expression(sourceSpan), identifier(std::move(identifier)) {}
 
-    void IdentifierExpression::accept(ASTVisitor &visitor) {
+    void IdentifierExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitIdentifierExpression(*this);
+    }
+
+    std::vector<Node *> IdentifierExpression::getChildren() const {
+        return {};
     }
 } // AST

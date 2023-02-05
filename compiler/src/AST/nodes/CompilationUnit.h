@@ -37,7 +37,9 @@ namespace Ceres::AST {
                             std::vector<std::unique_ptr<FunctionDefinition>>&& functionDefinitions,
                             std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
         };
 
     } // AST

@@ -17,7 +17,7 @@
  */
 
 #include "BinaryOperationExpression.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
     BinaryOperationExpression::BinaryOperationExpression(const SourceSpan &sourceSpan,
@@ -26,7 +26,11 @@ namespace Ceres::AST {
                                                          SourceSpan opSpan)
             : Expression(sourceSpan), left(std::move(left)), right(std::move(right)), op(op), opSpan(opSpan) {}
 
-    void BinaryOperationExpression::accept(ASTVisitor &visitor) {
+    void BinaryOperationExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitBinaryOperationExpression(*this);
+    }
+
+    std::vector<Node *> BinaryOperationExpression::getChildren() const {
+        return {left.get(), right.get()};
     }
 } // AST

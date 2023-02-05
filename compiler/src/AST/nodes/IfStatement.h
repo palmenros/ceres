@@ -41,7 +41,9 @@ namespace Ceres::AST {
                         std::unique_ptr<BlockStatement> &&thenBlock,
                         std::unique_ptr<Statement> &&elseStatement);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
 
         };
 

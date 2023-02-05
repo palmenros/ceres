@@ -43,7 +43,9 @@ namespace Ceres::AST {
         PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op, std::unique_ptr<Expression> &&expr,
                          const SourceSpan &opSourceSpan);
 
-        void accept(ASTVisitor &visitor) override;
+        void accept(AbstractASTVisitor &visitor) override;
+
+        std::vector<Node *> getChildren() const override;
     };
 
 } // AST

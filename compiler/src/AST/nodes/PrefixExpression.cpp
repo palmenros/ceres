@@ -17,7 +17,7 @@
  */
 
 #include "PrefixExpression.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
 
@@ -25,7 +25,11 @@ namespace Ceres::AST {
                                        const SourceSpan &opSourceSpan) : Expression(sourceSpan), op(op), expr(std::move(expr)),
                                                              opSourceSpan(opSourceSpan) {}
 
-    void PrefixExpression::accept(ASTVisitor &visitor) {
+    void PrefixExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitPrefixExpression(*this);
+    }
+
+    std::vector<Node *> PrefixExpression::getChildren() const {
+        return {expr.get()};
     }
 } // AST

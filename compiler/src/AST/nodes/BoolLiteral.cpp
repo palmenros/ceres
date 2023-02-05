@@ -17,13 +17,17 @@
  */
 
 #include "BoolLiteral.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
                                                                                          value(value) {}
 
-    void BoolLiteral::accept(ASTVisitor &visitor) {
+    void BoolLiteral::accept(AbstractASTVisitor &visitor) {
         visitor.visitBoolLiteral(*this);
+    }
+
+    std::vector<Node *> BoolLiteral::getChildren() const {
+        return {};
     }
 } // AST

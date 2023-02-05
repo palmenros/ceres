@@ -19,7 +19,7 @@
 #include "FloatLiteralExpression.h"
 
 #include <utility>
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         FloatLiteralType FloatLiteralExpression::stringToFloatLiteralType(const std::string &str) {
@@ -37,7 +37,11 @@ namespace Ceres::AST {
                                    : Expression(sourceSpan), base(base), type(type), str(std::move(str))
                                    {}
 
-    void FloatLiteralExpression::accept(ASTVisitor &visitor) {
+    void FloatLiteralExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitFloatLiteralExpression(*this);
+    }
+
+    std::vector<Node *> FloatLiteralExpression::getChildren() const {
+        return {};
     }
 } // AST

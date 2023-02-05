@@ -17,7 +17,7 @@
  */
 
 #include "AssignmentExpression.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 #include <utility>
 
 namespace Ceres::AST {
@@ -27,7 +27,12 @@ namespace Ceres::AST {
             sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
                                                                           opSourceSpan(opSourceSpan) {}
 
-    void AssignmentExpression::accept(ASTVisitor &visitor) {
+    void AssignmentExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitAssignmentExpression(*this);
+    }
+
+    std::vector<Node *> AssignmentExpression::getChildren() const {
+        // TODO: We will need to update this when our assignment expression takes an expression instead of identifier on the LHS
+        return { expressionRHS.get() };
     }
 } // AST

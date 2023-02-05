@@ -31,7 +31,9 @@ namespace Ceres::AST {
 
             IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
         };
 
     } // AST

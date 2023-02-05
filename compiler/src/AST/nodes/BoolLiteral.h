@@ -34,7 +34,9 @@ namespace Ceres::AST {
 
             BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
         };
 
     } // AST

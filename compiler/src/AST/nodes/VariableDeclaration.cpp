@@ -21,7 +21,7 @@
 #include <utility>
 
 #include <utility>
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
@@ -36,7 +36,14 @@ namespace Ceres::AST {
                   identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
 
-    void VariableDeclaration::accept(ASTVisitor &visitor) {
+    void VariableDeclaration::accept(AbstractASTVisitor &visitor) {
         visitor.visitVariableDeclaration(*this);
+    }
+
+    std::vector<Node *> VariableDeclaration::getChildren() const {
+        if (initializerExpression != nullptr) {
+            return {initializerExpression.get()};
+        }
+        return {};
     }
 } // Node

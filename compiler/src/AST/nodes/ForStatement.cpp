@@ -17,7 +17,7 @@
  */
 
 #include "ForStatement.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         ForStatement::ForStatement(const SourceSpan &sourceSpan,
@@ -32,7 +32,31 @@ namespace Ceres::AST {
                                                                              maybeUpdateExpr(std::move(updateExpr)),
                                                                              body(std::move(body)) {}
 
-    void ForStatement::accept(ASTVisitor &visitor) {
+    void ForStatement::accept(AbstractASTVisitor &visitor) {
         visitor.visitForStatement(*this);
+    }
+
+    std::vector<Node *> ForStatement::getChildren() const {
+       std::vector<Node*> v;
+
+       if(maybeInitDeclaration != nullptr) {
+           v.push_back(maybeInitDeclaration.get());
+       }
+
+       if(maybeInitExpression != nullptr) {
+           v.push_back(maybeInitExpression.get());
+       }
+
+       if(maybeConditionExpr != nullptr) {
+           v.push_back(maybeConditionExpr.get());
+       }
+
+       if(maybeUpdateExpr != nullptr) {
+           v.push_back(maybeUpdateExpr.get());
+       }
+
+       v.push_back(body.get());
+
+       return v;
     }
 } // AST

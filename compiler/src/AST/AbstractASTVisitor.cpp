@@ -16,27 +16,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
-
-#include "../Type.h"
-#include "VariableDeclaration.h"
+#include "AbstractASTVisitor.h"
 
 namespace Ceres::AST {
 
-    struct FunctionParameter {
-        Type type;
-        std::string name;
-        VariableConstness constness;
-
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
-
-        FunctionParameter(Type type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
-
-    };
+    void AbstractASTVisitor::visit(Node &node) {
+        node.accept(*this);
+    }
 
 } // AST
-
-#endif //COMPILER_FUNCTIONPARAMETER_H

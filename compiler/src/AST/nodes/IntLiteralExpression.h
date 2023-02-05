@@ -58,7 +58,9 @@ namespace Ceres::AST {
 
             static IntLiteralType stringToIntLiteralType(const std::string& str);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
 
         };
 

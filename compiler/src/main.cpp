@@ -33,6 +33,7 @@
 #include "utils/log.hpp"
 #include "AST/nodes/CompilationUnit.h"
 #include "AST/AntlrASTGeneratorVisitor.h"
+#include "AST/ASTVisitor.h"
 
 using namespace antlrgenerated;
 using namespace antlr4;

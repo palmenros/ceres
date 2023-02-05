@@ -17,14 +17,18 @@
  */
 
 #include "ExpressionStatement.h"
-#include "../ASTVisitor.h"
+#include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
         ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
                                                  std::unique_ptr<Expression>&&expression) : Statement(sourceSpan),
                                                                                                   expression(std::move(expression)) {}
 
-    void ExpressionStatement::accept(ASTVisitor &visitor) {
+    void ExpressionStatement::accept(AbstractASTVisitor &visitor) {
         visitor.visitExpressionStatement(*this);
+    }
+
+    std::vector<Node *> ExpressionStatement::getChildren() const {
+        return {expression.get()};
     }
 } // AST

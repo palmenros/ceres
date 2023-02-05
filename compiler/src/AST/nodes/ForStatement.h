@@ -48,7 +48,9 @@ namespace Ceres::AST {
                      std::unique_ptr<Expression> &&conditionExpr, std::unique_ptr<Expression> &&updateExpr,
                      std::unique_ptr<BlockStatement> &&body);
 
-        void accept(ASTVisitor &visitor) override;
+        void accept(AbstractASTVisitor &visitor) override;
+
+        std::vector<Node *> getChildren() const override;
 
     };
 

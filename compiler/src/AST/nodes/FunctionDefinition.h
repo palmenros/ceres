@@ -22,7 +22,7 @@
 #include <string>
 #include "Node.h"
 #include "../Type.h"
-#include "FunctionParameter.h"
+#include "../FunctionParameter.h"
 #include "BlockStatement.h"
 #include <vector>
 #include <memory>
@@ -51,7 +51,9 @@ namespace Ceres::AST {
                                Type returnType, std::unique_ptr<BlockStatement> &&block,
                                const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan);
 
-            void accept(ASTVisitor &visitor) override;
+            void accept(AbstractASTVisitor &visitor) override;
+
+            std::vector<Node *> getChildren() const override;
 
         };
 
