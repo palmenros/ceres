@@ -16,39 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_SOURCESPAN_H
-#define COMPILER_SOURCESPAN_H
+#ifndef COMPILER_FUNCTIONCALLEXPRESSION_H
+#define COMPILER_FUNCTIONCALLEXPRESSION_H
 
-#include <cstddef>
+#include <string>
+#include <vector>
+#include <memory>
+#include "Expression.h"
 
 namespace Ceres::AST {
 
-
-
-    struct SourceSpan {
-
-    private:
-
-        explicit SourceSpan(bool isSpanValid);
-
+    class FunctionCallExpression : public Expression {
     public:
 
-        // StartLine and EndLine start at 1
-        size_t startLine, endLine;
+        std::string functionIdentifier;
+        std::vector<std::unique_ptr<Expression>> arguments;
 
-        // CAUTION: The character indices start at 0, while many editors start at 1.
-        // TODO: Maybe change these to be 1-indexed?
-        size_t startCharacterIndex, endCharacterIndex;
+        SourceSpan functionIdentifierSourceSpan;
 
-        // Does the span contain valid data? Maybe it doesn't
-        bool isSpanValid;
+        FunctionCallExpression(const SourceSpan &sourceSpan, std::string functionIdentifier,
+                               std::vector<std::unique_ptr<Expression>> &&arguments,
+                               SourceSpan functionIdentifierSourceSpan);
 
-        SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
-                   size_t endCharacterIndex);
-
-        static SourceSpan createInvalidSpan();
     };
-}
 
+} // AST
 
-#endif //COMPILER_SOURCESPAN_H
+#endif //COMPILER_FUNCTIONCALLEXPRESSION_H

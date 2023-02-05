@@ -16,39 +16,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_SOURCESPAN_H
-#define COMPILER_SOURCESPAN_H
+#include "AssignmentExpression.h"
 
-#include <cstddef>
+#include <utility>
 
 namespace Ceres::AST {
-
-
-
-    struct SourceSpan {
-
-    private:
-
-        explicit SourceSpan(bool isSpanValid);
-
-    public:
-
-        // StartLine and EndLine start at 1
-        size_t startLine, endLine;
-
-        // CAUTION: The character indices start at 0, while many editors start at 1.
-        // TODO: Maybe change these to be 1-indexed?
-        size_t startCharacterIndex, endCharacterIndex;
-
-        // Does the span contain valid data? Maybe it doesn't
-        bool isSpanValid;
-
-        SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
-                   size_t endCharacterIndex);
-
-        static SourceSpan createInvalidSpan();
-    };
-}
-
-
-#endif //COMPILER_SOURCESPAN_H
+    AssignmentExpression::AssignmentExpression(const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
+                                               std::string identifierLhs, std::unique_ptr<Expression> &&expressionRhs,
+                                               SourceSpan opSourceSpan) : Expression(
+            sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
+                                                                          opSourceSpan(opSourceSpan) {}
+} // AST

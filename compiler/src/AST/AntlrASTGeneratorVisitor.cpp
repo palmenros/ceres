@@ -16,6 +16,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <optional>
 #include "AntlrASTGeneratorVisitor.h"
 #include "../utils/log.hpp"
 #include "FunctionDefinition.h"
@@ -31,6 +32,8 @@
 #include "CeresLexer.h"
 #include "PostfixExpression.h"
 #include "PrefixExpression.h"
+#include "FunctionCallExpression.h"
+#include "AssignmentExpression.h"
 
 using namespace antlrgenerated;
 
@@ -208,7 +211,58 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitAssignment_expr(CeresParser::Assignment_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+
+        antlr4::Token* binaryOpToken = ctx->binary_op;
+
+        ASSERT(binaryOpToken != nullptr);
+        ASSERT(ctx->IDENTIFIER() != nullptr);
+
+        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+
+        std::optional<AST::BinaryOp> binaryOp{};
+        switch(binaryOpToken->getType()) {
+            case CeresLexer::ASSIGN_OP:
+                // No binaryOp
+                binaryOp.reset();
+                break;
+            case CeresLexer::PLUS_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::Sum;
+                break;
+            case CeresLexer::MINUS_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::Subtraction;
+                break;
+            case CeresLexer::MULT_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::Mult;
+                break;
+            case CeresLexer::DIV_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::Div;
+                break;
+            case CeresLexer::BITWISE_AND_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::BitwiseAnd;
+                break;
+            case CeresLexer::BITWISE_OR_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::BitwiseOr;
+                break;
+            case CeresLexer::BITWISE_XOR_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::BitwiseXor;
+                break;
+            case CeresLexer::BITWISE_RIGHT_SHIFT_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::BitshiftRight;
+                break;
+            case CeresLexer::BITWISE_LEFT_SHIFT_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::BitshiftLeft;
+                break;
+            case CeresLexer::MOD_ASSIGN_OP:
+                binaryOp = AST::BinaryOp::Modulo;
+                break;
+            default:
+                NOT_IMPLEMENTED();
+                break;
+        }
+
+        return static_cast<Expression*>(new AssignmentExpression(getSourceSpan(*ctx), binaryOp, ctx->IDENTIFIER()->getText(),
+                                                                 std::unique_ptr<Expression>(expr), getSourceSpan(binaryOpToken)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitPostfix_expr(CeresParser::Postfix_exprContext *ctx) {
@@ -270,7 +324,8 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitFunction_call_expr(CeresParser::Function_call_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        return visit(ctx->functionCall());
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrimary_expr(CeresParser::Primary_exprContext *ctx) {
@@ -282,8 +337,6 @@ namespace Ceres::AST {
         ASSERT(ctx != nullptr);
 
         BinaryOp op;
-        ASSERT(ctx->binary_op != nullptr);
-
         SourceSpan opSpan = SourceSpan::createInvalidSpan();
 
         if(ctx->LOWER_OP().size() > 1) {
@@ -297,6 +350,7 @@ namespace Ceres::AST {
             op = BinaryOp::BitshiftRight;
             opSpan = getSourceSpan(*ctx->GREATER_OP(0), *ctx->GREATER_OP(1));
         } else {
+            ASSERT(ctx->binary_op != nullptr);
             opSpan = getSourceSpan(ctx->binary_op);
             switch(ctx->binary_op->getType()) {
                 case CeresLexer::MULT_OP:
@@ -486,7 +540,24 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitFunctionCall(CeresParser::FunctionCallContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+        ASSERT(ctx->IDENTIFIER() != nullptr);
+
+        std::vector<std::unique_ptr<Expression>> args;
+        args.reserve(ctx->assignmentExpression().size());
+
+        for (auto assignmentExpressionContextPtr : ctx->assignmentExpression()) {
+            auto res = visit(assignmentExpressionContextPtr);
+            auto arg = std::any_cast<Expression*>(res);
+
+            ASSERT(arg != nullptr);
+
+            args.push_back(std::unique_ptr<Expression>(arg));
+        }
+
+        return static_cast<Expression*>(new FunctionCallExpression(getSourceSpan(*ctx),
+                                                                   ctx->IDENTIFIER()->getText(), std::move(args),
+                                                                   getSourceSpan(*ctx->IDENTIFIER())));
     }
 
 }
