@@ -23,14 +23,26 @@
 
 namespace Ceres::AST {
 
+
+
     struct SourceSpan {
+
+    private:
+
+        explicit SourceSpan(bool isSpanValid);
+
+    public:
 
         size_t startLine, endLine;
         size_t startCharacterIndex, endCharacterIndex;
 
+        // Does the span contain valid data? Maybe it doesn't
+        bool isSpanValid;
+
         SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
                    size_t endCharacterIndex);
 
+        static SourceSpan createInvalidSpan();
     };
 }
 

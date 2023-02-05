@@ -30,6 +30,7 @@
 #include "BinaryOperationExpression.h"
 #include "CeresLexer.h"
 #include "PostfixExpression.h"
+#include "PrefixExpression.h"
 
 using namespace antlrgenerated;
 
@@ -156,7 +157,6 @@ namespace Ceres::AST {
         ASSERT(ctx != nullptr);
 
         ASSERT(ctx->IDENTIFIER() != nullptr);
-        ASSERT(ctx->type() != nullptr);
 
         std::unique_ptr<Expression> initializer_expression = nullptr;
         if(ctx->expression() != nullptr) {
@@ -173,11 +173,17 @@ namespace Ceres::AST {
             NOT_IMPLEMENTED();
         }
 
-        auto type = std::any_cast<Type>(visit(ctx->type()));
+        Type type = Type::createUnspecifiedType();
+        SourceSpan typeSourceSpan = SourceSpan::createInvalidSpan();
+        if(ctx->type() != nullptr) {
+            type = std::any_cast<Type>(visit(ctx->type()));
+            typeSourceSpan = getSourceSpan(*ctx->type());
+        }
+
         return new VariableDeclaration(getSourceSpan(*ctx), std::move(initializer_expression),
                                        VariableVisibility::Private,
-                                       constness, VariableScope::Local, type, ctx->IDENTIFIER()->getText(),
-                                       getSourceSpan(*ctx->type()),
+                                       constness, VariableScope::Local, std::move(type), ctx->IDENTIFIER()->getText(),
+                                       typeSourceSpan,
                                        getSourceSpan(*ctx->IDENTIFIER()));
     }
 
@@ -229,7 +235,38 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrefix_expr(CeresParser::Prefix_exprContext *ctx) {
-        NOT_IMPLEMENTED();
+        ASSERT(ctx != nullptr);
+
+        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+
+        PrefixOp op;
+        ASSERT(ctx->prefix != nullptr);
+
+        switch(ctx->prefix->getType()) {
+            case CeresLexer::UNARY_PLUS_PLUS_OP:
+                op = PrefixOp::PrefixIncrement;
+                break;
+            case CeresLexer::UNARY_MINUS_MINUS_OP:
+                op = PrefixOp::PrefixDecrement;
+                break;
+            case CeresLexer::PLUS_OP:
+                op = PrefixOp::UnaryPlus;
+                break;
+            case CeresLexer::MINUS_OP:
+                op = PrefixOp::UnaryMinus;
+                break;
+            case CeresLexer::LOGICAL_NOT:
+                op = PrefixOp::UnaryLogicalNot;
+                break;
+            case CeresLexer::BITWISE_NOT:
+                op = PrefixOp::UnaryBitwiseNot;
+                break;
+            default:
+                NOT_IMPLEMENTED();
+                break;
+        }
+
+        return static_cast<Expression*>(new PrefixExpression(getSourceSpan(*ctx), op, std::unique_ptr<Expression>(expr), getSourceSpan(ctx->prefix)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitFunction_call_expr(CeresParser::Function_call_exprContext *ctx) {
@@ -247,7 +284,7 @@ namespace Ceres::AST {
         BinaryOp op;
         ASSERT(ctx->binary_op != nullptr);
 
-        SourceSpan opSpan = {0, 0, 0, 0};
+        SourceSpan opSpan = SourceSpan::createInvalidSpan();
 
         if(ctx->LOWER_OP().size() > 1) {
             // << (Left bitshift)

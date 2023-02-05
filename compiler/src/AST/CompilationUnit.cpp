@@ -18,8 +18,7 @@
 
 #include "CompilationUnit.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         CompilationUnit::CompilationUnit(const SourceSpan &sourceSpan,
                                          std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
                                          std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations)
@@ -27,5 +26,4 @@ namespace Ceres {
                                          functionDefinitions(std::move(functionDefinitions)),
                                          globalVariableDeclarations(std::move(globalVariableDeclarations))
                                          {}
-    } // Ceres
-} // AST
+    } // AST

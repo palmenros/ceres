@@ -22,8 +22,7 @@
 #include <string>
 #include "Expression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         enum class IntLiteralBase {
             Dec,
@@ -61,7 +60,6 @@ namespace Ceres {
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_INTLITERALEXPRESSION_H

@@ -23,8 +23,7 @@
 #include <vector>
 #include <memory>
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         class CommaExpression : public Expression {
         public:
@@ -34,7 +33,6 @@ namespace Ceres {
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_COMMAEXPRESSION_H

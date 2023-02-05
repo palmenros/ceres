@@ -22,8 +22,7 @@
 #include <string>
 #include "Expression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         enum class FloatLiteralBase {
             Dec,
@@ -46,12 +45,11 @@ namespace Ceres {
             // and the type. For example: 0xfc783u32 -> fc783
             std::string str;
 
-            FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, const std::string &str);
+            FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, std::string str);
 
             static FloatLiteralType stringToFloatLiteralType(const std::string& str);
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_FLOATLITERALEXPRESSION_H

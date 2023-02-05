@@ -18,7 +18,5 @@
 
 #include "FunctionDefinition.h"
 
-namespace Ceres {
-    namespace AST {
-    } // Ceres
-} // AST
+namespace Ceres::AST {
+    } // AST

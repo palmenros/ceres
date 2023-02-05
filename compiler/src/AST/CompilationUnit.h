@@ -25,8 +25,7 @@
 #include "FunctionDefinition.h"
 #include "VariableDeclaration.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         class CompilationUnit : public Node {
         public:
@@ -39,7 +38,6 @@ namespace Ceres {
                             std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_COMPILATIONUNIT_H

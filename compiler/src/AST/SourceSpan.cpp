@@ -18,11 +18,18 @@
 
 #include "SourceSpan.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         SourceSpan::SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
                                size_t endCharacterIndex) : startLine(startLine), endLine(endLine),
                                                            startCharacterIndex(startCharacterIndex),
-                                                           endCharacterIndex(endCharacterIndex) {}
-    } // Ceres
+                                                           endCharacterIndex(endCharacterIndex), isSpanValid(true) {}
+
+    SourceSpan::SourceSpan(bool isSpanValid)
+        : isSpanValid(isSpanValid)
+    {
+    }
+
+    SourceSpan SourceSpan::createInvalidSpan() {
+        return SourceSpan{false};
+    }
 } // AST

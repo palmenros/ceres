@@ -21,8 +21,7 @@
 
 #include "Expression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         enum class BoolLiteralValue {
             True,
@@ -36,7 +35,6 @@ namespace Ceres {
             BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_BOOLLITERAL_H

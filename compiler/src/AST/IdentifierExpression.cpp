@@ -18,9 +18,7 @@
 
 #include "IdentifierExpression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         IdentifierExpression::IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier)
                 : Expression(sourceSpan), identifier(std::move(identifier)) {}
-    } // Ceres
-} // AST
+    } // AST

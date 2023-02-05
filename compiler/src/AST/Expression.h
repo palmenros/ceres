@@ -21,8 +21,7 @@
 
 #include "Node.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         class Expression : public Node {
         public:
@@ -31,7 +30,6 @@ namespace Ceres {
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_EXPRESSION_H

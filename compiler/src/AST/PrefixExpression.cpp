@@ -16,25 +16,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_TYPE_H
-#define COMPILER_TYPE_H
-
-#include <string>
+#include "PrefixExpression.h"
 
 namespace Ceres::AST {
 
-        class Type {
-        public:
-            // Type name. Can be the empty string if no type has been provided.
-            std::string name;
-
-            // Called by the AST generator to create a type with an specified (non-empty name)
-            explicit Type(std::string name);
-
-            // Called by the AST generator to create a type when none has been given by the user
-            static Type createUnspecifiedType();
-        };
-
-    } // AST
-
-#endif //COMPILER_TYPE_H
+    PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op, std::unique_ptr<Expression> &&expr,
+                                       const SourceSpan &opSourceSpan) : Expression(sourceSpan), op(op), expr(std::move(expr)),
+                                                             opSourceSpan(opSourceSpan) {}
+} // AST

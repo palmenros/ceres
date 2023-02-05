@@ -18,8 +18,12 @@
 
 #include "Type.h"
 
-namespace Ceres {
-    namespace AST {
-        Type::Type(const std::string &name) : name(name) {}
-    } // Ceres
-} // AST
+#include <utility>
+
+namespace Ceres::AST {
+        Type::Type(std::string name) : name(std::move(name)) {}
+
+        Type Type::createUnspecifiedType() {
+            return Type{""};
+        }
+    } // AST

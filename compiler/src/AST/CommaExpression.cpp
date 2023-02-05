@@ -18,10 +18,8 @@
 
 #include "CommaExpression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         CommaExpression::CommaExpression(const SourceSpan &sourceSpan,
                                          std::vector<std::unique_ptr<Expression>>&& expressions) : Expression(
                 sourceSpan), expressions(std::move(expressions)) {}
-    } // Ceres
-} // AST
+    } // AST

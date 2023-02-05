@@ -18,18 +18,20 @@
 
 #include "VariableDeclaration.h"
 
-namespace Ceres {
-    namespace AST {
+#include <utility>
+
+#include <utility>
+
+namespace Ceres::AST {
         VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
                                                  std::unique_ptr<Expression> &&initializerExpression,
                                                  VariableVisibility visibility, VariableConstness constness,
                                                  VariableScope scope,
-                                                 const Type &type, std::string identifier,
+                                                 Type type, std::string identifier,
                                                  const SourceSpan &typeSourceSpan,
                                                  const SourceSpan &identifierSourceSpan)
                 : Node(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
-                  constness(constness), type(type), identifier(identifier), typeSourceSpan(typeSourceSpan),
+                  constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
                   identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
-    } // AST
-} // Node
+    } // Node

@@ -25,8 +25,7 @@
 #include "Expression.h"
 #include "Type.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         enum class VariableVisibility {
             Public,
@@ -62,12 +61,11 @@ namespace Ceres {
             VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
                                 std::unique_ptr<Expression> &&initializerExpression,
                                 VariableVisibility visibility, VariableConstness constness, VariableScope scope,
-                                const Type &type, std::string identifier, const SourceSpan &typeSourceSpan,
+                                Type type, std::string identifier, const SourceSpan &typeSourceSpan,
                                 const SourceSpan &identifierSourceSpan);
 
         };
 
-    } // AST
-} // Node
+    } // Node
 
 #endif //COMPILER_VARIABLEDECLARATION_H

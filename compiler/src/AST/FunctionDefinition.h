@@ -21,14 +21,12 @@
 
 #include "Node.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         class FunctionDefinition : public Node {
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_FUNCTIONDEFINITION_H

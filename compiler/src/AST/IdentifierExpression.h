@@ -22,8 +22,7 @@
 #include <string>
 #include "Expression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
 
         class IdentifierExpression : public Expression {
         public:
@@ -34,7 +33,6 @@ namespace Ceres {
 
         };
 
-    } // Ceres
-} // AST
+    } // AST
 
 #endif //COMPILER_IDENTIFIEREXPRESSION_H

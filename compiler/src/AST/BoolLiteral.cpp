@@ -18,9 +18,7 @@
 
 #include "BoolLiteral.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
                                                                                          value(value) {}
-    } // Ceres
-} // AST
+    } // AST

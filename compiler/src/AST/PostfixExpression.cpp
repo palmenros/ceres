@@ -18,12 +18,10 @@
 
 #include "PostfixExpression.h"
 
-namespace Ceres {
-    namespace AST {
+namespace Ceres::AST {
         PostfixExpression::PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
                                              std::unique_ptr<Expression> &&expr,
                                              SourceSpan opSourceSpan) : Expression(sourceSpan), op(op),
                                                                         expr(std::move(expr)),
                                                                         opSourceSpan(opSourceSpan) {}
-    } // Ceres
-} // AST
+    } // AST

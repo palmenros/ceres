@@ -18,8 +18,9 @@
 
 #include "FloatLiteralExpression.h"
 
-namespace Ceres {
-    namespace AST {
+#include <utility>
+
+namespace Ceres::AST {
         FloatLiteralType FloatLiteralExpression::stringToFloatLiteralType(const std::string &str) {
             if (str == "f32") {
                 return FloatLiteralType::F32;
@@ -31,8 +32,7 @@ namespace Ceres {
         }
 
         FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type,
-                                                       const std::string &str)
-                                   : Expression(sourceSpan), base(base), type(type), str(str)
+                                                       std::string str)
+                                   : Expression(sourceSpan), base(base), type(type), str(std::move(str))
                                    {}
-    } // Ceres
-} // AST
+    } // AST
