@@ -47,9 +47,10 @@ using namespace antlrgenerated;
 namespace Ceres::AST {
 
     // This class is used for synchronizing the AST
-    class ParseException : public std::exception {
+    class ParseException : public std::runtime_error {
     public:
-        ParseException() : exception("ParseException. Should not escape AntlrASTGeneratorVisitor!") {}
+        ParseException() : std::runtime_error("ParseException. Should not escape AntlrASTGeneratorVisitor!")
+            {}
     };
 
     void AntlrASTGeneratorVisitor::handleParseError() {
