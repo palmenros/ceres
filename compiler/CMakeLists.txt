@@ -19,6 +19,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.7 FATAL_ERROR)
 # Project name
 project(compiler)
 
+# Generate compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Add ./cmake folder as module path. Used to load ANTLR4 external module
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
