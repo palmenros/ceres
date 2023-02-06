@@ -29,6 +29,8 @@ namespace Ceres::AST {
     class AbstractReturningASTVisitor : private AbstractASTVisitor {
     private:
 
+        // Stores the return value of the previous called visitor.
+        // Do not access, it is moved upon return
         T _result;
 
         void visitAssignmentExpression(AssignmentExpression &expr) override {_result = doVisitAssignmentExpression(expr);}
