@@ -28,9 +28,16 @@ namespace Ceres::AST {
 
     private:
 
+        [[noreturn]] static void handleParseError();
+
+        static inline void checkException(const antlr4::ParserRuleContext& context);
+
         static SourceSpan getSourceSpan(const antlr4::ParserRuleContext& context);
 
         static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode& context);
+
+    protected:
+        std::any defaultResult() override;
 
     public:
 
@@ -111,6 +118,10 @@ namespace Ceres::AST {
         static SourceSpan getSourceSpan(const antlr4::Token *first, const antlr4::Token *second);
 
         static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start, const antlr4::tree::TerminalNode &end);
+
+        std::any visit(antlr4::tree::ParseTree *tree) override;
+
+        std::any visitTerminal(antlr4::tree::TerminalNode *node) override;
     };
 
 } // Ceres
