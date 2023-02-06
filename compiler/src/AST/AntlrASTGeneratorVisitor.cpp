@@ -142,7 +142,7 @@ namespace Ceres::AST {
                 ASSERT(funDef != nullptr);
 
                 functionDefinitions.push_back(std::move(funDef));
-            } catch(ParseException& e) {
+            } catch(ParseException&) {
                 //Log::debug("Parse exception in function definition caught");
             }
         }
@@ -157,7 +157,7 @@ namespace Ceres::AST {
                 ASSERT(varDef != nullptr);
 
                 variableDeclarations.push_back(std::move(varDef));
-            } catch(ParseException& e) {
+            } catch(ParseException&) {
                 //Log::debug("Parse exception in variable definition caught");
             }
         }
@@ -232,7 +232,7 @@ namespace Ceres::AST {
             try {
                 auto res = std::any_cast<FunctionParameter>(visit(parameterContext));
                 parameters.push_back(res);
-            } catch(ParseException& e) {
+            } catch(ParseException&) {
                 //Log::debug("Caught Parse exception in parameter");
             }
         }
@@ -275,7 +275,7 @@ namespace Ceres::AST {
                     // Note: the statement can be a nullptr, for empty statements such as ';;'
                     statements.push_back(std::move(res));
                 }
-            } catch(ParseException& e) {
+            } catch(ParseException&) {
                 //Log::debug("Parse exception in block caught");
             }
         }
