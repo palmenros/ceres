@@ -23,23 +23,47 @@ lexer grammar CeresLexer;
 FN : 'fn';
 PUB: 'pub';
 VAR : 'var';
-CONST : 'const';
+CONSTANT : 'const';
 RETURN : 'return';
 IF : 'if';
 ELSE : 'else';
 FOR : 'for';
 WHILE : 'while';
 
-TRUE : 'true';
-FALSE : 'false';
+// Literals
+
+INTEGER_LITERAL_SUFFIX: 'u8'
+                      | 'u16'
+                      | 'u32'
+                      | 'u64'
+                      | 'i8'
+                      | 'i16'
+                      | 'i32'
+                      | 'i64'
+                      ;
+
+FLOAT_LITERAL_SUFFIX: 'f32'
+                    | 'f64'
+                    ;
+
+DEC_LITERAL: DecDigit (DecDigit | '_')*;
+HEX_LITERAL: '0x' '_'* HexDigit (HexDigit | '_')*;
+OCT_LITERAL: '0o' '_'* OctDigit (OctDigit | '_')*;
+BIN_LITERAL: '0b' '_'* [01] [01_]*;
+
+FLOAT_LITERAL:      (Digits '.' Digits? | '.' Digits) ExponentPart?
+             |       Digits ExponentPart
+             ;
+
+HEX_FLOAT_LITERAL:  '0' [xX] (HexDigits '.'? | HexDigits? '.' HexDigits) [pP] [+-]? Digits;
+
+BOOL_LITERAL: 'true'
+            | 'false'
+            ;
 
 // Identifier
 
 IDENTIFIER : [a-zA-Z_][a-zA-Z_0-9]*;
-
-// Number literals
-
-DECIMAL_LITERAL : [0-9]+;
 
 // Note: We don't have special parsing for primitive types, they will be handled in code via
 //       the type symbol table.
@@ -109,3 +133,26 @@ CLOSE_PARENS : ')';
 // Whitespaces
 
 WHITESPACES : [ \t\n\r\f]+ -> skip;
+
+// Fragment rules
+
+fragment ExponentPart
+    : [eE] [+-]? Digits
+    ;
+
+fragment HexDigits
+    : HexDigit ((HexDigit | '_')* HexDigit)?
+    ;
+
+fragment HexDigit
+    : [0-9a-fA-F]
+    ;
+
+fragment OctDigit: [0-7];
+
+fragment DecDigit: [0-9];
+
+
+fragment Digits
+    : [0-9] ([0-9_]* [0-9])?
+    ;

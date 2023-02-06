@@ -24,34 +24,34 @@
 namespace Ceres::Log {
 
     // Set up spdlog for logging
-    void setupLogging() {
+    inline void setupLogging() {
         spdlog::set_pattern("%^[%l]%$ %v");
     }
 
     // Just wrappers to call spdlog
 
     template <typename ...Args>
-    void debug(Args && ...args) {
+    inline void debug(Args && ...args) {
         spdlog::debug(std::forward<Args>(args)...);
     }
 
     template <typename ...Args>
-    void info(Args && ...args) {
+    inline void info(Args && ...args) {
         spdlog::info(std::forward<Args>(args)...);
     }
 
     template <typename ...Args>
-    void warn(Args && ...args) {
+    inline void warn(Args && ...args) {
         spdlog::warn(std::forward<Args>(args)...);
     }
 
     template <typename ...Args>
-    void error(Args && ...args) {
+    inline void error(Args && ...args) {
         spdlog::error(std::forward<Args>(args)...);
     }
 
     template <typename ...Args>
-    void critical(Args && ...args) {
+    inline void critical(Args && ...args) {
         spdlog::critical(std::forward<Args>(args)...);
     }
 
@@ -64,13 +64,22 @@ namespace Ceres::Log {
     #endif
 
     template <typename ...Args>
-    void panic(Args && ...args) {
+    [[noreturn]] inline void panic(Args && ...args) {
         critical(std::forward<Args>(args)...);
         exit(1);
     }
 
     // Macro for NOT_IMPLEMENTED
-    #define NOT_IMPLEMENTED() ::Ceres::Log::panic("Not implemented: {}", CERES_PRETTY_FUNCTION_NAME)
+    #define NOT_IMPLEMENTED() ::Ceres::Log::panic("Not implemented: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
+    #define TODO() ::Ceres::Log::panic("TODO: Not implemented: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
+
+
+    // TODO: Maybe define ASSERT only on DEBUG
+    #define ASSERT(cond) do { \
+        if (!(cond)) { \
+            ::Ceres::Log::panic("Assertion '{}' failed in {}, line {}, function {}", #cond, __FILE__, __LINE__, CERES_PRETTY_FUNCTION_NAME); \
+        } \
+    } while(0)
 
 }
 

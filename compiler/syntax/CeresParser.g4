@@ -21,7 +21,11 @@ options { tokenVocab=CeresLexer; }
 
 compilationUnit
     : (functionDefinition
-    | PUB? varDeclaration SEMICOLON )* EOF
+    | globalVarDeclaration )* EOF
+    ;
+
+globalVarDeclaration
+    : PUB? varDeclaration SEMICOLON
     ;
 
 functionDefinition
@@ -44,21 +48,23 @@ block
 //       the type symbol table.
 type
     : IDENTIFIER
+    | INTEGER_LITERAL_SUFFIX
+    | FLOAT_LITERAL_SUFFIX
     ;
 
 varDeclaration
-    : (VAR|CONST) IDENTIFIER (COLON type)? (ASSIGN_OP expression)?
+    : (VAR|CONSTANT) IDENTIFIER (COLON type)? (ASSIGN_OP expression)?
     ;
 
 statement
-    : varDeclaration SEMICOLON
-    | returnStatement SEMICOLON
-    | expression SEMICOLON
-    | ifStatement
-    | whileStatement
-    | forStatement
-    | block
-    | SEMICOLON
+    : varDeclaration SEMICOLON      # var_decl_statement
+    | returnStatement SEMICOLON     # return_statement
+    | expression SEMICOLON          # expr_statement
+    | ifStatement                   # if_statement
+    | whileStatement                # while_statement
+    | forStatement                  # for_statement
+    | block                         # block_statement
+    | SEMICOLON                     # empty_statement
     ;
 
 returnStatement
@@ -67,8 +73,7 @@ returnStatement
 
 ifStatement
     : IF expression block
-    | IF expression block ELSE block
-    | IF expression block ELSE ifStatement
+    | IF expression block ELSE (else_block=block | else_if=ifStatement)
     ;
 
 whileStatement
@@ -76,8 +81,8 @@ whileStatement
     ;
 
 forStatement
-    : FOR (varDeclaration | expression)? SEMICOLON (expression)? SEMICOLON (expression)? block
-    | FOR OPEN_PARENS (varDeclaration | expression)? SEMICOLON (expression)? SEMICOLON (expression)? CLOSE_PARENS block // Allow parenthesis
+    : FOR (varDeclaration | decl_expr=expression)? SEMICOLON (cond_expr=expression)? SEMICOLON (update_expr=expression)? block
+    | FOR OPEN_PARENS (varDeclaration | decl_expr=expression)? SEMICOLON (cond_expr=expression)? SEMICOLON (update_expr=expression)? CLOSE_PARENS block // Allow parenthesis
     ;
 
 // Implicit rule precedence (the first that matches)
@@ -86,22 +91,22 @@ forStatement
 // AssignmentExpression is any expression that doesn't contains commas at the top level.
 // This is required to avoid ambiguities in function calls
 assignmentExpression
-    : primaryExpression
-    | functionCall
-    | assignmentExpression postfix=('++' | '--')
-    | prefix=('+' | '-' |'++'|'--') assignmentExpression
-    | prefix=('~'|'!') assignmentExpression
-    | assignmentExpression binary_op=('*'|'/'|'%') assignmentExpression
-    | assignmentExpression binary_op=('+'|'-') assignmentExpression
-    | assignmentExpression ('<' '<' | '>' '>') assignmentExpression
-    | assignmentExpression binary_op=('<=' | '>=' | '>' | '<') assignmentExpression
-    | assignmentExpression binary_op='&' assignmentExpression
-    | assignmentExpression binary_op='^' assignmentExpression
-    | assignmentExpression binary_op='|' assignmentExpression
-    | assignmentExpression binary_op=('==' | '!=') assignmentExpression
-    | assignmentExpression binary_op='&&' assignmentExpression
-    | assignmentExpression binary_op='||' assignmentExpression
-    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression
+    : primaryExpression                                                                 # primary_expr
+    | functionCall                                                                      # function_call_expr
+    | assignmentExpression postfix=('++' | '--')                                        # postfix_expr
+    | prefix=('+' | '-' |'++'|'--') assignmentExpression                                # prefix_expr
+    | prefix=('~'|'!') assignmentExpression                                             # prefix_expr
+    | assignmentExpression binary_op=('*'|'/'|'%') assignmentExpression                 # binary_op_expr
+    | assignmentExpression binary_op=('+'|'-') assignmentExpression                     # binary_op_expr
+    | assignmentExpression ('<' '<' | '>' '>') assignmentExpression                     # binary_op_expr
+    | assignmentExpression binary_op=('<=' | '>=' | '>' | '<') assignmentExpression     # binary_op_expr
+    | assignmentExpression binary_op='&' assignmentExpression                           # binary_op_expr
+    | assignmentExpression binary_op='^' assignmentExpression                           # binary_op_expr
+    | assignmentExpression binary_op='|' assignmentExpression                           # binary_op_expr
+    | assignmentExpression binary_op=('==' | '!=') assignmentExpression                 # binary_op_expr
+    | assignmentExpression binary_op='&&' assignmentExpression                          # binary_op_expr
+    | assignmentExpression binary_op='||' assignmentExpression                          # binary_op_expr
+    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression # assignment_expr
  ;
 
 expression
@@ -109,11 +114,24 @@ expression
     ;
 
 primaryExpression
-    : OPEN_PARENS expression CLOSE_PARENS
-    | IDENTIFIER
-    | DECIMAL_LITERAL
-    | TRUE
-    | FALSE
+    : OPEN_PARENS expression CLOSE_PARENS   # parens_expr
+    | IDENTIFIER                            # id_expr
+    | intLiteral                            # int_literal_expr
+    | floatLiteral                          # float_literal_expr
+    | BOOL_LITERAL                          # bool_literal_expr
+    ;
+
+intLiteral
+    : DEC_LITERAL INTEGER_LITERAL_SUFFIX?
+    | HEX_LITERAL INTEGER_LITERAL_SUFFIX?
+    | OCT_LITERAL INTEGER_LITERAL_SUFFIX?
+    | BIN_LITERAL INTEGER_LITERAL_SUFFIX?
+    ;
+
+floatLiteral
+    : FLOAT_LITERAL FLOAT_LITERAL_SUFFIX?
+    | DEC_LITERAL FLOAT_LITERAL_SUFFIX
+    | HEX_FLOAT_LITERAL FLOAT_LITERAL_SUFFIX?
     ;
 
 functionCall
