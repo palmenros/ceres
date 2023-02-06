@@ -23,7 +23,6 @@
 #include <memory>
 
 namespace Ceres::AST {
-
     enum class PostfixOp {
         PostfixIncrement,
         PostfixDecrement

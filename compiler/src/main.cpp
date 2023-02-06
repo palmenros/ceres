@@ -57,7 +57,6 @@ int main(int argc, const char *argv[]) {
     }
 
     try {
-
         ANTLRInputStream input(file);
         CeresLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
@@ -66,7 +65,7 @@ int main(int argc, const char *argv[]) {
         tree::ParseTree *tree = parser.compilationUnit();
 
         auto s = tree->toStringTree(&parser);
-        Log::debug("Parse tree: {}", s);
+        // Log::debug("Parse tree: {}", s);
 
         AST::AntlrASTGeneratorVisitor visitor;
 
@@ -79,8 +78,8 @@ int main(int argc, const char *argv[]) {
         auto str = stringifierVisitor.visit(*AST);
         Log::info("AST: {}", str);
 
-        llvm::LLVMContext llvmContext;
-        auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
+        // llvm::LLVMContext llvmContext;
+        // auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
         //    std::cout << "LLVM says: " << module->getName().str() << std::endl;
     } catch (std::exception &e) {
         Log::critical("Uncaught Exception: {}", e.what());

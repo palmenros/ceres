@@ -17,6 +17,7 @@
  */
 
 #include "BinaryOperationExpression.h"
+#include "../../utils/log.hpp"
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {

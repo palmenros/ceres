@@ -48,8 +48,6 @@ namespace Ceres::AST {
         void accept(AbstractASTVisitor &visitor) override;
 
         std::vector<Node *> getChildren() const override;
-
-        static std::string assignmentBinaryOpToString(std::optional<BinaryOp> &binOp);
     };
 
 }// namespace Ceres::AST
