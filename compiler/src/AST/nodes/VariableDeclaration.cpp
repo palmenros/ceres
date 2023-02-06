@@ -20,20 +20,20 @@
 
 #include <utility>
 
-#include <utility>
 #include "../AbstractASTVisitor.h"
+#include <utility>
 
 namespace Ceres::AST {
-        VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
-                                                 std::unique_ptr<Expression> &&initializerExpression,
-                                                 VariableVisibility visibility, VariableConstness constness,
-                                                 VariableScope scope,
-                                                 Type type, std::string identifier,
-                                                 const SourceSpan &typeSourceSpan,
-                                                 const SourceSpan &identifierSourceSpan)
-                : Statement(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
-                  constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
-                  identifierSourceSpan(identifierSourceSpan), scope(scope) {}
+    VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
+                                             std::unique_ptr<Expression> &&initializerExpression,
+                                             VariableVisibility visibility, VariableConstness constness,
+                                             VariableScope scope,
+                                             Type type, std::string identifier,
+                                             const SourceSpan &typeSourceSpan,
+                                             const SourceSpan &identifierSourceSpan)
+        : Statement(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
+          constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
+          identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
 
     void VariableDeclaration::accept(AbstractASTVisitor &visitor) {
@@ -46,4 +46,4 @@ namespace Ceres::AST {
         }
         return {};
     }
-} // Node
+}// namespace Ceres::AST

@@ -19,31 +19,30 @@
 #ifndef COMPILER_COMPILATIONUNIT_H
 #define COMPILER_COMPILATIONUNIT_H
 
-#include <vector>
-#include <memory>
-#include "Node.h"
 #include "FunctionDefinition.h"
+#include "Node.h"
 #include "VariableDeclaration.h"
+#include <memory>
+#include <vector>
 
 namespace Ceres::AST {
 
-        class CompilationUnit : public Node {
-        public:
+    class CompilationUnit : public Node {
+    public:
+        std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
+        std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
 
-            std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
-            std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
+        CompilationUnit(const SourceSpan &sourceSpan,
+                        std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
+                        std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations);
 
-            CompilationUnit(const SourceSpan& sourceSpan,
-                            std::vector<std::unique_ptr<FunctionDefinition>>&& functionDefinitions,
-                            std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
+        CompilationUnit(const SourceSpan &sourceSpan);
 
-            CompilationUnit(const SourceSpan &sourceSpan);
+        void accept(AbstractASTVisitor &visitor) override;
 
-            void accept(AbstractASTVisitor &visitor) override;
+        std::vector<Node *> getChildren() const override;
+    };
 
-            std::vector<Node *> getChildren() const override;
-        };
+}// namespace Ceres::AST
 
-    } // AST
-
-#endif //COMPILER_COMPILATIONUNIT_H
+#endif//COMPILER_COMPILATIONUNIT_H

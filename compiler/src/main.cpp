@@ -19,30 +19,29 @@
 #include <iostream>
 #include <string>
 
-#include "antlr4-runtime.h"
 #include "CeresLexer.h"
 #include "CeresParser.h"
+#include "antlr4-runtime.h"
 
-#include "llvm/IR/IRBuilder.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/IR/Constants.h"
-#include "llvm/IR/Module.h"
 #include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Module.h"
 #include "llvm/IR/Verifier.h"
 
-#include "utils/log.hpp"
-#include "AST/nodes/CompilationUnit.h"
-#include "AST/AntlrASTGeneratorVisitor.h"
-#include "AST/ASTVisitor.h"
 #include "AST/ASTStringifierVisitor.h"
+#include "AST/ASTVisitor.h"
+#include "AST/AntlrASTGeneratorVisitor.h"
+#include "AST/nodes/CompilationUnit.h"
+#include "utils/log.hpp"
 
 using namespace antlrgenerated;
 using namespace antlr4;
 using namespace Ceres;
 
 
-int main(int argc, const char *argv[])
-{
+int main(int argc, const char *argv[]) {
     Log::setupLogging();
 
     if (argc < 2) {
@@ -82,8 +81,8 @@ int main(int argc, const char *argv[])
 
         llvm::LLVMContext llvmContext;
         auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
-//    std::cout << "LLVM says: " << module->getName().str() << std::endl;
-    } catch (std::exception& e) {
+        //    std::cout << "LLVM says: " << module->getName().str() << std::endl;
+    } catch (std::exception &e) {
         Log::critical("Uncaught Exception: {}", e.what());
     }
     return 0;

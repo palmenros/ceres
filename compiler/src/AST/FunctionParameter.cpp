@@ -22,8 +22,7 @@
 
 namespace Ceres::AST {
     FunctionParameter::FunctionParameter(Type type, std::string name, VariableConstness constness,
-                                         SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan) : type(std::move(
-            type)), name(std::move(name)), constness(constness), typeSourceSpan(typeSourceSpan),
+                                         SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan) : type(std::move(type)), name(std::move(name)), constness(constness), typeSourceSpan(typeSourceSpan),
                                                                                                           parameterNameSourceSpan(
                                                                                                                   parameterNameSourceSpan) {}
-} // AST
+}// namespace Ceres::AST

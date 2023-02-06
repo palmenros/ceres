@@ -19,8 +19,8 @@
 #ifndef COMPILER_ASSIGNMENTEXPRESSION_H
 #define COMPILER_ASSIGNMENTEXPRESSION_H
 
-#include "Expression.h"
 #include "BinaryOperationExpression.h"
+#include "Expression.h"
 #include <optional>
 #include <string>
 
@@ -28,7 +28,6 @@ namespace Ceres::AST {
 
     class AssignmentExpression : public Expression {
     public:
-
         // We embed the binary operation inside the Assignment Expresson because the LHS (identifier) is the same,
         // which can help us optimize the code better. However, we may not have a binary op in the assignment,
         // so it is an optional type
@@ -50,9 +49,9 @@ namespace Ceres::AST {
 
         std::vector<Node *> getChildren() const override;
 
-        static std::string assignmentBinaryOpToString(std::optional<BinaryOp>& binOp);
+        static std::string assignmentBinaryOpToString(std::optional<BinaryOp> &binOp);
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_ASSIGNMENTEXPRESSION_H
+#endif//COMPILER_ASSIGNMENTEXPRESSION_H

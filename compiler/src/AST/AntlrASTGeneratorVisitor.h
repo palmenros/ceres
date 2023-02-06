@@ -27,20 +27,18 @@ namespace Ceres::AST {
     class AntlrASTGeneratorVisitor : public antlrgenerated::CeresParserVisitor {
 
     private:
-
         [[noreturn]] static void handleParseError();
 
-        static inline void checkException(const antlr4::ParserRuleContext& context);
+        static inline void checkException(const antlr4::ParserRuleContext &context);
 
-        static SourceSpan getSourceSpan(const antlr4::ParserRuleContext& context);
+        static SourceSpan getSourceSpan(const antlr4::ParserRuleContext &context);
 
-        static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode& context);
+        static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &context);
 
     protected:
         std::any defaultResult() override;
 
     public:
-
         std::any visitErrorNode(antlr4::tree::ErrorNode *node) override;
 
         std::any visitCompilationUnit(antlrgenerated::CeresParser::CompilationUnitContext *ctx) override;
@@ -124,6 +122,6 @@ namespace Ceres::AST {
         std::any visitTerminal(antlr4::tree::TerminalNode *node) override;
     };
 
-} // Ceres
+}// namespace Ceres::AST
 
-#endif //COMPILER_ANTLRASTGENERATORVISITOR_H
+#endif//COMPILER_ANTLRASTGENERATORVISITOR_H

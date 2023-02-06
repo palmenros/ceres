@@ -26,11 +26,11 @@ namespace Ceres::AST {
     }
 
     void AbstractASTVisitor::visitChildren(Node &node) {
-        for(auto childPtr : node.getChildren()) {
+        for (auto childPtr: node.getChildren()) {
             ASSERT(childPtr != nullptr);
             visit(*childPtr);
         }
     }
 
 
-} // AST
+}// namespace Ceres::AST

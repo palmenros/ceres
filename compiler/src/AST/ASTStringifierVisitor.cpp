@@ -38,7 +38,7 @@ namespace Ceres::AST {
 
         bool first = true;
 
-        for(const auto& stm : block.statements) {
+        for (const auto &stm: block.statements) {
             if (first) {
                 first = false;
             } else {
@@ -61,7 +61,7 @@ namespace Ceres::AST {
     std::string ASTStringifierVisitor::doVisitCompilationUnit(CompilationUnit &unit) {
         std::string res = "(CompilationUnit ";
         bool first = true;
-        for (auto& childPtr : unit.getChildren()) {
+        for (auto &childPtr: unit.getChildren()) {
             if (first) {
                 first = false;
             } else {
@@ -78,7 +78,7 @@ namespace Ceres::AST {
 
     std::string ASTStringifierVisitor::doVisitFloatLiteralExpression(FloatLiteralExpression &expr) {
         std::string baseString;
-        switch(expr.base) {
+        switch (expr.base) {
             case FloatLiteralBase::Dec:
                 baseString = "dec";
                 break;
@@ -98,8 +98,8 @@ namespace Ceres::AST {
     std::string ASTStringifierVisitor::doVisitFunctionCallExpression(FunctionCallExpression &expr) {
         std::string args;
         bool first = true;
-        for (auto& arg : expr.arguments) {
-            if(first) {
+        for (auto &arg: expr.arguments) {
+            if (first) {
                 first = false;
             } else {
                 args += ", ";
@@ -113,9 +113,9 @@ namespace Ceres::AST {
     std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition &def) {
         std::string paramsString;
         bool first = true;
-        for(const auto& param : def.parameters) {
+        for (const auto &param: def.parameters) {
             std::string paramString = fmt::format("{} {}: {}", param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type.toString());
-            if(first) {
+            if (first) {
                 first = false;
             } else {
                 paramsString += ", ";
@@ -136,7 +136,7 @@ namespace Ceres::AST {
 
     std::string ASTStringifierVisitor::doVisitIntLiteralExpression(IntLiteralExpression &expr) {
         std::string baseString;
-        switch(expr.base) {
+        switch (expr.base) {
             case IntLiteralBase::Dec:
                 baseString = "dec";
                 break;
@@ -154,7 +154,7 @@ namespace Ceres::AST {
         }
 
         std::string typeString;
-        switch(expr.type) {
+        switch (expr.type) {
             case IntLiteralType::None:
                 typeString = "$UNKNOWN";
                 break;
@@ -213,4 +213,4 @@ namespace Ceres::AST {
         TODO();
     }
 
-} // AST
+}// namespace Ceres::AST

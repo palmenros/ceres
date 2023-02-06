@@ -19,8 +19,8 @@
 #ifndef COMPILER_RETURNINGASTVISITOR_HPP
 #define COMPILER_RETURNINGASTVISITOR_HPP
 
-#include "AbstractReturningASTVisitor.hpp"
 #include "../utils/log.hpp"
+#include "AbstractReturningASTVisitor.hpp"
 
 namespace Ceres::AST {
 
@@ -28,7 +28,6 @@ namespace Ceres::AST {
     template<class T>
     class ReturningASTVisitor : public AbstractReturningASTVisitor<T> {
     public:
-
         // Default implementation for visiting children
 
         virtual T doVisitAssignmentExpression(AssignmentExpression &expr) override;
@@ -155,6 +154,6 @@ namespace Ceres::AST {
         return this->visitChildren(stm);
     }
 
-}
+}// namespace Ceres::AST
 
-#endif //COMPILER_RETURNINGASTVISITOR_HPP
+#endif//COMPILER_RETURNINGASTVISITOR_HPP

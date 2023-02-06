@@ -19,16 +19,15 @@
 #ifndef COMPILER_FUNCTIONCALLEXPRESSION_H
 #define COMPILER_FUNCTIONCALLEXPRESSION_H
 
+#include "Expression.h"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
-#include "Expression.h"
 
 namespace Ceres::AST {
 
     class FunctionCallExpression : public Expression {
     public:
-
         std::string functionIdentifier;
         std::vector<std::unique_ptr<Expression>> arguments;
 
@@ -41,9 +40,8 @@ namespace Ceres::AST {
         void accept(AbstractASTVisitor &visitor) override;
 
         std::vector<Node *> getChildren() const override;
-
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_FUNCTIONCALLEXPRESSION_H
+#endif//COMPILER_FUNCTIONCALLEXPRESSION_H

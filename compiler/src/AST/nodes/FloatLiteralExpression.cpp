@@ -18,24 +18,23 @@
 
 #include "FloatLiteralExpression.h"
 
-#include <utility>
 #include "../AbstractASTVisitor.h"
+#include <utility>
 
 namespace Ceres::AST {
-        FloatLiteralType FloatLiteralExpression::stringToFloatLiteralType(const std::string &str) {
-            if (str == "f32") {
-                return FloatLiteralType::F32;
-            } else if (str == "f64") {
-                return FloatLiteralType::F64;
-            } else {
-                return FloatLiteralType::None;
-            }
+    FloatLiteralType FloatLiteralExpression::stringToFloatLiteralType(const std::string &str) {
+        if (str == "f32") {
+            return FloatLiteralType::F32;
+        } else if (str == "f64") {
+            return FloatLiteralType::F64;
+        } else {
+            return FloatLiteralType::None;
         }
+    }
 
-        FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type,
-                                                       std::string str)
-                                   : Expression(sourceSpan), base(base), type(type), str(std::move(str))
-                                   {}
+    FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type,
+                                                   std::string str)
+        : Expression(sourceSpan), base(base), type(type), str(std::move(str)) {}
 
     void FloatLiteralExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitFloatLiteralExpression(*this);
@@ -44,4 +43,4 @@ namespace Ceres::AST {
     std::vector<Node *> FloatLiteralExpression::getChildren() const {
         return {};
     }
-} // AST
+}// namespace Ceres::AST

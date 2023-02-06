@@ -19,5 +19,5 @@
 #include "Expression.h"
 
 namespace Ceres::AST {
-        Expression::Expression(const SourceSpan &sourceSpan) : Node(sourceSpan) {}
-    } // AST
+    Expression::Expression(const SourceSpan &sourceSpan) : Node(sourceSpan) {}
+}// namespace Ceres::AST

@@ -28,18 +28,16 @@ namespace Ceres::AST {
 
     class Node {
     public:
-
         SourceSpan sourceSpan;
 
     public:
-
         explicit Node(const SourceSpan &sourceSpan);
 
-        virtual void accept(AbstractASTVisitor& visitor) = 0;
+        virtual void accept(AbstractASTVisitor &visitor) = 0;
         virtual std::vector<Node *> getChildren() const = 0;
 
         virtual ~Node() = default;
     };
 
-}
-#endif //COMPILER_NODE_H
+}// namespace Ceres::AST
+#endif//COMPILER_NODE_H

@@ -24,15 +24,12 @@
 namespace Ceres::AST {
 
 
-
     struct SourceSpan {
 
     private:
-
         explicit SourceSpan(bool isSpanValid);
 
     public:
-
         // StartLine and EndLine start at 1
         size_t startLine, endLine;
 
@@ -48,7 +45,7 @@ namespace Ceres::AST {
 
         static SourceSpan createInvalidSpan();
     };
-}
+}// namespace Ceres::AST
 
 
-#endif //COMPILER_SOURCESPAN_H
+#endif//COMPILER_SOURCESPAN_H

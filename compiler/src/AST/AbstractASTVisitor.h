@@ -19,7 +19,6 @@
 #ifndef COMPILER_ABSTRACTASTVISITOR_H
 #define COMPILER_ABSTRACTASTVISITOR_H
 
-#include "nodes/Node.h"
 #include "nodes/AssignmentExpression.h"
 #include "nodes/BlockStatement.h"
 #include "nodes/BoolLiteral.h"
@@ -32,44 +31,44 @@
 #include "nodes/IdentifierExpression.h"
 #include "nodes/IfStatement.h"
 #include "nodes/IntLiteralExpression.h"
+#include "nodes/Node.h"
 #include "nodes/PostfixExpression.h"
 #include "nodes/PrefixExpression.h"
 #include "nodes/ReturnStatement.h"
-#include "nodes/WhileStatement.h"
 #include "nodes/VariableDeclarationStatement.h"
+#include "nodes/WhileStatement.h"
 
 namespace Ceres::AST {
 
     class AbstractASTVisitor {
     public:
-
         // This function should not be overriden, automatically calls the children
-        void visitChildren(Node& node);
+        void visitChildren(Node &node);
 
-        void visit(Node& node);
+        void visit(Node &node);
 
-        virtual void visitAssignmentExpression(AssignmentExpression& expr) = 0;
-        virtual void visitBinaryOperationExpression(BinaryOperationExpression& expr) = 0;
-        virtual void visitBlockStatement(BlockStatement& stm) = 0;
-        virtual void visitBoolLiteral(BoolLiteral& lit) = 0;
-        virtual void visitCommaExpression(CommaExpression& expr) = 0;
-        virtual void visitCompilationUnit(CompilationUnit& unit) = 0;
-        virtual void visitExpressionStatement(ExpressionStatement& stm) = 0;
-        virtual void visitFloatLiteralExpression(FloatLiteralExpression& expr) = 0;
-        virtual void visitForStatement(ForStatement& stm) = 0;
-        virtual void visitFunctionCallExpression(FunctionCallExpression& expr) = 0;
-        virtual void visitFunctionDefinition(FunctionDefinition& def) = 0;
-        virtual void visitIdentifierExpression(IdentifierExpression& expr) = 0;
-        virtual void visitIfStatement(IfStatement& stm) = 0;
-        virtual void visitIntLiteralExpression(IntLiteralExpression& expr) = 0;
-        virtual void visitPostfixExpression(PostfixExpression& expr) = 0;
-        virtual void visitPrefixExpression(PrefixExpression& expr) = 0;
-        virtual void visitReturnStatement(ReturnStatement& stm) = 0;
-        virtual void visitVariableDeclaration(VariableDeclaration& decl) = 0;
-        virtual void visitVariableDeclarationStatement(VariableDeclarationStatement& stm) = 0;
-        virtual void visitWhileStatement(WhileStatement& stm) = 0;
+        virtual void visitAssignmentExpression(AssignmentExpression &expr) = 0;
+        virtual void visitBinaryOperationExpression(BinaryOperationExpression &expr) = 0;
+        virtual void visitBlockStatement(BlockStatement &stm) = 0;
+        virtual void visitBoolLiteral(BoolLiteral &lit) = 0;
+        virtual void visitCommaExpression(CommaExpression &expr) = 0;
+        virtual void visitCompilationUnit(CompilationUnit &unit) = 0;
+        virtual void visitExpressionStatement(ExpressionStatement &stm) = 0;
+        virtual void visitFloatLiteralExpression(FloatLiteralExpression &expr) = 0;
+        virtual void visitForStatement(ForStatement &stm) = 0;
+        virtual void visitFunctionCallExpression(FunctionCallExpression &expr) = 0;
+        virtual void visitFunctionDefinition(FunctionDefinition &def) = 0;
+        virtual void visitIdentifierExpression(IdentifierExpression &expr) = 0;
+        virtual void visitIfStatement(IfStatement &stm) = 0;
+        virtual void visitIntLiteralExpression(IntLiteralExpression &expr) = 0;
+        virtual void visitPostfixExpression(PostfixExpression &expr) = 0;
+        virtual void visitPrefixExpression(PrefixExpression &expr) = 0;
+        virtual void visitReturnStatement(ReturnStatement &stm) = 0;
+        virtual void visitVariableDeclaration(VariableDeclaration &decl) = 0;
+        virtual void visitVariableDeclarationStatement(VariableDeclarationStatement &stm) = 0;
+        virtual void visitWhileStatement(WhileStatement &stm) = 0;
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_ABSTRACTASTVISITOR_H
+#endif//COMPILER_ABSTRACTASTVISITOR_H

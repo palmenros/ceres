@@ -101,4 +101,4 @@ namespace Ceres::AST {
     void ASTVisitor::visitWhileStatement(WhileStatement &stm) {
         visitChildren(stm);
     }
-} // AST
+}// namespace Ceres::AST

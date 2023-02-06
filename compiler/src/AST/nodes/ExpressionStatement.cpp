@@ -20,9 +20,9 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-        ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
-                                                 std::unique_ptr<Expression>&&expression) : Statement(sourceSpan),
-                                                                                                  expression(std::move(expression)) {}
+    ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
+                                             std::unique_ptr<Expression> &&expression) : Statement(sourceSpan),
+                                                                                         expression(std::move(expression)) {}
 
     void ExpressionStatement::accept(AbstractASTVisitor &visitor) {
         visitor.visitExpressionStatement(*this);
@@ -31,4 +31,4 @@ namespace Ceres::AST {
     std::vector<Node *> ExpressionStatement::getChildren() const {
         return {expression.get()};
     }
-} // AST
+}// namespace Ceres::AST

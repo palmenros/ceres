@@ -31,4 +31,4 @@ namespace Ceres::AST {
     std::vector<Node *> WhileStatement::getChildren() const {
         return {condition.get(), body.get()};
     }
-} // AST
+}// namespace Ceres::AST

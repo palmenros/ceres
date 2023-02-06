@@ -19,27 +19,26 @@
 #ifndef COMPILER_WHILESTATEMENT_H
 #define COMPILER_WHILESTATEMENT_H
 
-#include "Statement.h"
-#include "Expression.h"
 #include "BlockStatement.h"
+#include "Expression.h"
+#include "Statement.h"
 #include <memory>
 
 namespace Ceres::AST {
 
-        class WhileStatement : public Statement {
-        public:
-            std::unique_ptr<Expression> condition;
-            std::unique_ptr<BlockStatement> body;
+    class WhileStatement : public Statement {
+    public:
+        std::unique_ptr<Expression> condition;
+        std::unique_ptr<BlockStatement> body;
 
-            WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
-                           std::unique_ptr<BlockStatement> &&body);
+        WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                       std::unique_ptr<BlockStatement> &&body);
 
-            void accept(AbstractASTVisitor &visitor) override;
+        void accept(AbstractASTVisitor &visitor) override;
 
-            std::vector<Node *> getChildren() const override;
+        std::vector<Node *> getChildren() const override;
+    };
 
-        };
+}// namespace Ceres::AST
 
-    } // AST
-
-#endif //COMPILER_WHILESTATEMENT_H
+#endif//COMPILER_WHILESTATEMENT_H

@@ -19,25 +19,23 @@
 #ifndef COMPILER_RETURNSTATEMENT_H
 #define COMPILER_RETURNSTATEMENT_H
 
-#include "Statement.h"
 #include "Expression.h"
+#include "Statement.h"
 #include <memory>
 
 namespace Ceres::AST {
 
-        class ReturnStatement : public Statement {
-        public:
+    class ReturnStatement : public Statement {
+    public:
+        std::unique_ptr<Expression> expr;
 
-            std::unique_ptr<Expression> expr;
+        ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
 
-            ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
+        void accept(AbstractASTVisitor &visitor) override;
 
-            void accept(AbstractASTVisitor &visitor) override;
+        std::vector<Node *> getChildren() const override;
+    };
 
-            std::vector<Node *> getChildren() const override;
+}// namespace Ceres::AST
 
-        };
-
-    } // AST
-
-#endif //COMPILER_RETURNSTATEMENT_H
+#endif//COMPILER_RETURNSTATEMENT_H

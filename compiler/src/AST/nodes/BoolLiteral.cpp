@@ -20,8 +20,8 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-        BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
-                                                                                         value(value) {}
+    BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
+                                                                                     value(value) {}
 
     void BoolLiteral::accept(AbstractASTVisitor &visitor) {
         visitor.visitBoolLiteral(*this);
@@ -32,10 +32,10 @@ namespace Ceres::AST {
     }
 
     std::string BoolLiteral::toStringBoolLiteralValue(BoolLiteralValue value) {
-        if(value == BoolLiteralValue::True) {
+        if (value == BoolLiteralValue::True) {
             return "true";
         } else {
             return "false";
         }
     }
-} // AST
+}// namespace Ceres::AST

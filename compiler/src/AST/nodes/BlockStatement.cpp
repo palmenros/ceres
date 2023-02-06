@@ -29,11 +29,11 @@ namespace Ceres::AST {
     }
 
     std::vector<Node *> BlockStatement::getChildren() const {
-        std::vector<Node*> v;
+        std::vector<Node *> v;
         v.reserve(statements.size());
-        for(auto& a : statements) {
+        for (auto &a: statements) {
             v.push_back(a.get());
         }
         return v;
     }
-} // AST
+}// namespace Ceres::AST

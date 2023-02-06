@@ -19,23 +19,22 @@
 #ifndef COMPILER_IDENTIFIEREXPRESSION_H
 #define COMPILER_IDENTIFIEREXPRESSION_H
 
-#include <string>
 #include "Expression.h"
+#include <string>
 
 namespace Ceres::AST {
 
-        class IdentifierExpression : public Expression {
-        public:
+    class IdentifierExpression : public Expression {
+    public:
+        std::string identifier;
 
-            std::string identifier;
+        IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier);
 
-            IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier);
+        void accept(AbstractASTVisitor &visitor) override;
 
-            void accept(AbstractASTVisitor &visitor) override;
+        std::vector<Node *> getChildren() const override;
+    };
 
-            std::vector<Node *> getChildren() const override;
-        };
+}// namespace Ceres::AST
 
-    } // AST
-
-#endif //COMPILER_IDENTIFIEREXPRESSION_H
+#endif//COMPILER_IDENTIFIEREXPRESSION_H

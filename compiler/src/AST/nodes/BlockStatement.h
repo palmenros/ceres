@@ -20,8 +20,8 @@
 #define COMPILER_BLOCKSTATEMENT_H
 
 #include "Statement.h"
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace Ceres::AST {
 
@@ -36,6 +36,6 @@ namespace Ceres::AST {
         std::vector<Node *> getChildren() const override;
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_BLOCKSTATEMENT_H
+#endif//COMPILER_BLOCKSTATEMENT_H

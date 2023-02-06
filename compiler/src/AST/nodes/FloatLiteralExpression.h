@@ -19,41 +19,41 @@
 #ifndef COMPILER_FLOATLITERALEXPRESSION_H
 #define COMPILER_FLOATLITERALEXPRESSION_H
 
-#include <string>
 #include "Expression.h"
+#include <string>
 
 namespace Ceres::AST {
 
-        enum class FloatLiteralBase {
-            Dec,
-            Hex
-        };
+    enum class FloatLiteralBase {
+        Dec,
+        Hex
+    };
 
-        enum class FloatLiteralType {
-            None,
-            F32,
-            F64
-        };
+    enum class FloatLiteralType {
+        None,
+        F32,
+        F64
+    };
 
-        class FloatLiteralExpression : public Expression {
-        public:
-            FloatLiteralBase base;
+    class FloatLiteralExpression : public Expression {
+    public:
+        FloatLiteralBase base;
 
-            FloatLiteralType type;
+        FloatLiteralType type;
 
-            // String containing the integer literal in base "base" without the introducer characters for the base
-            // and the type. For example: 0xfc783u32 -> fc783
-            std::string str;
+        // String containing the integer literal in base "base" without the introducer characters for the base
+        // and the type. For example: 0xfc783u32 -> fc783
+        std::string str;
 
-            FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, std::string str);
+        FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, std::string str);
 
-            static FloatLiteralType stringToFloatLiteralType(const std::string& str);
+        static FloatLiteralType stringToFloatLiteralType(const std::string &str);
 
-            void accept(AbstractASTVisitor &visitor) override;
+        void accept(AbstractASTVisitor &visitor) override;
 
-            std::vector<Node *> getChildren() const override;
-        };
+        std::vector<Node *> getChildren() const override;
+    };
 
-    } // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_FLOATLITERALEXPRESSION_H
+#endif//COMPILER_FLOATLITERALEXPRESSION_H

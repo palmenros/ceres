@@ -19,8 +19,8 @@
 #ifndef COMPILER_PREFIXEXPRESSION_H
 #define COMPILER_PREFIXEXPRESSION_H
 
-#include <memory>
 #include "Expression.h"
+#include <memory>
 
 namespace Ceres::AST {
 
@@ -48,6 +48,6 @@ namespace Ceres::AST {
         std::vector<Node *> getChildren() const override;
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_PREFIXEXPRESSION_H
+#endif//COMPILER_PREFIXEXPRESSION_H

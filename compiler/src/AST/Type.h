@@ -23,20 +23,20 @@
 
 namespace Ceres::AST {
 
-        class Type {
-        public:
-            // Type name. Can be the empty string if no type has been provided.
-            std::string name;
+    class Type {
+    public:
+        // Type name. Can be the empty string if no type has been provided.
+        std::string name;
 
-            // Called by the AST generator to create a type with an specified (non-empty name)
-            explicit Type(std::string name);
+        // Called by the AST generator to create a type with an specified (non-empty name)
+        explicit Type(std::string name);
 
-            // Called by the AST generator to create a type when none has been given by the user
-            static Type createUnspecifiedType();
+        // Called by the AST generator to create a type when none has been given by the user
+        static Type createUnspecifiedType();
 
-            std::string toString() const;
-        };
+        std::string toString() const;
+    };
 
-    } // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_TYPE_H
+#endif//COMPILER_TYPE_H

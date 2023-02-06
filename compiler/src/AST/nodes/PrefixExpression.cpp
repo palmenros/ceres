@@ -23,7 +23,7 @@ namespace Ceres::AST {
 
     PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op, std::unique_ptr<Expression> &&expr,
                                        const SourceSpan &opSourceSpan) : Expression(sourceSpan), op(op), expr(std::move(expr)),
-                                                             opSourceSpan(opSourceSpan) {}
+                                                                         opSourceSpan(opSourceSpan) {}
 
     void PrefixExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitPrefixExpression(*this);
@@ -32,4 +32,4 @@ namespace Ceres::AST {
     std::vector<Node *> PrefixExpression::getChildren() const {
         return {expr.get()};
     }
-} // AST
+}// namespace Ceres::AST

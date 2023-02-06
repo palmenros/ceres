@@ -34,9 +34,8 @@ namespace Ceres::AST {
 
         FunctionParameter(Type type, std::string name, VariableConstness constness,
                           SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
-
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_FUNCTIONPARAMETER_H
+#endif//COMPILER_FUNCTIONPARAMETER_H

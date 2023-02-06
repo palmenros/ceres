@@ -19,9 +19,9 @@
 #ifndef COMPILER_FORSTATEMENT_H
 #define COMPILER_FORSTATEMENT_H
 
-#include "Statement.h"
 #include "BlockStatement.h"
 #include "Expression.h"
+#include "Statement.h"
 #include "VariableDeclaration.h"
 #include <memory>
 
@@ -29,7 +29,6 @@ namespace Ceres::AST {
 
     class ForStatement : public Statement {
     public:
-
         // Note: Any expression in the for except the block can be a nullptr (for (;;;) {}).
         // moreover, For may have as its first argument either a declaration or an expression:
         // It may have a declaration (for(let i = 0;;){}) or an expression (let i : i32; for(i = 0;;){}).
@@ -51,9 +50,8 @@ namespace Ceres::AST {
         void accept(AbstractASTVisitor &visitor) override;
 
         std::vector<Node *> getChildren() const override;
-
     };
 
-} // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_FORSTATEMENT_H
+#endif//COMPILER_FORSTATEMENT_H

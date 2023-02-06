@@ -23,14 +23,13 @@
 
 namespace Ceres::AST {
 
-        class Expression : public Node {
-        public:
+    class Expression : public Node {
+    public:
+        explicit Expression(const SourceSpan &sourceSpan);
 
-            explicit Expression(const SourceSpan &sourceSpan);
+        virtual ~Expression() = default;
+    };
 
-            virtual ~Expression() = default;
-        };
+}// namespace Ceres::AST
 
-    } // AST
-
-#endif //COMPILER_EXPRESSION_H
+#endif//COMPILER_EXPRESSION_H

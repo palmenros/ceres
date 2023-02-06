@@ -21,13 +21,13 @@
 #include <utility>
 
 namespace Ceres::AST {
-        Type::Type(std::string name) : name(std::move(name)) {}
+    Type::Type(std::string name) : name(std::move(name)) {}
 
-        Type Type::createUnspecifiedType() {
-            return Type{""};
-        }
+    Type Type::createUnspecifiedType() {
+        return Type{""};
+    }
 
-        // TODO: Consider where should the toString methods be. Should they be centralized?
+    // TODO: Consider where should the toString methods be. Should they be centralized?
     std::string Type::toString() const {
         if (name != "") {
             return name;
@@ -35,4 +35,4 @@ namespace Ceres::AST {
             return "UNKNOWN";
         }
     }
-} // AST
+}// namespace Ceres::AST

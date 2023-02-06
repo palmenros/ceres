@@ -24,7 +24,7 @@ namespace Ceres::AST {
                                                          std::unique_ptr<Expression> &&left,
                                                          std::unique_ptr<Expression> &&right, BinaryOp op,
                                                          SourceSpan opSpan)
-            : Expression(sourceSpan), left(std::move(left)), right(std::move(right)), op(op), opSpan(opSpan) {}
+        : Expression(sourceSpan), left(std::move(left)), right(std::move(right)), op(op), opSpan(opSpan) {}
 
     void BinaryOperationExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitBinaryOperationExpression(*this);
@@ -33,4 +33,4 @@ namespace Ceres::AST {
     std::vector<Node *> BinaryOperationExpression::getChildren() const {
         return {left.get(), right.get()};
     }
-} // AST
+}// namespace Ceres::AST

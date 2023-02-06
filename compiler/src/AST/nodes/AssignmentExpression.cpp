@@ -17,15 +17,14 @@
  */
 
 #include "AssignmentExpression.h"
+#include "../../utils/log.hpp"
 #include "../AbstractASTVisitor.h"
 #include <utility>
-#include "../../utils/log.hpp"
 
 namespace Ceres::AST {
     AssignmentExpression::AssignmentExpression(const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
                                                std::string identifierLhs, std::unique_ptr<Expression> &&expressionRhs,
-                                               SourceSpan opSourceSpan) : Expression(
-            sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
+                                               SourceSpan opSourceSpan) : Expression(sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
                                                                           opSourceSpan(opSourceSpan) {}
 
     void AssignmentExpression::accept(AbstractASTVisitor &visitor) {
@@ -34,7 +33,7 @@ namespace Ceres::AST {
 
     std::vector<Node *> AssignmentExpression::getChildren() const {
         // TODO: We will need to update this when our assignment expression takes an expression instead of identifier on the LHS
-        return { expressionRHS.get() };
+        return {expressionRHS.get()};
     }
 
     std::string AssignmentExpression::assignmentBinaryOpToString(std::optional<BinaryOp> &binOp) {
@@ -42,7 +41,7 @@ namespace Ceres::AST {
             return "=";
         }
 
-        switch(binOp.value()) {
+        switch (binOp.value()) {
             case BinaryOp::Mult:
                 return "*=";
             case BinaryOp::Div:
@@ -67,4 +66,4 @@ namespace Ceres::AST {
                 NOT_IMPLEMENTED();
         }
     }
-} // AST
+}// namespace Ceres::AST

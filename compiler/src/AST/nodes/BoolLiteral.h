@@ -20,28 +20,28 @@
 #define COMPILER_BOOLLITERAL_H
 
 #include "Expression.h"
-#include<string>
+#include <string>
 
 namespace Ceres::AST {
 
-        enum class BoolLiteralValue {
-            True,
-            False
-        };
+    enum class BoolLiteralValue {
+        True,
+        False
+    };
 
-        class BoolLiteral : public Expression {
-        public:
-            BoolLiteralValue value;
+    class BoolLiteral : public Expression {
+    public:
+        BoolLiteralValue value;
 
-            BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
+        BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
 
-            void accept(AbstractASTVisitor &visitor) override;
+        void accept(AbstractASTVisitor &visitor) override;
 
-            std::vector<Node *> getChildren() const override;
+        std::vector<Node *> getChildren() const override;
 
-            static std::string toStringBoolLiteralValue(BoolLiteralValue value);
-        };
+        static std::string toStringBoolLiteralValue(BoolLiteralValue value);
+    };
 
-    } // AST
+}// namespace Ceres::AST
 
-#endif //COMPILER_BOOLLITERAL_H
+#endif//COMPILER_BOOLLITERAL_H
