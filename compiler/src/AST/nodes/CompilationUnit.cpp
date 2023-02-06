@@ -45,4 +45,6 @@ namespace Ceres::AST {
         }
         return v;
     }
+
+    CompilationUnit::CompilationUnit(const SourceSpan &sourceSpan) : Node(sourceSpan) {}
 } // AST

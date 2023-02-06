@@ -46,9 +46,45 @@ using namespace antlrgenerated;
 
 namespace Ceres::AST {
 
+    // This class is used for synchronizing the AST
+    class ParseException : public std::exception {
+    public:
+        ParseException() : exception("ParseException. Should not escape AntlrASTGeneratorVisitor!") {}
+    };
+
+    void AntlrASTGeneratorVisitor::handleParseError() {
+        throw ParseException();
+    }
+
     std::any AntlrASTGeneratorVisitor::visitErrorNode(antlr4::tree::ErrorNode *node) {
-        // TODO: Implement error handling and recovery
-        TODO();
+        handleParseError();
+    }
+
+    std::any AntlrASTGeneratorVisitor::defaultResult() {
+        // If we ever get here, we have reached an Error in a labeled rule, so no visit will be called
+        // We should throw an exception so we can catch it where relevant in the AST.
+        handleParseError();
+    }
+
+    std::any AntlrASTGeneratorVisitor::visit(antlr4::tree::ParseTree *tree) {
+        if (tree == nullptr) {
+            // There has been a parse error here
+            handleParseError();
+        }
+
+        return tree->accept(this);;
+    }
+
+    std::any AntlrASTGeneratorVisitor::visitTerminal(antlr4::tree::TerminalNode *node) {
+        ASSERT(node != nullptr);
+        return node->getText();
+    }
+
+
+    void AntlrASTGeneratorVisitor::checkException(const antlr4::ParserRuleContext &context) {
+        if(context.exception != nullptr) {
+            handleParseError();
+        }
     }
 
     SourceSpan AntlrASTGeneratorVisitor::getSourceSpan(const antlr4::ParserRuleContext& context) {
@@ -88,32 +124,42 @@ namespace Ceres::AST {
     }
 
     std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::CompilationUnitContext *ctx) {
+        ASSERT(ctx != nullptr);
+        if(ctx->exception != nullptr) {
+            return new CompilationUnit(getSourceSpan(*ctx));
+        }
 
         std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
         std::vector<std::unique_ptr<VariableDeclaration>> variableDeclarations;
 
-        ASSERT(ctx != nullptr);
-
         functionDefinitions.reserve(ctx->functionDefinition().size());
 
         for(auto funDefinitionContextPtr : ctx->functionDefinition()) {
-            auto res = visit(funDefinitionContextPtr);
-            auto funDef = std::any_cast<FunctionDefinition*>(res);
+            try {
+                auto res = visit(funDefinitionContextPtr);
+                auto funDef = std::unique_ptr<FunctionDefinition>(std::any_cast<FunctionDefinition *>(res));
 
-            ASSERT(funDef != nullptr);
+                ASSERT(funDef != nullptr);
 
-            functionDefinitions.push_back(std::unique_ptr<FunctionDefinition>(funDef));
+                functionDefinitions.push_back(std::move(funDef));
+            } catch(ParseException& e) {
+                //Log::debug("Parse exception in function definition caught");
+            }
         }
 
         variableDeclarations.reserve(ctx->globalVarDeclaration().size());
 
         for (auto varDefinitionContextPtr : ctx->globalVarDeclaration()) {
-            auto res = visit(varDefinitionContextPtr);
-            auto varDef = std::any_cast<VariableDeclaration*>(res);
+            try {
+                auto res = visit(varDefinitionContextPtr);
+                auto varDef = std::unique_ptr<VariableDeclaration>(std::any_cast<VariableDeclaration *>(res));
 
-            ASSERT(varDef != nullptr);
+                ASSERT(varDef != nullptr);
 
-            variableDeclarations.push_back(std::unique_ptr<VariableDeclaration>(varDef));
+                variableDeclarations.push_back(std::move(varDef));
+            } catch(ParseException& e) {
+                //Log::debug("Parse exception in variable definition caught");
+            }
         }
 
         return new CompilationUnit(getSourceSpan(*ctx),
@@ -123,6 +169,7 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitGlobalVarDeclaration(CeresParser::GlobalVarDeclarationContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         auto varDeclaration = std::any_cast<VariableDeclaration*>(visit(ctx->varDeclaration()));
         ASSERT(varDeclaration != nullptr);
@@ -142,6 +189,7 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitFunctionDefinition(CeresParser::FunctionDefinitionContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         FunctionVisibility visibility = FunctionVisibility::Private;
         Type returnType = Type::createUnspecifiedType();
@@ -155,6 +203,8 @@ namespace Ceres::AST {
         SourceSpan identifierSourceSpan = getSourceSpan(*ctx->IDENTIFIER());
         SourceSpan returnTypeSourceSpan = SourceSpan::createInvalidSpan();
 
+        auto function_name = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+
         if(ctx->type() != nullptr) {
             returnType = std::any_cast<Type>(visit(ctx->type()));
             returnTypeSourceSpan = getSourceSpan(*ctx->type());
@@ -165,21 +215,26 @@ namespace Ceres::AST {
         }
 
         auto statement = std::any_cast<Statement*>(visit(ctx->block()));
-        auto block = dynamic_cast<BlockStatement*>(statement);
+        auto block = std::unique_ptr<BlockStatement>(dynamic_cast<BlockStatement*>(statement));
 
-        return new FunctionDefinition(getSourceSpan(*ctx), visibility, ctx->IDENTIFIER()->getText(), parameters,
-                                      returnType, std::unique_ptr<BlockStatement>(block), returnTypeSourceSpan, identifierSourceSpan);
+        return new FunctionDefinition(getSourceSpan(*ctx), visibility, function_name, parameters,
+                                      returnType, std::move(block), returnTypeSourceSpan, identifierSourceSpan);
     }
 
     std::any AntlrASTGeneratorVisitor::visitFormalParameters(CeresParser::FormalParametersContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         std::vector<FunctionParameter> parameters;
         parameters.reserve(ctx->parameter().size());
 
         for(auto parameterContext : ctx->parameter()) {
-            auto res = std::any_cast<FunctionParameter>(visit(parameterContext));
-            parameters.push_back(res);
+            try {
+                auto res = std::any_cast<FunctionParameter>(visit(parameterContext));
+                parameters.push_back(res);
+            } catch(ParseException& e) {
+                //Log::debug("Caught Parse exception in parameter");
+            }
         }
 
         return parameters;
@@ -187,6 +242,7 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitParameter(CeresParser::ParameterContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         VariableConstness constness = VariableConstness::Const;
 
@@ -202,19 +258,25 @@ namespace Ceres::AST {
         SourceSpan typeSourceSpan = getSourceSpan(*ctx->type());
         SourceSpan nameSourceSpan = getSourceSpan(*ctx->IDENTIFIER());
 
-        return FunctionParameter{type, ctx->IDENTIFIER()->getText(), constness, typeSourceSpan, nameSourceSpan};
+        auto parameterName = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+        return FunctionParameter{type, parameterName, constness, typeSourceSpan, nameSourceSpan};
     }
 
     std::any AntlrASTGeneratorVisitor::visitBlock(CeresParser::BlockContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         std::vector<std::unique_ptr<Statement>> statements;
 
         for(auto statementContextPtr : ctx->statement()) {
-            auto res = std::any_cast<Statement*>(visit(statementContextPtr));
-            if (res != nullptr) {
-                // Note: the statement can be a nullptr, for empty statements such as ';;'
-                statements.push_back(std::unique_ptr<Statement>(res));
+            try {
+                auto res = std::unique_ptr<Statement>(std::any_cast<Statement *>(visit(statementContextPtr)));
+                if (res != nullptr) {
+                    // Note: the statement can be a nullptr, for empty statements such as ';;'
+                    statements.push_back(std::move(res));
+                }
+            } catch(ParseException& e) {
+                //Log::debug("Parse exception in block caught");
             }
         }
 
@@ -223,21 +285,31 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         std::string type_text;
+        if (ctx->IDENTIFIER() != nullptr) {
+            type_text = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+        } else if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
+            type_text = std::any_cast<std::string>(visit(ctx->INTEGER_LITERAL_SUFFIX()));
+        } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
+            type_text = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL_SUFFIX()));
+        } else {
+            NOT_IMPLEMENTED();
+        }
 
-        return Type{ctx->getText()};
+        return Type{type_text};
     }
 
     std::any AntlrASTGeneratorVisitor::visitVarDeclaration(CeresParser::VarDeclarationContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         ASSERT(ctx->IDENTIFIER() != nullptr);
 
         std::unique_ptr<Expression> initializer_expression = nullptr;
         if(ctx->expression() != nullptr) {
-            auto expr = std::any_cast<Expression*>(visit(ctx->expression()));
-            initializer_expression.reset(expr);
+            initializer_expression.reset(std::any_cast<Expression*>(visit(ctx->expression())));
         }
 
         VariableConstness constness;
@@ -256,83 +328,100 @@ namespace Ceres::AST {
             typeSourceSpan = getSourceSpan(*ctx->type());
         }
 
+        auto var_name = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+
         return new VariableDeclaration(getSourceSpan(*ctx), std::move(initializer_expression),
                                        VariableVisibility::Private,
-                                       constness, VariableScope::Local, std::move(type), ctx->IDENTIFIER()->getText(),
+                                       constness, VariableScope::Local, std::move(type), var_name,
                                        typeSourceSpan,
                                        getSourceSpan(*ctx->IDENTIFIER()));
     }
 
     std::any AntlrASTGeneratorVisitor::visitReturnStatement(CeresParser::ReturnStatementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         auto expr = std::any_cast<Expression*>(visit(ctx->expression()));
         return static_cast<Statement*>(new ReturnStatement(getSourceSpan(*ctx), std::unique_ptr<Expression>(expr)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitIfStatement(CeresParser::IfStatementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
-        auto condition = std::any_cast<Expression*>(visit(ctx->expression()));
-        auto thenBlock = dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block(0))));
+        auto condition = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->expression())));
+        auto thenBlock = std::unique_ptr<BlockStatement>(dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block(0)))));
 
-        Statement* elseStatement = nullptr;
+        std::unique_ptr<Statement> elseStatement = nullptr;
         if(ctx->else_block != nullptr) {
-            elseStatement = std::any_cast<Statement*>(visit(ctx->else_block));
+            elseStatement.reset(std::any_cast<Statement*>(visit(ctx->else_block)));
         } else if (ctx->else_if != nullptr) {
-            elseStatement = std::any_cast<Statement*>(visit(ctx->else_if));
+            elseStatement.reset(std::any_cast<Statement*>(visit(ctx->else_if)));
         }
 
-        return static_cast<Statement*>(new IfStatement(getSourceSpan(*ctx), std::unique_ptr<Expression>(condition),
-                                            std::unique_ptr<BlockStatement>(thenBlock), std::unique_ptr<Statement>(elseStatement)));
+        ASSERT(condition != nullptr);
+        ASSERT(thenBlock != nullptr);
+
+        return static_cast<Statement*>(new IfStatement(getSourceSpan(*ctx), std::move(condition),
+                                            std::move(thenBlock), std::move(elseStatement)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitWhileStatement(CeresParser::WhileStatementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
-        auto condition = std::any_cast<Expression*>(visit(ctx->expression()));
-        auto body = dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block())));
+        auto condition = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->expression())));
+        auto body = std::unique_ptr<BlockStatement>(dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block()))));
 
-        return static_cast<Statement*>(new WhileStatement(getSourceSpan(*ctx), std::unique_ptr<Expression>(condition),
-                                                            std::unique_ptr<BlockStatement>(body)));
+        ASSERT(condition != nullptr);
+        ASSERT(body != nullptr);
+
+        return static_cast<Statement*>(new WhileStatement(getSourceSpan(*ctx), std::move(condition),
+                                                            std::move(body)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitForStatement(CeresParser::ForStatementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
-        VariableDeclaration* varDecl = nullptr;
-        Expression* declExpr = nullptr;
-        Expression* condExpr = nullptr;
-        Expression* updateExpr = nullptr;
+        std::unique_ptr<VariableDeclaration> varDecl = nullptr;
+        std::unique_ptr<Expression> declExpr = nullptr;
+        std::unique_ptr<Expression> condExpr = nullptr;
+        std::unique_ptr<Expression> updateExpr = nullptr;
 
-        auto body = dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block())));
+        auto body = std::unique_ptr<BlockStatement>(dynamic_cast<BlockStatement*>(std::any_cast<Statement*>(visit(ctx->block()))));
+
         if (ctx->varDeclaration() != nullptr) {
-            varDecl = std::any_cast<VariableDeclaration*>(visit(ctx->varDeclaration()));
+            varDecl.reset(std::any_cast<VariableDeclaration*>(visit(ctx->varDeclaration())));
         } else if (ctx->decl_expr != nullptr) {
-            declExpr = std::any_cast<Expression*>(visit(ctx->decl_expr));
+            declExpr.reset(std::any_cast<Expression*>(visit(ctx->decl_expr)));
         }
 
         if(ctx->cond_expr != nullptr) {
-            condExpr = std::any_cast<Expression*>(visit(ctx->cond_expr));
+            condExpr.reset(std::any_cast<Expression*>(visit(ctx->cond_expr)));
         }
 
         if(ctx->update_expr != nullptr) {
-            updateExpr = std::any_cast<Expression*>(visit(ctx->update_expr));
+            updateExpr.reset(std::any_cast<Expression*>(visit(ctx->update_expr)));
         }
 
-        return static_cast<Statement*>(new ForStatement(getSourceSpan(*ctx), std::unique_ptr<VariableDeclaration>(varDecl),
-                std::unique_ptr<Expression>(declExpr), std::unique_ptr<Expression>(condExpr), std::unique_ptr<Expression>(updateExpr),
-                                       std::unique_ptr<BlockStatement>(body)));
+        ASSERT(body != nullptr);
+
+        return static_cast<Statement*>(new ForStatement(getSourceSpan(*ctx), std::move(varDecl),
+                std::move(declExpr), std::move(condExpr), std::move(updateExpr),
+                                       std::move(body)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitAssignment_expr(CeresParser::Assignment_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         antlr4::Token* binaryOpToken = ctx->binary_op;
 
         ASSERT(binaryOpToken != nullptr);
         ASSERT(ctx->IDENTIFIER() != nullptr);
 
-        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+        auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression())));
 
         std::optional<AST::BinaryOp> binaryOp{};
         switch(binaryOpToken->getType()) {
@@ -375,13 +464,17 @@ namespace Ceres::AST {
                 break;
         }
 
-        return static_cast<Expression*>(new AssignmentExpression(getSourceSpan(*ctx), binaryOp, ctx->IDENTIFIER()->getText(),
-                                                                 std::unique_ptr<Expression>(expr), getSourceSpan(binaryOpToken)));
+        auto LHS_identifier = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+
+        return static_cast<Expression*>(new AssignmentExpression(getSourceSpan(*ctx), binaryOp, LHS_identifier,
+                                                                 std::move(expr), getSourceSpan(binaryOpToken)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitPostfix_expr(CeresParser::Postfix_exprContext *ctx) {
         ASSERT(ctx != nullptr);
-        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+        checkException(*ctx);
+
+        auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression())));
 
         PostfixOp op;
         ASSERT(ctx->postfix != nullptr);
@@ -398,14 +491,15 @@ namespace Ceres::AST {
         }
 
         return static_cast<Expression*>(new PostfixExpression(getSourceSpan(*ctx), op,
-                                                               std::unique_ptr<Expression>(expr),
+                                                               std::move(expr),
                                                                getSourceSpan(ctx->postfix)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrefix_expr(CeresParser::Prefix_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
-        auto expr = std::any_cast<Expression*>(visit(ctx->assignmentExpression()));
+        auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression())));
 
         PrefixOp op;
         ASSERT(ctx->prefix != nullptr);
@@ -434,21 +528,26 @@ namespace Ceres::AST {
                 break;
         }
 
-        return static_cast<Expression*>(new PrefixExpression(getSourceSpan(*ctx), op, std::unique_ptr<Expression>(expr), getSourceSpan(ctx->prefix)));
+        return static_cast<Expression*>(new PrefixExpression(getSourceSpan(*ctx), op, std::move(expr), getSourceSpan(ctx->prefix)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitFunction_call_expr(CeresParser::Function_call_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->functionCall());
     }
 
     std::any AntlrASTGeneratorVisitor::visitPrimary_expr(CeresParser::Primary_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->primaryExpression());
     }
 
     std::any AntlrASTGeneratorVisitor::visitBinary_op_expr(CeresParser::Binary_op_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         BinaryOp op;
         SourceSpan opSpan = SourceSpan::createInvalidSpan();
@@ -521,16 +620,16 @@ namespace Ceres::AST {
             }
         }
 
-        auto left = std::any_cast<Expression*>(visit(ctx->assignmentExpression(0)));
-        auto right = std::any_cast<Expression*>(visit(ctx->assignmentExpression(1)));
+        auto left = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression(0))));
+        auto right = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression(1))));
 
-        return static_cast<Expression*>(new BinaryOperationExpression(getSourceSpan(*ctx), std::unique_ptr<Expression>(left),
-                std::unique_ptr<Expression>(right), op, opSpan));
+        return static_cast<Expression*>(new BinaryOperationExpression(getSourceSpan(*ctx), std::move(left),
+                std::move(right), op, opSpan));
     }
 
     std::any AntlrASTGeneratorVisitor::visitExpression(CeresParser::ExpressionContext *ctx) {
-
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         // We must at least have one expression. Each expression is an expression separated by commas.
         size_t num_expressions = ctx->assignmentExpression().size();
@@ -543,10 +642,10 @@ namespace Ceres::AST {
             std::vector<std::unique_ptr<Expression>> expressions;
 
             for(auto exprCtx : ctx->assignmentExpression()) {
-                auto expr = std::any_cast<Expression*>(visit(exprCtx));
+                auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(exprCtx)));
                 ASSERT(expr != nullptr);
 
-                expressions.push_back(std::unique_ptr<Expression>(expr));
+                expressions.push_back(std::move(expr));
             }
 
             return static_cast<Expression*>(new CommaExpression(getSourceSpan(*ctx), std::move(expressions)));
@@ -555,33 +654,44 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitParens_expr(CeresParser::Parens_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->expression());
     }
 
     std::any AntlrASTGeneratorVisitor::visitId_expr(CeresParser::Id_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         ASSERT(ctx->IDENTIFIER() != nullptr);
 
-        return static_cast<Expression*>(new IdentifierExpression(getSourceSpan(*ctx), ctx->IDENTIFIER()->getText()));
+        auto id = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+
+        return static_cast<Expression*>(new IdentifierExpression(getSourceSpan(*ctx), id));
     }
 
     std::any AntlrASTGeneratorVisitor::visitInt_literal_expr(CeresParser::Int_literal_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->intLiteral());
     }
 
     std::any AntlrASTGeneratorVisitor::visitFloat_literal_expr(CeresParser::Float_literal_exprContext *ctx) {
        ASSERT(ctx != nullptr);
+       checkException(*ctx);
+
        return visit(ctx->floatLiteral());
     }
 
     std::any AntlrASTGeneratorVisitor::visitBool_literal_expr(CeresParser::Bool_literal_exprContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         BoolLiteralValue value;
 
         ASSERT(ctx->BOOL_LITERAL() != nullptr);
-        const std::string& text_literal = ctx->BOOL_LITERAL()->getText();
+        const std::string& text_literal = std::any_cast<std::string>(visit(ctx->BOOL_LITERAL()));
 
         if (text_literal == "true") {
             value = BoolLiteralValue::True;
@@ -596,10 +706,12 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitIntLiteral(CeresParser::IntLiteralContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         IntLiteralType type = IntLiteralType::None;
         if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
-            type = IntLiteralExpression::stringToIntLiteralType(ctx->INTEGER_LITERAL_SUFFIX()->getText());
+            auto suffix = std::any_cast<std::string>(visit(ctx->INTEGER_LITERAL_SUFFIX()));
+            type = IntLiteralExpression::stringToIntLiteralType(suffix);
             ASSERT(type != IntLiteralType::None);
         }
 
@@ -608,16 +720,16 @@ namespace Ceres::AST {
         std::string str;
         if (ctx->DEC_LITERAL() != nullptr) {
             base = IntLiteralBase::Dec;
-            str = ctx->DEC_LITERAL()->getText();
+            str = std::any_cast<std::string>(visit(ctx->DEC_LITERAL()));
         } else if (ctx->HEX_LITERAL() != nullptr) {
             base = IntLiteralBase::Hex;
-            str = ctx->HEX_LITERAL()->getText().substr(2);
+            str = std::any_cast<std::string>(visit(ctx->HEX_LITERAL())).substr(2);
         } else if (ctx->OCT_LITERAL() != nullptr) {
             base = IntLiteralBase::Oct;
-            str = ctx->HEX_LITERAL()->getText().substr(2);
+            str = std::any_cast<std::string>(visit(ctx->OCT_LITERAL())).substr(2);
         } else if (ctx->BIN_LITERAL() != nullptr) {
             base = IntLiteralBase::Bin;
-            str = ctx->HEX_LITERAL()->getText().substr(2);
+            str = std::any_cast<std::string>(visit(ctx->BIN_LITERAL())).substr(2);
         } else {
             NOT_IMPLEMENTED();
         }
@@ -627,10 +739,12 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitFloatLiteral(CeresParser::FloatLiteralContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
 
         FloatLiteralType type = FloatLiteralType::None;
         if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
-            type = FloatLiteralExpression::stringToFloatLiteralType(ctx->FLOAT_LITERAL_SUFFIX()->getText());
+            auto suffix = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL_SUFFIX()));
+            type = FloatLiteralExpression::stringToFloatLiteralType(suffix);
             ASSERT(type != FloatLiteralType::None);
         }
 
@@ -638,13 +752,13 @@ namespace Ceres::AST {
 
         std::string str;
         if(ctx->FLOAT_LITERAL() != nullptr) {
-            str = ctx->FLOAT_LITERAL()->getText();
+            str = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL()));
             base = FloatLiteralBase::Dec;
         } else if (ctx->DEC_LITERAL() != nullptr) {
-            str = ctx->DEC_LITERAL()->getText();
+            str = std::any_cast<std::string>(visit(ctx->DEC_LITERAL()));
             base = FloatLiteralBase::Dec;
         } else if (ctx->HEX_FLOAT_LITERAL() != nullptr) {
-            str = ctx->HEX_FLOAT_LITERAL()->getText().substr(2);
+            str = std::any_cast<std::string>(visit(ctx->HEX_FLOAT_LITERAL())).substr(2);
             base = FloatLiteralBase::Hex;
         } else {
             NOT_IMPLEMENTED();
@@ -655,6 +769,8 @@ namespace Ceres::AST {
 
     std::any AntlrASTGeneratorVisitor::visitFunctionCall(CeresParser::FunctionCallContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         ASSERT(ctx->IDENTIFIER() != nullptr);
 
         std::vector<std::unique_ptr<Expression>> args;
@@ -662,59 +778,80 @@ namespace Ceres::AST {
 
         for (auto assignmentExpressionContextPtr : ctx->assignmentExpression()) {
             auto res = visit(assignmentExpressionContextPtr);
-            auto arg = std::any_cast<Expression*>(res);
+            auto arg = std::unique_ptr<Expression>(std::any_cast<Expression*>(res));
 
             ASSERT(arg != nullptr);
 
-            args.push_back(std::unique_ptr<Expression>(arg));
+            args.push_back(std::move(arg));
         }
 
+        auto function_identifier = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+
         return static_cast<Expression*>(new FunctionCallExpression(getSourceSpan(*ctx),
-                                                                   ctx->IDENTIFIER()->getText(), std::move(args),
+                                                                   function_identifier, std::move(args),
                                                                    getSourceSpan(*ctx->IDENTIFIER())));
     }
 
     std::any AntlrASTGeneratorVisitor::visitVar_decl_statement(CeresParser::Var_decl_statementContext *ctx) {
         ASSERT(ctx != nullptr);
-        auto varDeclaration = std::any_cast<VariableDeclaration*>(visit(ctx->varDeclaration()));
+        checkException(*ctx);
+
+        auto varDeclaration = std::unique_ptr<VariableDeclaration>(std::any_cast<VariableDeclaration*>(visit(ctx->varDeclaration())));
+
         return static_cast<Statement*>(new VariableDeclarationStatement(getSourceSpan(*ctx),
-                                                                        std::unique_ptr<VariableDeclaration>(varDeclaration)));
+                                                                        std::move(varDeclaration)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitReturn_statement(CeresParser::Return_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->returnStatement());
     }
 
     std::any AntlrASTGeneratorVisitor::visitExpr_statement(CeresParser::Expr_statementContext *ctx) {
         ASSERT(ctx != nullptr);
-        auto expr = std::any_cast<Expression*>(visit(ctx->expression()));
-        return static_cast<Statement*>(new ExpressionStatement(getSourceSpan(*ctx), std::unique_ptr<Expression>(expr)));
+        checkException(*ctx);
+
+        auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->expression())));
+
+        return static_cast<Statement*>(new ExpressionStatement(getSourceSpan(*ctx), std::move(expr)));
     }
 
     std::any AntlrASTGeneratorVisitor::visitIf_statement(CeresParser::If_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->ifStatement());
     }
 
     std::any AntlrASTGeneratorVisitor::visitWhile_statement(CeresParser::While_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->whileStatement());
     }
 
     std::any AntlrASTGeneratorVisitor::visitFor_statement(CeresParser::For_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->forStatement());
     }
 
     std::any AntlrASTGeneratorVisitor::visitBlock_statement(CeresParser::Block_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return visit(ctx->block());
     }
 
     std::any AntlrASTGeneratorVisitor::visitEmpty_statement(CeresParser::Empty_statementContext *ctx) {
         ASSERT(ctx != nullptr);
+        checkException(*ctx);
+
         return static_cast<Statement*>(nullptr);
     }
 
+    // TODO: When adding a new AST node, don't forget to call checkExceptions
 }
