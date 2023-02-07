@@ -16,28 +16,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_NODE_H
-#define COMPILER_NODE_H
+#ifndef COMPILER_FIXITSPAN_H
+#define COMPILER_FIXITSPAN_H
 
-#include "../../utils/SourceSpan.h"
-#include <vector>
+#include "../utils/SourceSpan.h"
+#include <string>
 
-namespace Ceres::AST {
+namespace Ceres {
 
-    class AbstractASTVisitor;
-
-    class Node {
+    class FixItSpan {
     public:
+        // Span to be replaced
         SourceSpan sourceSpan;
 
-    public:
-        explicit Node(const SourceSpan &sourceSpan);
-
-        virtual void accept(AbstractASTVisitor &visitor) = 0;
-        virtual std::vector<Node *> getChildren() const = 0;
-
-        virtual ~Node() = default;
+        // What the selected range should be replaced with
+        std::string replacementString;
+        FixItSpan(const SourceSpan &sourceSpan, std::string replacementString);
     };
 
-}// namespace Ceres::AST
-#endif//COMPILER_NODE_H
+}// namespace Ceres
+
+#endif//COMPILER_FIXITSPAN_H

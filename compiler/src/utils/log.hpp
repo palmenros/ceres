@@ -25,7 +25,7 @@ namespace Ceres::Log {
 
     // Set up spdlog for logging
     inline void setupLogging() {
-        spdlog::set_pattern("%^[%l]%$ %v");
+        spdlog::set_pattern("%^[internal %l]%$ %v");
         // TODO: Update the level when needed
         spdlog::set_level(spdlog::level::trace);
     }

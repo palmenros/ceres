@@ -16,28 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_NODE_H
-#define COMPILER_NODE_H
+#include "SourceSpan.h"
 
-#include "../../utils/SourceSpan.h"
-#include <vector>
+namespace Ceres {
 
-namespace Ceres::AST {
+    SourceSpan::SourceSpan(bool isSpanValid)
+        : isSpanValid(isSpanValid) {
+    }
 
-    class AbstractASTVisitor;
-
-    class Node {
-    public:
-        SourceSpan sourceSpan;
-
-    public:
-        explicit Node(const SourceSpan &sourceSpan);
-
-        virtual void accept(AbstractASTVisitor &visitor) = 0;
-        virtual std::vector<Node *> getChildren() const = 0;
-
-        virtual ~Node() = default;
-    };
-
-}// namespace Ceres::AST
-#endif//COMPILER_NODE_H
+    SourceSpan SourceSpan::createInvalidSpan() {
+        return SourceSpan{false};
+    }
+    SourceSpan::SourceSpan(unsigned int fileId, size_t startCharacterIndex, size_t endCharacterIndex) : fileId(fileId), startCharacterIndex(startCharacterIndex), endCharacterIndex(endCharacterIndex), isSpanValid(true) {}
+}// namespace Ceres

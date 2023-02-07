@@ -16,36 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_SOURCESPAN_H
-#define COMPILER_SOURCESPAN_H
+#ifndef COMPILER_PARSERERRORLISTENER_H
+#define COMPILER_PARSERERRORLISTENER_H
 
-#include <cstddef>
+#include "BaseErrorListener.h"
 
-namespace Ceres::AST {
+namespace Ceres {
 
+    class ParserErrorListener : public antlr4::BaseErrorListener {
+    protected:
 
-    struct SourceSpan {
-
-    private:
-        explicit SourceSpan(bool isSpanValid);
+        unsigned fileId;
 
     public:
-        // StartLine and EndLine start at 1
-        size_t startLine, endLine;
+        ParserErrorListener(unsigned int fileId);
 
-        // CAUTION: The character indices start at 0, while many editors start at 1.
-        // TODO: Maybe change these to be 1-indexed?
-        size_t startCharacterIndex, endCharacterIndex;
-
-        // Does the span contain valid data? Maybe it doesn't
-        bool isSpanValid;
-
-        SourceSpan(size_t startLine, size_t endLine, size_t startCharacterIndex,
-                   size_t endCharacterIndex);
-
-        static SourceSpan createInvalidSpan();
+        void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, size_t line, size_t charPositionInLine, const std::string &msg, std::exception_ptr e) override;
+        void reportAmbiguity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa, size_t startIndex, size_t stopIndex, bool exact, const antlrcpp::BitSet &ambigAlts, antlr4::atn::ATNConfigSet *configs) override;
     };
-}// namespace Ceres::AST
 
+}// namespace Ceres
 
-#endif//COMPILER_SOURCESPAN_H
+#endif//COMPILER_PARSERERRORLISTENER_H

@@ -28,12 +28,15 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Module.h"
-#include "llvm/IR/Verifier.h"
+#include "llvm/Support/InitLLVM.h"
 
 #include "AST/ASTStringifierVisitor.h"
 #include "AST/ASTVisitor.h"
 #include "AST/AntlrASTGeneratorVisitor.h"
 #include "AST/nodes/CompilationUnit.h"
+#include "Diagnostics/Diagnostics.h"
+#include "Diagnostics/ParserErrorListener.h"
+#include "utils/SourceManager.h"
 #include "utils/log.hpp"
 
 using namespace antlrgenerated;
@@ -42,6 +45,7 @@ using namespace Ceres;
 
 
 int main(int argc, const char *argv[]) {
+    llvm::InitLLVM X(argc, argv);
     Log::setupLogging();
 
     if (argc < 2) {
@@ -50,24 +54,27 @@ int main(int argc, const char *argv[]) {
         return 1;
     }
 
-    std::ifstream file(argv[1]);
-    if (!file.is_open()) {
-        Log::error("Could not open file '{}'", argv[1]);
-        return 1;
-    }
+    auto &sourceManager = SourceManager::get();
+    unsigned fileId = sourceManager.addSourceFileOrExit(argv[1]);
 
     try {
-        ANTLRInputStream input(file);
+        auto memoryBuffer = sourceManager.getMemoryBuffer(fileId);
+        ANTLRInputStream input(memoryBuffer->getBufferStart(), memoryBuffer->getBufferSize());
         CeresLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
 
         CeresParser parser(&tokens);
+        parser.removeErrorListeners();
+
+        std::unique_ptr<ParserErrorListener> parserErrorListener = std::make_unique<ParserErrorListener>(fileId);
+        parser.addErrorListener(parserErrorListener.get());
+
         tree::ParseTree *tree = parser.compilationUnit();
 
         auto s = tree->toStringTree(&parser);
-        // Log::debug("Parse tree: {}", s);
+        //        Log::debug("Parse tree: {}", s);
 
-        AST::AntlrASTGeneratorVisitor visitor;
+        AST::AntlrASTGeneratorVisitor visitor{fileId};
 
         auto res = std::any_cast<AST::CompilationUnit *>(tree->accept(&visitor));
         ASSERT(res != nullptr);
@@ -76,7 +83,22 @@ int main(int argc, const char *argv[]) {
 
         AST::ASTStringifierVisitor stringifierVisitor;
         auto str = stringifierVisitor.visit(*AST);
-        Log::info("AST: {}", str);
+        //        Log::info("AST: {}", str);
+
+        //        class Test : public Ceres::AST::ASTVisitor {
+        //            void visitFunctionDefinition(AST::FunctionDefinition &def) override {
+        //                Ceres::Diagnostics::report(def.functionNameSpan, Diag::err_function_identifier, def.functionName);
+        //
+        //                for (auto &param: def.parameters) {
+        //                    Ceres::Diagnostics::report(param.parameterNameSourceSpan, Diag::err_param, {param.typeSourceSpan}, param.name);
+        //                }
+        //
+        //                Ceres::AST::ASTVisitor::visitFunctionDefinition(def);
+        //            }
+        //        };
+        //
+        //        Test test;
+        //        test.visit(*AST);
 
         // llvm::LLVMContext llvmContext;
         // auto module = std::make_unique<llvm::Module>("Hello", llvmContext);

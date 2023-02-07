@@ -24,7 +24,7 @@
 #include <utility>
 
 namespace Ceres::AST {
-    VariableDeclaration::VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
+    VariableDeclaration::VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
                                              std::unique_ptr<Expression> &&initializerExpression,
                                              VariableVisibility visibility, VariableConstness constness,
                                              VariableScope scope,

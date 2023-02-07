@@ -19,8 +19,8 @@
 #ifndef COMPILER_ANTLRASTGENERATORVISITOR_H
 #define COMPILER_ANTLRASTGENERATORVISITOR_H
 
+#include "../utils/SourceSpan.h"
 #include "CeresParserBaseVisitor.h"
-#include "SourceSpan.h"
 
 namespace Ceres::AST {
 
@@ -29,16 +29,20 @@ namespace Ceres::AST {
     private:
         [[noreturn]] static void handleParseError();
 
-        static inline void checkException(const antlr4::ParserRuleContext &context);
+        inline void checkException(const antlr4::ParserRuleContext &context);
 
-        static SourceSpan getSourceSpan(const antlr4::ParserRuleContext &context);
+        SourceSpan getSourceSpan(const antlr4::ParserRuleContext &context);
 
-        static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &context);
+        SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &context);
 
     protected:
         std::any defaultResult() override;
 
     public:
+        unsigned fileId;
+
+        AntlrASTGeneratorVisitor(unsigned int fileId);
+
         std::any visitErrorNode(antlr4::tree::ErrorNode *node) override;
 
         std::any visitCompilationUnit(antlrgenerated::CeresParser::CompilationUnitContext *ctx) override;
@@ -111,11 +115,11 @@ namespace Ceres::AST {
 
         std::any visitEmpty_statement(antlrgenerated::CeresParser::Empty_statementContext *context) override;
 
-        static SourceSpan getSourceSpan(const antlr4::Token *token);
+        SourceSpan getSourceSpan(const antlr4::Token *token) const;
 
-        static SourceSpan getSourceSpan(const antlr4::Token *first, const antlr4::Token *second);
+        SourceSpan getSourceSpan(const antlr4::Token *first, const antlr4::Token *second) const;
 
-        static SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start, const antlr4::tree::TerminalNode &end);
+        SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start, const antlr4::tree::TerminalNode &end);
 
         std::any visit(antlr4::tree::ParseTree *tree) override;
 

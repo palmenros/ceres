@@ -58,7 +58,7 @@ namespace Ceres::AST {
         std::unique_ptr<Expression> initializerExpression;
 
     public:
-        VariableDeclaration(const Ceres::AST::SourceSpan &sourceSpan,
+        VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
                             std::unique_ptr<Expression> &&initializerExpression,
                             VariableVisibility visibility, VariableConstness constness, VariableScope scope,
                             Type type, std::string identifier, const SourceSpan &typeSourceSpan,

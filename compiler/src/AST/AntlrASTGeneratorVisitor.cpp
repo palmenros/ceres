@@ -19,6 +19,7 @@
 #include "AntlrASTGeneratorVisitor.h"
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
+#include "CeresParser.h"
 #include "Type.h"
 #include "nodes/AssignmentExpression.h"
 #include "nodes/BinaryOperationExpression.h"
@@ -51,6 +52,8 @@ namespace Ceres::AST {
     public:
         ParseException() : std::runtime_error("ParseException. Should not escape AntlrASTGeneratorVisitor!") {}
     };
+
+    AntlrASTGeneratorVisitor::AntlrASTGeneratorVisitor(unsigned int fileId) : fileId(fileId) {}
 
     void AntlrASTGeneratorVisitor::handleParseError() {
         throw ParseException();
@@ -116,12 +119,12 @@ namespace Ceres::AST {
         return getSourceSpan(startTok, endTok);
     }
 
-    SourceSpan AntlrASTGeneratorVisitor::getSourceSpan(const antlr4::Token *tok) {
-        return {tok->getLine(), tok->getLine(), tok->getStartIndex(), tok->getStopIndex()};
+    SourceSpan AntlrASTGeneratorVisitor::getSourceSpan(const antlr4::Token *tok) const {
+        return {fileId, tok->getStartIndex(), tok->getStopIndex()};
     }
 
-    SourceSpan AntlrASTGeneratorVisitor::getSourceSpan(const antlr4::Token *startToken, const antlr4::Token *endToken) {
-        return {startToken->getLine(), endToken->getLine(), startToken->getStartIndex(), endToken->getStopIndex()};
+    SourceSpan AntlrASTGeneratorVisitor::getSourceSpan(const antlr4::Token *startToken, const antlr4::Token *endToken) const {
+        return {fileId, startToken->getStartIndex(), endToken->getStopIndex()};
     }
 
     std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::CompilationUnitContext *ctx) {
