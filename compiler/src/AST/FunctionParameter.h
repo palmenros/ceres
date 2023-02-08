@@ -19,7 +19,7 @@
 #ifndef COMPILER_FUNCTIONPARAMETER_H
 #define COMPILER_FUNCTIONPARAMETER_H
 
-#include "Type.h"
+#include "../Binding/Type.h"
 #include "nodes/VariableDeclaration.h"
 
 namespace Ceres::AST {

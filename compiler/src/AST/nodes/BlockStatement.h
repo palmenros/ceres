@@ -21,11 +21,12 @@
 
 #include "Statement.h"
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 namespace Ceres::AST {
-
     class BlockStatement : public Statement {
+
     public:
         std::vector<std::unique_ptr<Statement>> statements;
 
@@ -35,7 +36,6 @@ namespace Ceres::AST {
 
         std::vector<Node *> getChildren() const override;
     };
-
 }// namespace Ceres::AST
 
 #endif//COMPILER_BLOCKSTATEMENT_H

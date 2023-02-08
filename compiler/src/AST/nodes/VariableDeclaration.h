@@ -19,7 +19,7 @@
 #ifndef COMPILER_VARIABLEDECLARATION_H
 #define COMPILER_VARIABLEDECLARATION_H
 
-#include "../Type.h"
+#include "../../Binding/Type.h"
 #include "Expression.h"
 #include "Statement.h"
 #include <memory>

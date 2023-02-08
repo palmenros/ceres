@@ -20,7 +20,7 @@
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
 #include "CeresParser.h"
-#include "Type.h"
+#include "../Binding/Type.h"
 #include "nodes/AssignmentExpression.h"
 #include "nodes/BinaryOperationExpression.h"
 #include "nodes/BlockStatement.h"

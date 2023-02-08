@@ -20,7 +20,7 @@
 #define COMPILER_FUNCTIONDEFINITION_H
 
 #include "../FunctionParameter.h"
-#include "../Type.h"
+#include "../../Binding/Type.h"
 #include "BlockStatement.h"
 #include "Node.h"
 #include <memory>
