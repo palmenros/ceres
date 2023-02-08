@@ -29,7 +29,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
-add_executable(compiler src/Binding/Type.cpp src/Binding/Type.h
+add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/main.cpp src/utils/log.hpp src/AST/AntlrASTGeneratorVisitor.cpp src/AST/AntlrASTGeneratorVisitor.h
         src/AST/nodes/Node.cpp src/AST/nodes/Node.h src/utils/SourceSpan.cpp src/utils/SourceSpan.h
         src/AST/nodes/CompilationUnit.cpp src/AST/nodes/CompilationUnit.h src/AST/nodes/FunctionDefinition.cpp
@@ -53,7 +53,9 @@ add_executable(compiler src/Binding/Type.cpp src/Binding/Type.h
         src/AST/ASTStringifierVisitor.h src/utils/SourceManager.cpp src/utils/SourceManager.h
         src/Diagnostics/Diagnostics.def src/Diagnostics/Diagnostics.cpp src/Diagnostics/Diagnostics.h
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
-        src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h)
+        src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
+        src/Typing/TypeVisitor.h src/Binding/Symbol.cpp src/Binding/Symbol.h src/Binding/Scope.cpp src/Binding/Scope.h
+        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h)
 
 ##########################################
 #          END MISCELLANEOUS LIBRARIES

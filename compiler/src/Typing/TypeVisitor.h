@@ -16,27 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
+#ifndef COMPILER_TYPEVISITOR_H
+#define COMPILER_TYPEVISITOR_H
 
-#include "../Typing/Type.h"
-#include "nodes/VariableDeclaration.h"
-#include <memory>
+#include "Type.h"
 
-namespace Ceres::AST {
+namespace Ceres::Typing {
 
-    struct FunctionParameter {
-        Type *type;
-        std::string name;
-        VariableConstness constness;
+    class TypeVisitor {
+    public:
+        void visit(Type *type);
 
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
+        // Note: This visitor uses pointers instead of references due to the
+        //  unique nature of types. A type is uniquely represented by its
+        //  pointer value, due to caching.
 
-        FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
+        virtual void visitUnitVoidType(UnitVoidType *type) = 0;
+        virtual void visitUnresolvedType(UnresolvedType *type) = 0;
+        virtual void visitNotYetInferredType(NotYetInferredType *type) = 0;
+        virtual void visitPrimitiveScalarType(PrimitiveScalarType *type) = 0;
     };
 
-}// namespace Ceres::AST
+}// namespace Ceres::Typing
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+#endif//COMPILER_TYPEVISITOR_H

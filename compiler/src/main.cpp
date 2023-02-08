@@ -49,7 +49,7 @@ int main(int argc, const char *argv[]) {
     // Performs initialization and destruction on scope end
     Ceres::InitCeres ceres;
     llvm::InitLLVM X(argc, argv);
-
+    
     if (argc < 2) {
         std::cout << "Not enough arguments" << std::endl;
         std::cout << "Usage: '" << argv[0] << "' [filename]" << std::endl;

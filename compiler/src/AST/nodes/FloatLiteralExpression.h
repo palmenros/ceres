@@ -19,7 +19,7 @@
 #ifndef COMPILER_FLOATLITERALEXPRESSION_H
 #define COMPILER_FLOATLITERALEXPRESSION_H
 
-#include "../../Binding/Type.h"
+#include "../../Typing/Type.h"
 #include "Expression.h"
 #include <memory>
 #include <string>

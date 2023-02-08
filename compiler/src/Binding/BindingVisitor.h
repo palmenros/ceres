@@ -16,27 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
+#ifndef COMPILER_BINDINGVISITOR_H
+#define COMPILER_BINDINGVISITOR_H
 
-#include "../Typing/Type.h"
-#include "nodes/VariableDeclaration.h"
-#include <memory>
+#include "../AST/ASTVisitor.h"
 
-namespace Ceres::AST {
+namespace Ceres::Binding {
 
-    struct FunctionParameter {
-        Type *type;
-        std::string name;
-        VariableConstness constness;
+    using namespace AST;
 
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
-
-        FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
+    class BindingVisitor : public ASTVisitor {
+        // TODO: Override the needed visitor functions to perform the binding on the AST
     };
 
-}// namespace Ceres::AST
+}// namespace Ceres::Binding
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+#endif//COMPILER_BINDINGVISITOR_H

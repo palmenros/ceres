@@ -16,27 +16,28 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
+#ifndef COMPILER_SCOPE_H
+#define COMPILER_SCOPE_H
 
-#include "../Typing/Type.h"
-#include "nodes/VariableDeclaration.h"
-#include <memory>
+#include "Symbol.h"
+#include <string>
 
-namespace Ceres::AST {
+namespace Ceres::Binding {
 
-    struct FunctionParameter {
-        Type *type;
-        std::string name;
-        VariableConstness constness;
-
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
-
-        FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
+    // Abstract class representing a scope
+    class Scope {
+    public:
+        virtual std::string getScopeName() = 0;
+        virtual Scope *getEnclosingScope() = 0;
+        virtual void define(const Symbol &symbol) = 0;
+        virtual Symbol resolve(std::string_view name) = 0;
     };
 
-}// namespace Ceres::AST
+    class LocalScope : public Scope {
+    public:
+        // TODO: Implement Local Scope, etc.
+    };
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+}// namespace Ceres::Binding
+
+#endif//COMPILER_SCOPE_H

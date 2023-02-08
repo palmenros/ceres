@@ -17,8 +17,8 @@
  */
 
 #include "AntlrASTGeneratorVisitor.h"
-#include "../Binding/Type.h"
 #include "../Diagnostics/Diagnostics.h"
+#include "../Typing/Type.h"
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
 #include "CeresParser.h"

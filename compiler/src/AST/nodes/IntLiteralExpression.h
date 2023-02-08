@@ -19,7 +19,7 @@
 #ifndef COMPILER_INTLITERALEXPRESSION_H
 #define COMPILER_INTLITERALEXPRESSION_H
 
-#include "../../Binding/Type.h"
+#include "../../Typing/Type.h"
 #include "Expression.h"
 #include <memory>
 #include <string>

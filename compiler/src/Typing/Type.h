@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Pedro Palacios Almendros
+ * Copyright (C) 2023 Pedro Palacios Almendros, Ricardo Maurizio Paul
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,38 @@
 #define COMPILER_TYPE_H
 
 #include "../utils/log.hpp"
+#include "llvm/Support/Casting.h"
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 namespace Ceres {
+
+    namespace Typing {
+        class TypeVisitor;
+    }
+
+    // Note: Types are cached. There is only a unique instance per type. Types should have a private
+    // constructor and have a get() function that performs the cache lookup
     class Type {
     public:
+        /// Discriminator for LLVM-style RTTI (dyn_cast<> et al.)
+        // TODO: When adding a new type kind, you also have to add it here
+        enum class TypeKind {
+            UnitVoidType,
+            UnresolvedType,
+            NotYetInferredType,
+            PrimitiveScalarType
+        };
+
+    private:
+        const TypeKind kind;
+
+    public:
+        explicit Type(TypeKind kind) : kind(kind) {}
+        TypeKind getKind() const { return kind; }
+
+        virtual void accept(Typing::TypeVisitor &visitor) = 0;
         virtual std::string toString() const = 0;
         virtual ~Type() = default;
     };
@@ -33,11 +59,15 @@ namespace Ceres {
     class UnitVoidType : public Type {
     private:
         static std::unique_ptr<UnitVoidType> instance;
-        UnitVoidType() = default;
+        UnitVoidType() : Type(TypeKind::UnitVoidType) {}
+
+    public:
+        // Static function needed for fast LLVM RTTI
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::UnitVoidType; }
+        void accept(Typing::TypeVisitor &visitor) override;
 
     public:
         static UnitVoidType *get();
-
         std::string toString() const override;
     };
 
@@ -49,10 +79,16 @@ namespace Ceres {
         explicit UnresolvedType(std::string typeIdentifier);
 
     public:
+        // Static function needed for fast LLVM RTTI
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::UnresolvedType; }
+        void accept(Typing::TypeVisitor &visitor) override;
+
+    public:
         std::string typeIdentifier;
 
+        // TODO: Consider using std::string_view instead of std::string here and everywhere else
+        //          where it is appropriate.
         static UnresolvedType *get(const std::string &str);
-
         std::string toString() const override;
     };
 
@@ -68,7 +104,12 @@ namespace Ceres {
     class NotYetInferredType : public Type {
     private:
         static std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> instances;
-        explicit NotYetInferredType(NotYetInferredKind kind) : kind(kind) {}
+        explicit NotYetInferredType(NotYetInferredKind kind) : kind(kind), Type(TypeKind::NotYetInferredType) {}
+
+    public:
+        // Static function needed for fast LLVM RTTI
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::NotYetInferredType; }
+        void accept(Typing::TypeVisitor &visitor) override;
 
     public:
         NotYetInferredKind kind;
@@ -99,12 +140,17 @@ namespace Ceres {
         explicit PrimitiveScalarType(PrimitiveKind kind);
 
     public:
+        // Static function needed for fast LLVM RTTI
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::NotYetInferredType; }
+        void accept(Typing::TypeVisitor &visitor) override;
+
+    public:
         PrimitiveKind kind;
 
-        static PrimitiveKind primitiveKindFromString(const std::string &str);
+        static PrimitiveKind primitiveKindFromString(std::string_view str);
 
         static PrimitiveScalarType *get(PrimitiveKind kind);
-        static PrimitiveScalarType *get(const std::string &str);
+        static PrimitiveScalarType *get(std::string_view str);
         std::string toString() const override;
     };
 

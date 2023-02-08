@@ -16,27 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FUNCTIONPARAMETER_H
-#define COMPILER_FUNCTIONPARAMETER_H
+#ifndef COMPILER_SYMBOL_H
+#define COMPILER_SYMBOL_H
 
 #include "../Typing/Type.h"
-#include "nodes/VariableDeclaration.h"
-#include <memory>
+#include <string>
 
-namespace Ceres::AST {
+namespace Ceres::Binding {
 
-    struct FunctionParameter {
+    class Symbol {
+    public:
+        std::string_view name;
         Type *type;
-        std::string name;
-        VariableConstness constness;
-
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
-
-        FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
     };
 
-}// namespace Ceres::AST
+}// namespace Ceres::Binding
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+#endif//COMPILER_SYMBOL_H

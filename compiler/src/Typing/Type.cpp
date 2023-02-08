@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Pedro Palacios Almendros
+ * Copyright (C) 2023 Pedro Palacios Almendros, Ricardo Maurizio Paul
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "Type.h"
+#include "TypeVisitor.h"
 
 #include <utility>
 
@@ -39,10 +40,15 @@ namespace Ceres {
         instance.reset(new UnitVoidType);
         return instance.get();
     }
-    PrimitiveScalarType::PrimitiveScalarType(PrimitiveKind kind)
-        : kind(kind) {}
 
-    PrimitiveKind PrimitiveScalarType::primitiveKindFromString(const std::string &str) {
+    void UnitVoidType::accept(Typing::TypeVisitor &visitor) {
+        visitor.visitUnitVoidType(this);
+    }
+
+    PrimitiveScalarType::PrimitiveScalarType(PrimitiveKind kind)
+        : kind(kind), Type(TypeKind::PrimitiveScalarType) {}
+
+    PrimitiveKind PrimitiveScalarType::primitiveKindFromString(std::string_view str) {
         // TODO: Maybe change to a lookup into a static hashmap?
         if (str == "i8") {
             return PrimitiveKind::I8;
@@ -96,7 +102,7 @@ namespace Ceres {
         }
     }
 
-    PrimitiveScalarType *PrimitiveScalarType::get(const std::string &str) {
+    PrimitiveScalarType *PrimitiveScalarType::get(std::string_view str) {
         return get(primitiveKindFromString(str));
     }
 
@@ -107,6 +113,11 @@ namespace Ceres {
         }
         return ptr.get();
     }
+
+    void PrimitiveScalarType::accept(Typing::TypeVisitor &visitor) {
+        visitor.visitPrimitiveScalarType(this);
+    }
+
     std::string NotYetInferredType::toString() const {
         switch (kind) {
             case NotYetInferredKind::NumberLiteral:
@@ -117,6 +128,7 @@ namespace Ceres {
                 NOT_IMPLEMENTED();
         }
     }
+
     NotYetInferredType *NotYetInferredType::get(NotYetInferredKind kind) {
         auto &ptr = instances[kind];
         if (ptr == nullptr) {
@@ -125,16 +137,27 @@ namespace Ceres {
         return ptr.get();
     }
 
-    UnresolvedType::UnresolvedType(std::string typeIdentifier) : typeIdentifier(std::move(typeIdentifier)) {}
+    void NotYetInferredType::accept(Typing::TypeVisitor &visitor) {
+        visitor.visitNotYetInferredType(this);
+    }
+
+    UnresolvedType::UnresolvedType(std::string typeIdentifier)
+        : typeIdentifier(std::move(typeIdentifier)),
+          Type(TypeKind::UnresolvedType) {}
 
     std::string UnresolvedType::toString() const {
         return typeIdentifier;
     }
+
     UnresolvedType *UnresolvedType::get(const std::string &str) {
         auto &ptr = instances[str];
         if (ptr == nullptr) {
             ptr.reset(new UnresolvedType(str));
         }
         return ptr.get();
+    }
+
+    void UnresolvedType::accept(Typing::TypeVisitor &visitor) {
+        visitor.visitUnresolvedType(this);
     }
 }// namespace Ceres

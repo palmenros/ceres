@@ -19,7 +19,7 @@
 #ifndef COMPILER_FUNCTIONDEFINITION_H
 #define COMPILER_FUNCTIONDEFINITION_H
 
-#include "../../Binding/Type.h"
+#include "../../Typing/Type.h"
 #include "../FunctionParameter.h"
 #include "BlockStatement.h"
 #include "Node.h"
