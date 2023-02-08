@@ -243,7 +243,7 @@ namespace Ceres::AST {
         std::string paramsString;
         bool first = true;
         for (const auto &param: def.parameters) {
-            std::string paramString = fmt::format("{} {}: {}", param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type.toString());
+            std::string paramString = fmt::format("{} {}: {}", param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type->toString());
             if (first) {
                 first = false;
             } else {
@@ -295,38 +295,7 @@ namespace Ceres::AST {
                 NOT_IMPLEMENTED();
         }
 
-        std::string typeString;
-        switch (expr.type) {
-            case IntLiteralType::None:
-                typeString = "$UNKNOWN";
-                break;
-            case IntLiteralType::U8:
-                typeString = "u8";
-                break;
-            case IntLiteralType::U16:
-                typeString = "u16";
-                break;
-            case IntLiteralType::U32:
-                typeString = "u32";
-                break;
-            case IntLiteralType::U64:
-                typeString = "u64";
-                break;
-            case IntLiteralType::I8:
-                typeString = "i8";
-                break;
-            case IntLiteralType::I16:
-                typeString = "i16";
-                break;
-            case IntLiteralType::I32:
-                typeString = "i32";
-                break;
-            case IntLiteralType::I64:
-                typeString = "i64";
-                break;
-            default:
-                NOT_IMPLEMENTED();
-        }
+        std::string typeString = expr.type->toString();
 
         return fmt::format("(IntLiteralExpression base='{}' text='{}' type='{}')", baseString, expr.str, typeString);
     }

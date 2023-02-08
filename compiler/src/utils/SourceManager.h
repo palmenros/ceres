@@ -27,7 +27,7 @@ namespace Ceres {
     protected:
         SourceManager() = default;
 
-        static SourceManager *singletonInstance;
+        static std::unique_ptr<SourceManager> singletonInstance;
 
     public:
         llvm::SourceMgr sourceMgr;

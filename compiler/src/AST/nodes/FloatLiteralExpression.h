@@ -19,7 +19,9 @@
 #ifndef COMPILER_FLOATLITERALEXPRESSION_H
 #define COMPILER_FLOATLITERALEXPRESSION_H
 
+#include "../../Binding/Type.h"
 #include "Expression.h"
+#include <memory>
 #include <string>
 
 namespace Ceres::AST {
@@ -29,25 +31,17 @@ namespace Ceres::AST {
         Hex
     };
 
-    enum class FloatLiteralType {
-        None,
-        F32,
-        F64
-    };
-
     class FloatLiteralExpression : public Expression {
     public:
         FloatLiteralBase base;
 
-        FloatLiteralType type;
+        Type *type;
 
         // String containing the integer literal in base "base" without the introducer characters for the base
         // and the type. For example: 0xfc783u32 -> fc783
         std::string str;
 
-        FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, FloatLiteralType type, std::string str);
-
-        static FloatLiteralType stringToFloatLiteralType(const std::string &str);
+        FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, Type *type, std::string str);
 
         void accept(AbstractASTVisitor &visitor) override;
 

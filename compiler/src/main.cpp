@@ -36,6 +36,7 @@
 #include "AST/nodes/CompilationUnit.h"
 #include "Diagnostics/Diagnostics.h"
 #include "Diagnostics/ParserErrorListener.h"
+#include "utils/InitCeres.h"
 #include "utils/SourceManager.h"
 #include "utils/log.hpp"
 
@@ -45,8 +46,9 @@ using namespace Ceres;
 
 
 int main(int argc, const char *argv[]) {
+    // Performs initialization and destruction on scope end
+    Ceres::InitCeres ceres;
     llvm::InitLLVM X(argc, argv);
-    Log::setupLogging();
 
     if (argc < 2) {
         std::cout << "Not enough arguments" << std::endl;
@@ -83,7 +85,7 @@ int main(int argc, const char *argv[]) {
 
         AST::ASTStringifierVisitor stringifierVisitor;
         auto str = stringifierVisitor.visit(*AST);
-        //        Log::info("AST: {}", str);
+        Log::info("AST: {}", str);
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def) override {

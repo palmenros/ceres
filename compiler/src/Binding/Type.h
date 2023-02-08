@@ -21,46 +21,60 @@
 
 #include "../utils/log.hpp"
 #include <string>
+#include <unordered_map>
 
-namespace Ceres::AST {
+namespace Ceres {
     class Type {
-    protected:
-        // Type name. Can be the empty string if no type has been provided.
-        // std::string name;
-
-        // Called by the AST generator to create a type with an specified (non-empty name)
-        // explicit Type(std::string name);
-
-        // Called by the AST generator to create a type when none has been given by the user
-        // static Type createUnspecifiedType();
-
-        virtual std::string toString();
-    };
-
-    class Unit : Type {
     public:
-        std::string toString() override {
-            return "Unit";
-        }
+        virtual std::string toString() const = 0;
+        virtual ~Type() = default;
     };
 
-    enum class UnresolvedKind {
-        NumberLiteral
+    class UnitVoidType : public Type {
+    private:
+        static std::unique_ptr<UnitVoidType> instance;
+        UnitVoidType() = default;
+
+    public:
+        static UnitVoidType *get();
+
+        std::string toString() const override;
     };
 
-    class Unresolved : Type {
-        UnresolvedKind kind;
+    // UnresolvedType is a type that hasn't been resolved yet. For example, it is a user-created type
+    //  and we haven't run yet type-binding, so we don't have fully resolved this type.
+    class UnresolvedType : public Type {
+    private:
+        static std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> instances;
+        explicit UnresolvedType(std::string typeIdentifier);
 
-        Unresolved(UnresolvedKind kind) : kind(kind) {}
+    public:
+        std::string typeIdentifier;
 
-        std::string toString() override {
-            switch (kind) {
-                case UnresolvedKind::NumberLiteral:
-                    return "numberLit";
-                default:
-                    Log::panic("Wot???");
-            }
-        }
+        static UnresolvedType *get(const std::string &str);
+
+        std::string toString() const override;
+    };
+
+    // NotYetInferredKind is a type that hasn't been inferred yet and has not been specified by the user
+    // Examples:
+    //      Number literal without a specified type
+    //      Variable declaration without a user-specified type
+    enum class NotYetInferredKind {
+        NumberLiteral,     // Number literal without a specified type such as '2' instead of '2u32'
+        VariableDeclaration// Variable declaration without a specified type such as 'const i = 1u32';
+    };
+
+    class NotYetInferredType : public Type {
+    private:
+        static std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> instances;
+        explicit NotYetInferredType(NotYetInferredKind kind) : kind(kind) {}
+
+    public:
+        NotYetInferredKind kind;
+
+        static NotYetInferredType *get(NotYetInferredKind kind);
+        std::string toString() const override;
     };
 
     enum class PrimitiveKind {
@@ -79,65 +93,22 @@ namespace Ceres::AST {
         F64,
     };
 
-    class Primitive : Type {
+    class PrimitiveScalarType : public Type {
+    private:
+        static std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>> instances;
+        explicit PrimitiveScalarType(PrimitiveKind kind);
+
     public:
         PrimitiveKind kind;
 
-        Primitive(const std::string &str) {
-            if (str == "i8") {
-                kind = PrimitiveKind::I8;
-            } else if (str == "u8") {
-                kind = PrimitiveKind::U8;
-            } else if (str == "i16") {
-                kind = PrimitiveKind::I16;
-            } else if (str == "u16") {
-                kind = PrimitiveKind::U16;
-            } else if (str == "i32") {
-                kind = PrimitiveKind::I32;
-            } else if (str == "u32") {
-                kind = PrimitiveKind::U32;
-            } else if (str == "i64") {
-                kind = PrimitiveKind::I64;
-            } else if (str == "u64") {
-                kind = PrimitiveKind::U64;
-            } else if (str == "f32") {
-                kind = PrimitiveKind::F32;
-            } else if (str == "f64") {
-                kind = PrimitiveKind::F64;
-            } else {
-                Log::panic("Unknown type");
-            }
-        }
+        static PrimitiveKind primitiveKindFromString(const std::string &str);
 
-        std::string toString() override {
-            switch (kind) {
-                case PrimitiveKind::I8:
-                    return "i8";
-                case PrimitiveKind::U8:
-                    return "u8";
-                case PrimitiveKind::I16:
-                    return "i16";
-                case PrimitiveKind::U16:
-                    return "u16";
-                case PrimitiveKind::I32:
-                    return "i32";
-                case PrimitiveKind::U32:
-                    return "u32";
-                case PrimitiveKind::I64:
-                    return "i64";
-                case PrimitiveKind::U64:
-                    return "u64";
-                case PrimitiveKind::F32:
-                    return "f32";
-                case PrimitiveKind::F64:
-                    return "f64";
-                default:
-                    Log::panic("Wot???");
-            }
-        }
+        static PrimitiveScalarType *get(PrimitiveKind kind);
+        static PrimitiveScalarType *get(const std::string &str);
+        std::string toString() const override;
     };
 
 
-}// namespace Ceres::AST
+}// namespace Ceres
 
 #endif//COMPILER_TYPE_H

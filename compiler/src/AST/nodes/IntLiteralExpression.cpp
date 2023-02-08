@@ -22,29 +22,8 @@
 
 namespace Ceres::AST {
 
-    IntLiteralExpression::IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type,
+    IntLiteralExpression::IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type,
                                                std::string str) : Expression(sourceSpan), base(base), type(type), str(std::move(str)) {}
-
-    IntLiteralType IntLiteralExpression::stringToIntLiteralType(const std::string &str) {
-
-        static const std::unordered_map<std::string, IntLiteralType> intLiteralStrings{
-                {"u8", IntLiteralType::U8},
-                {"u16", IntLiteralType::U16},
-                {"u32", IntLiteralType::U32},
-                {"u64", IntLiteralType::U64},
-                {"i8", IntLiteralType::I8},
-                {"i16", IntLiteralType::I16},
-                {"i32", IntLiteralType::I32},
-                {"i64", IntLiteralType::I64},
-        };
-
-        auto it = intLiteralStrings.find(str);
-        if (it == intLiteralStrings.end()) {
-            return IntLiteralType::None;
-        }
-
-        return it->second;
-    }
 
     void IntLiteralExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitIntLiteralExpression(*this);

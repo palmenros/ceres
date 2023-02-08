@@ -19,7 +19,9 @@
 #ifndef COMPILER_INTLITERALEXPRESSION_H
 #define COMPILER_INTLITERALEXPRESSION_H
 
+#include "../../Binding/Type.h"
 #include "Expression.h"
+#include <memory>
 #include <string>
 
 namespace Ceres::AST {
@@ -31,31 +33,16 @@ namespace Ceres::AST {
         Bin
     };
 
-    enum class IntLiteralType {
-        None,
-        U8,
-        U16,
-        U32,
-        U64,
-        I8,
-        I16,
-        I32,
-        I64
-    };
-
     class IntLiteralExpression : public Expression {
     public:
         IntLiteralBase base;
-
-        IntLiteralType type;
+        Type *type;
 
         // String containing the integer literal in base "base" without the introducer characters for the base
         // and the type. For example: 0xfc783u32 -> fc783
         std::string str;
 
-        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, IntLiteralType type, std::string str);
-
-        static IntLiteralType stringToIntLiteralType(const std::string &str);
+        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type, std::string str);
 
         void accept(AbstractASTVisitor &visitor) override;
 

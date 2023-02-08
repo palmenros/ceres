@@ -16,13 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef DIAG
-#define DIAG(identifier, severity, formatString)
-#endif
+#ifndef COMPILER_INITCERES_H
+#define COMPILER_INITCERES_H
 
-// Severity can be one of the following: {Error, Note, Warning, Remark}
+namespace Ceres {
 
-DIAG(parse_error, Error, "{}")
-DIAG(unknown_type, Error, "unknown type '{}'")
+    // The purpose of this class is to perform initialization and destruction
+    // actions for the Ceres compiler
+    class InitCeres {
+    public:
+        InitCeres();
+        ~InitCeres();
 
-#undef DIAG
+        // Delete assignment operator
+        InitCeres &operator=(const InitCeres &) = delete;
+        InitCeres(const InitCeres &) = delete;
+
+        // Delete move assignment operator
+        InitCeres(InitCeres &&) = delete;
+        InitCeres &operator=(InitCeres &&) = delete;
+    };
+
+}// namespace Ceres
+
+#endif//COMPILER_INITCERES_H

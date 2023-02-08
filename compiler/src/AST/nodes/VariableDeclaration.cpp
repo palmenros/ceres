@@ -28,11 +28,11 @@ namespace Ceres::AST {
                                              std::unique_ptr<Expression> &&initializerExpression,
                                              VariableVisibility visibility, VariableConstness constness,
                                              VariableScope scope,
-                                             Type type, std::string identifier,
+                                             Type *type, std::string identifier,
                                              const SourceSpan &typeSourceSpan,
                                              const SourceSpan &identifierSourceSpan)
         : Statement(sourceSpan), initializerExpression(std::move(initializerExpression)), visibility(visibility),
-          constness(constness), type(std::move(type)), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
+          constness(constness), type(type), identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
           identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
 

@@ -19,8 +19,8 @@
 #ifndef COMPILER_FUNCTIONDEFINITION_H
 #define COMPILER_FUNCTIONDEFINITION_H
 
-#include "../FunctionParameter.h"
 #include "../../Binding/Type.h"
+#include "../FunctionParameter.h"
 #include "BlockStatement.h"
 #include "Node.h"
 #include <memory>
@@ -39,15 +39,15 @@ namespace Ceres::AST {
         FunctionVisibility visibility;
         std::string functionName;
         std::vector<FunctionParameter> parameters;
-        Type returnType;
+        Type *returnType;
         std::unique_ptr<BlockStatement> block;
 
         SourceSpan returnTypeSpan;
         SourceSpan functionNameSpan;
 
         FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
-                           std::string functionName, std::vector<FunctionParameter> parameters,
-                           Type returnType, std::unique_ptr<BlockStatement> &&block,
+                           std::string functionName, std::vector<FunctionParameter> &&parameters,
+                           Type *returnType, std::unique_ptr<BlockStatement> &&block,
                            const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan);
 
         void accept(AbstractASTVisitor &visitor) override;

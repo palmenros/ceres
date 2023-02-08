@@ -22,13 +22,13 @@
 
 namespace Ceres {
 
-    SourceManager *SourceManager::singletonInstance = nullptr;
+    std::unique_ptr<SourceManager> SourceManager::singletonInstance = nullptr;
 
     SourceManager &SourceManager::get() {
         if (singletonInstance != nullptr) {
             return *singletonInstance;
         }
-        singletonInstance = new SourceManager();
+        singletonInstance.reset(new SourceManager);
         return *singletonInstance;
     }
 

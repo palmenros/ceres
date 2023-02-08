@@ -17,10 +17,11 @@
  */
 
 #include "AntlrASTGeneratorVisitor.h"
+#include "../Binding/Type.h"
+#include "../Diagnostics/Diagnostics.h"
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
 #include "CeresParser.h"
-#include "../Binding/Type.h"
 #include "nodes/AssignmentExpression.h"
 #include "nodes/BinaryOperationExpression.h"
 #include "nodes/BlockStatement.h"
@@ -41,6 +42,7 @@
 #include "nodes/VariableDeclaration.h"
 #include "nodes/VariableDeclarationStatement.h"
 #include "nodes/WhileStatement.h"
+#include <memory>
 #include <optional>
 
 using namespace antlrgenerated;
@@ -76,7 +78,6 @@ namespace Ceres::AST {
         }
 
         return tree->accept(this);
-        ;
     }
 
     std::any AntlrASTGeneratorVisitor::visitTerminal(antlr4::tree::TerminalNode *node) {
@@ -196,8 +197,6 @@ namespace Ceres::AST {
         checkException(*ctx);
 
         FunctionVisibility visibility = FunctionVisibility::Private;
-        Type returnType = Type::createUnspecifiedType();
-        std::vector<FunctionParameter> parameters;
 
         if (ctx->PUB() != nullptr) {
             visibility = FunctionVisibility::Public;
@@ -208,20 +207,28 @@ namespace Ceres::AST {
         SourceSpan returnTypeSourceSpan = SourceSpan::createInvalidSpan();
 
         auto function_name = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+        Type *returnType;
 
         if (ctx->type() != nullptr) {
-            returnType = std::any_cast<Type>(visit(ctx->type()));
+            returnType = std::any_cast<Type *>(visit(ctx->type()));
             returnTypeSourceSpan = getSourceSpan(*ctx->type());
+        } else {
+            returnType = UnitVoidType::get();
         }
+
+        std::vector<FunctionParameter> parameters;
 
         if (ctx->formalParameters() != nullptr) {
             parameters = std::any_cast<std::vector<FunctionParameter>>(visit(ctx->formalParameters()));
         }
 
         auto statement = std::any_cast<Statement *>(visit(ctx->block()));
+
+        // TODO: Remove all dynamic_cast by using an LLVM-like RTTI. Maybe check casts only in debug, as they
+        //          should always be correct.
         auto block = std::unique_ptr<BlockStatement>(dynamic_cast<BlockStatement *>(statement));
 
-        return new FunctionDefinition(getSourceSpan(*ctx), visibility, function_name, parameters,
+        return new FunctionDefinition(getSourceSpan(*ctx), visibility, function_name, std::move(parameters),
                                       returnType, std::move(block), returnTypeSourceSpan, identifierSourceSpan);
     }
 
@@ -253,7 +260,7 @@ namespace Ceres::AST {
         ASSERT(ctx->IDENTIFIER() != nullptr);
         ASSERT(ctx->type() != nullptr);
 
-        Type type = std::any_cast<Type>(visit(ctx->type()));
+        Type *type = std::any_cast<Type *>(visit(ctx->type()));
 
         if (ctx->VAR() != nullptr) {
             constness = VariableConstness::NonConst;
@@ -291,18 +298,15 @@ namespace Ceres::AST {
         ASSERT(ctx != nullptr);
         checkException(*ctx);
 
-        std::string type_text;
         if (ctx->IDENTIFIER() != nullptr) {
-            type_text = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
+            return static_cast<Type *>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
         } else if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
-            type_text = std::any_cast<std::string>(visit(ctx->INTEGER_LITERAL_SUFFIX()));
+            return static_cast<Type *>(PrimitiveScalarType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
         } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
-            type_text = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL_SUFFIX()));
+            return static_cast<Type *>(PrimitiveScalarType::get(ctx->FLOAT_LITERAL_SUFFIX()->toString()));
         } else {
             NOT_IMPLEMENTED();
         }
-
-        return Type{type_text};
     }
 
     std::any AntlrASTGeneratorVisitor::visitVarDeclaration(CeresParser::VarDeclarationContext *ctx) {
@@ -325,18 +329,20 @@ namespace Ceres::AST {
             NOT_IMPLEMENTED();
         }
 
-        Type type = Type::createUnspecifiedType();
+        Type *type;
         SourceSpan typeSourceSpan = SourceSpan::createInvalidSpan();
         if (ctx->type() != nullptr) {
-            type = std::any_cast<Type>(visit(ctx->type()));
+            type = std::any_cast<Type *>(visit(ctx->type()));
             typeSourceSpan = getSourceSpan(*ctx->type());
+        } else {
+            type = NotYetInferredType::get(NotYetInferredKind::VariableDeclaration);
         }
 
         auto var_name = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
 
         return new VariableDeclaration(getSourceSpan(*ctx), std::move(initializer_expression),
                                        VariableVisibility::Private,
-                                       constness, VariableScope::Local, std::move(type), var_name,
+                                       constness, VariableScope::Local, type, var_name,
                                        typeSourceSpan,
                                        getSourceSpan(*ctx->IDENTIFIER()));
     }
@@ -712,11 +718,12 @@ namespace Ceres::AST {
         ASSERT(ctx != nullptr);
         checkException(*ctx);
 
-        IntLiteralType type = IntLiteralType::None;
+        Type *type;
         if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
             auto suffix = std::any_cast<std::string>(visit(ctx->INTEGER_LITERAL_SUFFIX()));
-            type = IntLiteralExpression::stringToIntLiteralType(suffix);
-            ASSERT(type != IntLiteralType::None);
+            type = PrimitiveScalarType::get(suffix);
+        } else {
+            type = NotYetInferredType::get(NotYetInferredKind::NumberLiteral);
         }
 
         IntLiteralBase base;
@@ -745,11 +752,12 @@ namespace Ceres::AST {
         ASSERT(ctx != nullptr);
         checkException(*ctx);
 
-        FloatLiteralType type = FloatLiteralType::None;
+        Type *type;
         if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
             auto suffix = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL_SUFFIX()));
-            type = FloatLiteralExpression::stringToFloatLiteralType(suffix);
-            ASSERT(type != FloatLiteralType::None);
+            type = PrimitiveScalarType::get(suffix);
+        } else {
+            type = NotYetInferredType::get(NotYetInferredKind::NumberLiteral);
         }
 
         FloatLiteralBase base;

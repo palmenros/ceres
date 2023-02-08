@@ -16,13 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef DIAG
-#define DIAG(identifier, severity, formatString)
-#endif
+#include "InitCeres.h"
+#include "log.hpp"
 
-// Severity can be one of the following: {Error, Note, Warning, Remark}
+namespace Ceres {
 
-DIAG(parse_error, Error, "{}")
-DIAG(unknown_type, Error, "unknown type '{}'")
+    InitCeres::InitCeres() {
+        Log::setupLogging();
+    }
 
-#undef DIAG
+    InitCeres::~InitCeres() {
+        // Add destruction here
+    }
+}// namespace Ceres

@@ -48,7 +48,7 @@ namespace Ceres::AST {
         VariableConstness constness;
         VariableScope scope;
 
-        Type type;
+        Type *type;
         std::string identifier;
 
         SourceSpan typeSourceSpan;
@@ -61,7 +61,7 @@ namespace Ceres::AST {
         VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
                             std::unique_ptr<Expression> &&initializerExpression,
                             VariableVisibility visibility, VariableConstness constness, VariableScope scope,
-                            Type type, std::string identifier, const SourceSpan &typeSourceSpan,
+                            Type *type, std::string identifier, const SourceSpan &typeSourceSpan,
                             const SourceSpan &identifierSourceSpan);
 
         void accept(AbstractASTVisitor &visitor) override;

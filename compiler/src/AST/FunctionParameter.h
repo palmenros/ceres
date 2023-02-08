@@ -21,18 +21,19 @@
 
 #include "../Binding/Type.h"
 #include "nodes/VariableDeclaration.h"
+#include <memory>
 
 namespace Ceres::AST {
 
     struct FunctionParameter {
-        Type type;
+        Type *type;
         std::string name;
         VariableConstness constness;
 
         SourceSpan typeSourceSpan;
         SourceSpan parameterNameSourceSpan;
 
-        FunctionParameter(Type type, std::string name, VariableConstness constness,
+        FunctionParameter(Type *type, std::string name, VariableConstness constness,
                           SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
     };
 
