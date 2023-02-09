@@ -26,6 +26,8 @@ fn gcd(a: i32, b: i32) i32 {
     if b > a {
         max = b;
         min = a;
+    } else {
+        max = b;
     }
 
     if min == 0 {

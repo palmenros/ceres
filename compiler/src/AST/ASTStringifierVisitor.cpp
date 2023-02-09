@@ -19,130 +19,128 @@
 #include "ASTStringifierVisitor.h"
 #include "../utils/log.hpp"
 #include "spdlog/fmt/fmt.h"
+#include <iterator>
 
 namespace Ceres::AST {
     std::string ASTStringifierVisitor::doVisitAssignmentExpression(AssignmentExpression &expr) {
-        std::string opStr = "";
-
+        std::string opStr;
 
         if (!expr.binaryOp.has_value()) {
-            opStr += "=";
+            opStr = "=";
         } else {
             switch (expr.binaryOp.value()) {
                 case BinaryOp::Mult:
-                    opStr += "*=";
+                    opStr = "*=";
                     break;
                 case BinaryOp::Div:
-                    opStr += "/=";
+                    opStr = "/=";
                     break;
                 case BinaryOp::Modulo:
-                    opStr += "%=";
+                    opStr = "%=";
                     break;
                 case BinaryOp::Sum:
-                    opStr += "+=";
+                    opStr = "+=";
                     break;
                 case BinaryOp::Subtraction:
-                    opStr += "-=";
+                    opStr = "-=";
                     break;
                 case BinaryOp::BitshiftLeft:
-                    opStr += "<<=";
+                    opStr = "<<=";
                     break;
                 case BinaryOp::BitshiftRight:
-                    opStr += ">>=";
+                    opStr = ">>=";
                     break;
                 case BinaryOp::BitwiseAnd:
-                    opStr += "&=";
+                    opStr = "&=";
                     break;
                 case BinaryOp::BitwiseOr:
-                    opStr += "|=";
+                    opStr = "|=";
                     break;
                 case BinaryOp::BitwiseXor:
-                    opStr += "^=";
+                    opStr = "^=";
                     break;
                 default:
                     NOT_IMPLEMENTED();
             }
         }
 
-        return fmt::format("(AssignmentExpression BinOp='{}' LHS='{}' RHS={})",
+        return fmt::format("(AssignmentExpression op='{}' lhs='{}' rhs={})",
                            opStr,
                            expr.identifierLHS,
                            visit(*expr.expressionRHS));
     }
 
     std::string ASTStringifierVisitor::doVisitBinaryOperationExpression(BinaryOperationExpression &expr) {
-        std::string opStr = "";
+        std::string opStr;
 
         switch (expr.op) {
             case BinaryOp::Mult:
-                opStr += "*";
+                opStr = "*";
                 break;
             case BinaryOp::Div:
-                opStr += "/";
+                opStr = "/";
                 break;
             case BinaryOp::Modulo:
-                opStr += "%";
+                opStr = "%";
                 break;
             case BinaryOp::Sum:
-                opStr += "+";
+                opStr = "+";
                 break;
             case BinaryOp::Subtraction:
-                opStr += "-";
+                opStr = "-";
                 break;
             case BinaryOp::BitshiftLeft:
-                opStr += "<<";
+                opStr = "<<";
                 break;
             case BinaryOp::BitshiftRight:
-                opStr += ">>";
+                opStr = ">>";
                 break;
             case BinaryOp::LessOrEqual:
-                opStr += "<=";
+                opStr = "<=";
                 break;
             case BinaryOp::GreaterOrEqual:
-                opStr += ">=";
+                opStr = ">=";
                 break;
             case BinaryOp::GreaterThan:
-                opStr += ">";
+                opStr = ">";
                 break;
             case BinaryOp::LessThan:
-                opStr += "<";
+                opStr = "<";
                 break;
             case BinaryOp::BitwiseAnd:
-                opStr += "&";
+                opStr = "&";
                 break;
             case BinaryOp::BitwiseOr:
-                opStr += "|";
+                opStr = "|";
                 break;
             case BinaryOp::BitwiseXor:
-                opStr += "^";
+                opStr = "^";
                 break;
             case BinaryOp::Equals:
-                opStr += "==";
+                opStr = "==";
                 break;
             case BinaryOp::NotEquals:
-                opStr += "!=";
+                opStr = "!=";
                 break;
             case BinaryOp::LogicalAnd:
-                opStr += "&&";
+                opStr = "&&";
                 break;
             case BinaryOp::LogicalOr:
-                opStr += "||";
+                opStr = "||";
                 break;
             default:
                 NOT_IMPLEMENTED();
                 break;
         }
 
-
-        return fmt::format("(BinaryExpression BinOp='{}' LHS='{}' RHS={})",
+        return fmt::format("(BinaryExpression BinOp='{}' lhs='{}' rhs={})",
                            opStr,
                            visit(*expr.left),
                            visit(*expr.right));
     }
 
     std::string ASTStringifierVisitor::doVisitBlockStatement(BlockStatement &block) {
-        std::string res = "(Block ";
-
+        std::string res;
         bool first = true;
 
         for (const auto &stm: block.statements) {
@@ -154,7 +152,7 @@ namespace Ceres::AST {
             res += visit(*stm);
         }
 
-        return res + ")";
+        return fmt::format("(Block '{}')", res);
     }
 
     std::string ASTStringifierVisitor::doVisitBoolLiteral(BoolLiteral &lit) {
@@ -176,7 +174,7 @@ namespace Ceres::AST {
     }
 
     std::string ASTStringifierVisitor::doVisitCompilationUnit(CompilationUnit &unit) {
-        std::string res = "(CompilationUnit ";
+        std::string res;
         bool first = true;
         for (auto &childPtr: unit.getChildren()) {
             if (first) {
@@ -186,11 +184,11 @@ namespace Ceres::AST {
             }
             res += visit(*childPtr);
         }
-        return res + ")";
+        return fmt::format("(CompilationUnit '{}')", res);
     }
 
     std::string ASTStringifierVisitor::doVisitExpressionStatement(ExpressionStatement &stm) {
-        return fmt::format("(ExpressionStatement {})", visit(*stm.expression));
+        return fmt::format("(ExpressionStatement '{}')", visit(*stm.expression));
     }
 
     std::string ASTStringifierVisitor::doVisitFloatLiteralExpression(FloatLiteralExpression &expr) {
@@ -205,23 +203,38 @@ namespace Ceres::AST {
             default:
                 NOT_IMPLEMENTED();
         }
+
         return fmt::format("(FloatLiteral base='{}' str='{}')", baseString, expr.str);
     }
 
     std::string ASTStringifierVisitor::doVisitForStatement(ForStatement &stm) {
-        std::string res = "(ForStatement [";
-        bool first = true;
+        std::string res;
 
-        for (const auto &stm: stm.getChildren()) {
-            if (first) {
-                first = false;
-            } else {
-                res += " ";
-            }
-            res += visit(*stm);
+        if (stm.maybeInitDeclaration != nullptr) {
+            res += " decl='";
+            res += visit(*stm.maybeInitDeclaration);
+            res += "'";
         }
 
-        return res + "])";
+        if (stm.maybeInitExpression != nullptr) {
+            res += " expr='";
+            res += visit(*stm.maybeInitExpression);
+            res += "'";
+        }
+
+        if (stm.maybeConditionExpr != nullptr) {
+            res += " cond='";
+            res += visit(*stm.maybeConditionExpr);
+            res += "'";
+        }
+
+        if (stm.maybeUpdateExpr != nullptr) {
+            res += " update='";
+            res += visit(*stm.maybeUpdateExpr);
+            res += "'";
+        }
+
+        return fmt::format("(ForStatement{} body='{}')", res, visit(*stm.body));
     }
 
     std::string ASTStringifierVisitor::doVisitFunctionCallExpression(FunctionCallExpression &expr) {
@@ -236,7 +249,7 @@ namespace Ceres::AST {
             args += visit(*arg);
         }
 
-        return fmt::format("(FunctionCallExpression function_name='{}' args=[{}])", expr.functionIdentifier, args);
+        return fmt::format("(FunctionCallExpression id='{}' args='{}')", expr.functionIdentifier, args);
     }
 
     std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition &def) {
@@ -252,7 +265,7 @@ namespace Ceres::AST {
             paramsString += paramString;
         }
 
-        return fmt::format("(FunctionDefinition name='{}', params='{}' {})", def.functionName, paramsString, visit(*def.block));
+        return fmt::format("(FunctionDefinition id='{}', params='{}' body='{}')", def.functionName, paramsString, visit(*def.block));
     }
 
     std::string ASTStringifierVisitor::doVisitIdentifierExpression(IdentifierExpression &expr) {
@@ -260,24 +273,16 @@ namespace Ceres::AST {
     }
 
     std::string ASTStringifierVisitor::doVisitIfStatement(IfStatement &stm) {
-        std::string res = "(IfStatement [";
-        bool first = true;
-
-        for (const auto &stm: stm.getChildren()) {
-            if (first) {
-                first = false;
-            } else {
-                res += " ";
-            }
-            res += visit(*stm);
+        if (stm.maybeElseStatement != nullptr) {
+            return fmt::format("(IfStatement cond='{}' body='{}' else='{}')", visit(*stm.condition), visit(*stm.thenBlock), visit(*stm.maybeElseStatement));
         }
 
-        return res + "])";
+        return fmt::format("(IfStatement cond='{}' body='{}')", visit(*stm.condition), visit(*stm.thenBlock));
     }
 
     std::string ASTStringifierVisitor::doVisitIntLiteralExpression(IntLiteralExpression &expr) {
         std::string baseString;
-        // TODO: move to class toString?
+
         switch (expr.base) {
             case IntLiteralBase::Dec:
                 baseString = "dec";
@@ -301,14 +306,14 @@ namespace Ceres::AST {
     }
 
     std::string ASTStringifierVisitor::doVisitPostfixExpression(PostfixExpression &expr) {
-        std::string opStr = "";
+        std::string opStr;
 
         switch (expr.op) {
             case PostfixOp::PostfixIncrement:
-                opStr += "++";
+                opStr = "++";
                 break;
             case PostfixOp::PostfixDecrement:
-                opStr += "--";
+                opStr = "--";
                 break;
         }
 
@@ -316,26 +321,26 @@ namespace Ceres::AST {
     }
 
     std::string ASTStringifierVisitor::doVisitPrefixExpression(PrefixExpression &expr) {
-        std::string opStr = "";
+        std::string opStr;
 
         switch (expr.op) {
             case PrefixOp::PrefixIncrement:
-                opStr += "++";
+                opStr = "++";
                 break;
             case PrefixOp::PrefixDecrement:
-                opStr += "--";
+                opStr = "--";
                 break;
             case PrefixOp::UnaryPlus:
-                opStr += "+";
+                opStr = "+";
                 break;
             case PrefixOp::UnaryMinus:
-                opStr += "-";
+                opStr = "-";
                 break;
             case PrefixOp::UnaryLogicalNot:
-                opStr += "!";
+                opStr = "!";
                 break;
             case PrefixOp::UnaryBitwiseNot:
-                opStr += "~";
+                opStr = "~";
                 break;
         }
 
@@ -348,51 +353,22 @@ namespace Ceres::AST {
     }
 
     std::string ASTStringifierVisitor::doVisitVariableDeclaration(VariableDeclaration &decl) {
-        std::string res = "(VariableDeclaration [";
-        bool first = true;
+        std::string vis = decl.visibility == VariableVisibility::Private ? "private" : "public";
+        std::string scope = decl.scope == VariableScope::Local ? "local" : "global";
+        std::string constn = decl.constness == VariableConstness::Const ? "const" : "var";
 
-        for (const auto &stm: decl.getChildren()) {
-            if (first) {
-                first = false;
-            } else {
-                res += " ";
-            }
-            res += visit(*stm);
+        if (decl.initializerExpression != nullptr) {
+            return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' id='{}' expr='{}')", vis, scope, constn, decl.type->toString(), decl.identifier, visit(*decl.initializerExpression));
         }
 
-        return res + "])";
+        return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' id='{}')", vis, scope, constn, decl.type->toString(), decl.identifier);
     }
 
     std::string ASTStringifierVisitor::doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) {
-        std::string res = "(VariableDeclarationStatement [";
-        bool first = true;
-
-        for (const auto &stm: stm.getChildren()) {
-            if (first) {
-                first = false;
-            } else {
-                res += " ";
-            }
-            res += visit(*stm);
-        }
-
-        return res + "])";
+        return fmt::format("(VariableDeclarationStatement '{}')", visit(*stm.variableDeclaration));
     }
 
     std::string ASTStringifierVisitor::doVisitWhileStatement(WhileStatement &stm) {
-        std::string res = "(WhileStatement [";
-        bool first = true;
-
-        for (const auto &stm: stm.getChildren()) {
-            if (first) {
-                first = false;
-            } else {
-                res += " ";
-            }
-            res += visit(*stm);
-        }
-
-        return res + "])";
+        return fmt::format("(WhileStatement cond='{}' body='{}')", visit(*stm.condition), visit(*stm.body));
     }
-
 }// namespace Ceres::AST
