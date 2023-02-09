@@ -25,6 +25,11 @@ namespace Ceres::Binding {
 
     using namespace AST;
 
+    // TODO: The binding visitor is only the first pass of the binding. It should embed all the
+    //          the declarations in the necessary scopes so the second pass (that I think can and
+    //          should be combined with type-inference and type-checking) can reference the scopes for
+    //          the needed symbols.
+
     class BindingVisitor : public ASTVisitor {
         // TODO: Override the needed visitor functions to perform the binding on the AST
     };

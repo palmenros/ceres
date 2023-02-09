@@ -19,7 +19,7 @@
 #ifndef COMPILER_SCOPE_H
 #define COMPILER_SCOPE_H
 
-#include "Symbol.h"
+#include "SymbolDeclaration.h"
 #include <string>
 
 namespace Ceres::Binding {
@@ -29,10 +29,12 @@ namespace Ceres::Binding {
     public:
         virtual std::string getScopeName() = 0;
         virtual Scope *getEnclosingScope() = 0;
-        virtual void define(const Symbol &symbol) = 0;
-        virtual Symbol resolve(std::string_view name) = 0;
+        virtual void define(const SymbolDeclaration &symbol) = 0;
+        virtual SymbolDeclaration resolve(const std::string &name) = 0;
     };
 
+    // TODO: Maybe GlobalScope can also be implemented as a LocalScope so rename it.
+    //          We will however need different scopes for structs, enums, etc.
     class LocalScope : public Scope {
     public:
         // TODO: Implement Local Scope, etc.

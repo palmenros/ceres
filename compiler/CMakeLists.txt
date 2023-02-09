@@ -54,7 +54,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/Diagnostics/Diagnostics.def src/Diagnostics/Diagnostics.cpp src/Diagnostics/Diagnostics.h
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
         src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
-        src/Typing/TypeVisitor.h src/Binding/Symbol.cpp src/Binding/Symbol.h src/Binding/Scope.cpp src/Binding/Scope.h
+        src/Typing/TypeVisitor.h src/Binding/SymbolDeclaration.cpp src/Binding/SymbolDeclaration.h src/Binding/Scope.cpp src/Binding/Scope.h
         src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h)
 
 ##########################################

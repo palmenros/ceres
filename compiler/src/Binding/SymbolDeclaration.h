@@ -16,20 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_SYMBOL_H
-#define COMPILER_SYMBOL_H
+#ifndef COMPILER_SYMBOLDECLARATION_H
+#define COMPILER_SYMBOLDECLARATION_H
 
+#include "../AST/nodes/Node.h"
 #include "../Typing/Type.h"
 #include <string>
 
 namespace Ceres::Binding {
 
-    class Symbol {
+    enum class SymbolDeclarationKind {
+        FunctionDeclaration,
+        LocalVariableDeclaration,
+        GlobalVariableDeclaration
+    };
+
+    class SymbolDeclaration {
     public:
-        std::string_view name;
-        Type *type;
+        SymbolDeclarationKind kind;
+        AST::Node *declarationNode;
     };
 
 }// namespace Ceres::Binding
 
-#endif//COMPILER_SYMBOL_H
+#endif//COMPILER_SYMBOLDECLARATION_H
