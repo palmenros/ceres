@@ -36,7 +36,6 @@ namespace Ceres::AST {
     class IntLiteralExpression : public Expression {
     public:
         IntLiteralBase base;
-        Type *type;
 
         // String containing the integer literal in base "base" without the introducer characters for the base
         // and the type. For example: 0xfc783u32 -> fc783

@@ -97,8 +97,9 @@ namespace Ceres {
     //      Number literal without a specified type
     //      Variable declaration without a user-specified type
     enum class NotYetInferredKind {
-        NumberLiteral,     // Number literal without a specified type such as '2' instead of '2u32'
-        VariableDeclaration// Variable declaration without a specified type such as 'const i = 1u32';
+        NumberLiteral,      // Number literal without a specified type such as '2' instead of '2u32'
+        VariableDeclaration,// Variable declaration without a specified type such as 'const i = 1u32';
+        Expression,         //
     };
 
     class NotYetInferredType : public Type {

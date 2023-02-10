@@ -35,8 +35,6 @@ namespace Ceres::AST {
     public:
         FloatLiteralBase base;
 
-        Type *type;
-
         // String containing the integer literal in base "base" without the introducer characters for the base
         // and the type. For example: 0xfc783u32 -> fc783
         std::string str;

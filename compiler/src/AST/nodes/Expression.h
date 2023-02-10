@@ -19,13 +19,18 @@
 #ifndef COMPILER_EXPRESSION_H
 #define COMPILER_EXPRESSION_H
 
+#include "../../Typing/Type.h"
 #include "Node.h"
 
-namespace Ceres::AST {
 
+namespace Ceres::AST {
     class Expression : public Node {
     public:
+        Type *type;
+
         explicit Expression(const SourceSpan &sourceSpan);
+
+        explicit Expression(const SourceSpan &sourceSpan, Type *type);
 
         virtual ~Expression() = default;
     };

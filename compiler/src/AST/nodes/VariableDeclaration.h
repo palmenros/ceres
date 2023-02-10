@@ -26,7 +26,6 @@
 #include <string>
 
 namespace Ceres::AST {
-
     enum class VariableVisibility {
         Public,
         Private
@@ -56,7 +55,7 @@ namespace Ceres::AST {
 
         // Can be nullptr if the variable doesn't have initializer expression
         std::unique_ptr<Expression> initializerExpression;
-
+ 
     public:
         VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
                             std::unique_ptr<Expression> &&initializerExpression,
@@ -68,7 +67,6 @@ namespace Ceres::AST {
 
         std::vector<Node *> getChildren() const override;
     };
-
 }// namespace Ceres::AST
 
 #endif//COMPILER_VARIABLEDECLARATION_H

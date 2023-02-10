@@ -64,13 +64,12 @@ namespace Ceres::AST {
             }
         }
 
-        return fmt::format("(AssignmentExpression op='{}' lhs='{}' rhs={})",
-                           opStr,
-                           expr.identifierLHS,
-                           visit(*expr.expressionRHS));
+        return fmt::format("(AssignmentExpression op='{}' lhs='{}' rhs={})", opStr,
+                           expr.identifierLHS, visit(*expr.expressionRHS));
     }
 
-    std::string ASTStringifierVisitor::doVisitBinaryOperationExpression(BinaryOperationExpression &expr) {
+    std::string
+    ASTStringifierVisitor::doVisitBinaryOperationExpression(BinaryOperationExpression &expr) {
         std::string opStr;
 
         switch (expr.op) {
@@ -133,10 +132,8 @@ namespace Ceres::AST {
                 break;
         }
 
-        return fmt::format("(BinaryExpression BinOp='{}' lhs='{}' rhs={})",
-                           opStr,
-                           visit(*expr.left),
-                           visit(*expr.right));
+        return fmt::format("(BinaryExpression BinOp='{}' lhs='{}' rhs={})", opStr,
+                           visit(*expr.left), visit(*expr.right));
     }
 
     std::string ASTStringifierVisitor::doVisitBlockStatement(BlockStatement &block) {
@@ -249,14 +246,17 @@ namespace Ceres::AST {
             args += visit(*arg);
         }
 
-        return fmt::format("(FunctionCallExpression id='{}' args='{}')", expr.functionIdentifier, args);
+        return fmt::format("(FunctionCallExpression id='{}' args='{}')", expr.functionIdentifier,
+                           args);
     }
 
     std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition &def) {
         std::string paramsString;
         bool first = true;
         for (const auto &param: def.parameters) {
-            std::string paramString = fmt::format("{} {}: {}", param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type->toString());
+            std::string paramString = fmt::format(
+                    "{} {}: {}", param.constness == VariableConstness::NonConst ? "var" : "const",
+                    param.name, param.type->toString());
             if (first) {
                 first = false;
             } else {
@@ -265,7 +265,8 @@ namespace Ceres::AST {
             paramsString += paramString;
         }
 
-        return fmt::format("(FunctionDefinition id='{}', params='{}' body='{}')", def.functionName, paramsString, visit(*def.block));
+        return fmt::format("(FunctionDefinition id='{}', params='{}' body='{}')", def.functionName,
+                           paramsString, visit(*def.block));
     }
 
     std::string ASTStringifierVisitor::doVisitIdentifierExpression(IdentifierExpression &expr) {
@@ -274,10 +275,12 @@ namespace Ceres::AST {
 
     std::string ASTStringifierVisitor::doVisitIfStatement(IfStatement &stm) {
         if (stm.maybeElseStatement != nullptr) {
-            return fmt::format("(IfStatement cond='{}' body='{}' else='{}')", visit(*stm.condition), visit(*stm.thenBlock), visit(*stm.maybeElseStatement));
+            return fmt::format("(IfStatement cond='{}' body='{}' else='{}')", visit(*stm.condition),
+                               visit(*stm.thenBlock), visit(*stm.maybeElseStatement));
         }
 
-        return fmt::format("(IfStatement cond='{}' body='{}')", visit(*stm.condition), visit(*stm.thenBlock));
+        return fmt::format("(IfStatement cond='{}' body='{}')", visit(*stm.condition),
+                           visit(*stm.thenBlock));
     }
 
     std::string ASTStringifierVisitor::doVisitIntLiteralExpression(IntLiteralExpression &expr) {
@@ -302,7 +305,8 @@ namespace Ceres::AST {
 
         std::string typeString = expr.type->toString();
 
-        return fmt::format("(IntLiteralExpression base='{}' text='{}' type='{}')", baseString, expr.str, typeString);
+        return fmt::format("(IntLiteralExpression base='{}' text='{}' type='{}')", baseString,
+                           expr.str, typeString);
     }
 
     std::string ASTStringifierVisitor::doVisitPostfixExpression(PostfixExpression &expr) {
@@ -358,17 +362,23 @@ namespace Ceres::AST {
         std::string constn = decl.constness == VariableConstness::Const ? "const" : "var";
 
         if (decl.initializerExpression != nullptr) {
-            return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' id='{}' expr='{}')", vis, scope, constn, decl.type->toString(), decl.identifier, visit(*decl.initializerExpression));
+            return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' "
+                               "id='{}' expr='{}')",
+                               vis, scope, constn, decl.type->toString(), decl.identifier,
+                               visit(*decl.initializerExpression));
         }
 
-        return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' id='{}')", vis, scope, constn, decl.type->toString(), decl.identifier);
+        return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' id='{}')",
+                           vis, scope, constn, decl.type->toString(), decl.identifier);
     }
 
-    std::string ASTStringifierVisitor::doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) {
+    std::string
+    ASTStringifierVisitor::doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) {
         return fmt::format("(VariableDeclarationStatement '{}')", visit(*stm.variableDeclaration));
     }
 
     std::string ASTStringifierVisitor::doVisitWhileStatement(WhileStatement &stm) {
-        return fmt::format("(WhileStatement cond='{}' body='{}')", visit(*stm.condition), visit(*stm.body));
+        return fmt::format("(WhileStatement cond='{}' body='{}')", visit(*stm.condition),
+                           visit(*stm.body));
     }
 }// namespace Ceres::AST

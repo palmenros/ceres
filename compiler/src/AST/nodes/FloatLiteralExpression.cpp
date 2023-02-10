@@ -23,15 +23,14 @@
 
 namespace Ceres::AST {
 
-    FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, Type *type,
+    FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan,
+                                                   FloatLiteralBase base, Type *type,
                                                    std::string str)
-        : Expression(sourceSpan), base(base), type(type), str(std::move(str)) {}
+        : Expression(sourceSpan, type), base(base), str(std::move(str)) {}
 
     void FloatLiteralExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitFloatLiteralExpression(*this);
     }
 
-    std::vector<Node *> FloatLiteralExpression::getChildren() const {
-        return {};
-    }
+    std::vector<Node *> FloatLiteralExpression::getChildren() const { return {}; }
 }// namespace Ceres::AST
