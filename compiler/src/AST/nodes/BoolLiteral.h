@@ -24,10 +24,7 @@
 
 namespace Ceres::AST {
 
-    enum class BoolLiteralValue {
-        True,
-        False
-    };
+    enum class BoolLiteralValue { True, False };
 
     class BoolLiteral : public Expression {
     public:

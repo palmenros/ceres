@@ -27,7 +27,5 @@ namespace Ceres::AST {
         visitor.visitIdentifierExpression(*this);
     }
 
-    std::vector<Node *> IdentifierExpression::getChildren() const {
-        return {};
-    }
+    std::vector<Node *> IdentifierExpression::getChildren() const { return {}; }
 }// namespace Ceres::AST

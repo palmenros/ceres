@@ -23,9 +23,10 @@
 namespace Ceres::AST {
     BinaryOperationExpression::BinaryOperationExpression(const SourceSpan &sourceSpan,
                                                          std::unique_ptr<Expression> &&left,
-                                                         std::unique_ptr<Expression> &&right, BinaryOp op,
-                                                         SourceSpan opSpan)
-        : Expression(sourceSpan), left(std::move(left)), right(std::move(right)), op(op), opSpan(opSpan) {}
+                                                         std::unique_ptr<Expression> &&right,
+                                                         BinaryOp op, SourceSpan opSpan)
+        : Expression(sourceSpan), left(std::move(left)), right(std::move(right)), op(op),
+          opSpan(opSpan) {}
 
     void BinaryOperationExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitBinaryOperationExpression(*this);

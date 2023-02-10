@@ -29,10 +29,7 @@
 
 namespace Ceres::AST {
 
-    enum class FunctionVisibility {
-        Public,
-        Private
-    };
+    enum class FunctionVisibility { Public, Private };
 
     class FunctionDefinition : public Node {
     public:

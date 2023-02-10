@@ -22,10 +22,13 @@
 #include <utility>
 
 namespace Ceres::AST {
-    AssignmentExpression::AssignmentExpression(const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
-                                               std::string identifierLhs, std::unique_ptr<Expression> &&expressionRhs,
-                                               SourceSpan opSourceSpan) : Expression(sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)), expressionRHS(std::move(expressionRhs)),
-                                                                          opSourceSpan(opSourceSpan) {}
+    AssignmentExpression::AssignmentExpression(const SourceSpan &sourceSpan,
+                                               const std::optional<BinaryOp> &binaryOp,
+                                               std::string identifierLhs,
+                                               std::unique_ptr<Expression> &&expressionRhs,
+                                               SourceSpan opSourceSpan)
+        : Expression(sourceSpan), binaryOp(binaryOp), identifierLHS(std::move(identifierLhs)),
+          expressionRHS(std::move(expressionRhs)), opSourceSpan(opSourceSpan) {}
 
     void AssignmentExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitAssignmentExpression(*this);

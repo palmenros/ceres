@@ -20,14 +20,13 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    ReturnStatement::ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr)
+    ReturnStatement::ReturnStatement(const SourceSpan &sourceSpan,
+                                     std::unique_ptr<Expression> &&expr)
         : Statement(sourceSpan), expr(std::move(expr)) {}
 
     void ReturnStatement::accept(AbstractASTVisitor &visitor) {
         visitor.visitReturnStatement(*this);
     }
 
-    std::vector<Node *> ReturnStatement::getChildren() const {
-        return {expr.get()};
-    }
+    std::vector<Node *> ReturnStatement::getChildren() const { return {expr.get()}; }
 }// namespace Ceres::AST

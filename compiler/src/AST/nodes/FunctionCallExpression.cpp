@@ -22,10 +22,12 @@
 #include <utility>
 
 namespace Ceres::AST {
-    FunctionCallExpression::FunctionCallExpression(const SourceSpan &sourceSpan, std::string functionIdentifier,
-                                                   std::vector<std::unique_ptr<Expression>> &&arguments,
-                                                   SourceSpan functionIdentifierSourceSpan)
-        : Expression(sourceSpan), functionIdentifier(std::move(functionIdentifier)), arguments(std::move(arguments)),
+    FunctionCallExpression::FunctionCallExpression(
+            const SourceSpan &sourceSpan, std::string functionIdentifier,
+            std::vector<std::unique_ptr<Expression>> &&arguments,
+            SourceSpan functionIdentifierSourceSpan)
+        : Expression(sourceSpan), functionIdentifier(std::move(functionIdentifier)),
+          arguments(std::move(arguments)),
           functionIdentifierSourceSpan(functionIdentifierSourceSpan) {}
 
     void FunctionCallExpression::accept(AbstractASTVisitor &visitor) {
@@ -37,9 +39,7 @@ namespace Ceres::AST {
         //          resolving to the function pointer to the children
         std::vector<Node *> v;
         v.reserve(arguments.size());
-        for (auto &a: arguments) {
-            v.push_back(a.get());
-        }
+        for (auto &a: arguments) { v.push_back(a.get()); }
         return v;
     }
 }// namespace Ceres::AST

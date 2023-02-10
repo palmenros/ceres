@@ -29,7 +29,8 @@ namespace Ceres::AST {
     public:
         std::vector<std::unique_ptr<Expression>> expressions;
 
-        CommaExpression(const SourceSpan &sourceSpan, std::vector<std::unique_ptr<Expression>> &&expressions);
+        CommaExpression(const SourceSpan &sourceSpan,
+                        std::vector<std::unique_ptr<Expression>> &&expressions);
 
         void accept(AbstractASTVisitor &visitor) override;
 

@@ -25,25 +25,21 @@ namespace Ceres {
 
     std::unique_ptr<UnitVoidType> UnitVoidType::instance = nullptr;
     std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> UnresolvedType::instances;
-    std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> NotYetInferredType::instances;
-    std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>> PrimitiveScalarType::instances;
+    std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>>
+            NotYetInferredType::instances;
+    std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>>
+            PrimitiveScalarType::instances;
 
-    std::string UnitVoidType::toString() const {
-        return "void";
-    }
+    std::string UnitVoidType::toString() const { return "void"; }
 
     UnitVoidType *UnitVoidType::get() {
-        if (instance != nullptr) {
-            return instance.get();
-        }
+        if (instance != nullptr) { return instance.get(); }
 
         instance.reset(new UnitVoidType);
         return instance.get();
     }
 
-    void UnitVoidType::accept(Typing::TypeVisitor &visitor) {
-        visitor.visitUnitVoidType(this);
-    }
+    void UnitVoidType::accept(Typing::TypeVisitor &visitor) { visitor.visitUnitVoidType(this); }
 
     PrimitiveScalarType::PrimitiveScalarType(PrimitiveKind kind)
         : kind(kind), Type(TypeKind::PrimitiveScalarType) {}
@@ -108,9 +104,7 @@ namespace Ceres {
 
     PrimitiveScalarType *PrimitiveScalarType::get(PrimitiveKind kind) {
         auto &ptr = instances[kind];
-        if (ptr == nullptr) {
-            ptr.reset(new PrimitiveScalarType(kind));
-        }
+        if (ptr == nullptr) { ptr.reset(new PrimitiveScalarType(kind)); }
         return ptr.get();
     }
 
@@ -131,9 +125,7 @@ namespace Ceres {
 
     NotYetInferredType *NotYetInferredType::get(NotYetInferredKind kind) {
         auto &ptr = instances[kind];
-        if (ptr == nullptr) {
-            ptr.reset(new NotYetInferredType(kind));
-        }
+        if (ptr == nullptr) { ptr.reset(new NotYetInferredType(kind)); }
         return ptr.get();
     }
 
@@ -142,22 +134,15 @@ namespace Ceres {
     }
 
     UnresolvedType::UnresolvedType(std::string typeIdentifier)
-        : typeIdentifier(std::move(typeIdentifier)),
-          Type(TypeKind::UnresolvedType) {}
+        : typeIdentifier(std::move(typeIdentifier)), Type(TypeKind::UnresolvedType) {}
 
-    std::string UnresolvedType::toString() const {
-        return typeIdentifier;
-    }
+    std::string UnresolvedType::toString() const { return typeIdentifier; }
 
     UnresolvedType *UnresolvedType::get(const std::string &str) {
         auto &ptr = instances[str];
-        if (ptr == nullptr) {
-            ptr.reset(new UnresolvedType(str));
-        }
+        if (ptr == nullptr) { ptr.reset(new UnresolvedType(str)); }
         return ptr.get();
     }
 
-    void UnresolvedType::accept(Typing::TypeVisitor &visitor) {
-        visitor.visitUnresolvedType(this);
-    }
+    void UnresolvedType::accept(Typing::TypeVisitor &visitor) { visitor.visitUnresolvedType(this); }
 }// namespace Ceres

@@ -26,20 +26,14 @@
 #include <string>
 
 namespace Ceres::AST {
-    enum class VariableVisibility {
-        Public,
-        Private
-    };
+    enum class VariableVisibility { Public, Private };
 
     enum class VariableScope {
         Local,// Defined inside a function
         Global// Defined as a global variable, outside any function
     };
 
-    enum class VariableConstness {
-        Const,
-        NonConst
-    };
+    enum class VariableConstness { Const, NonConst };
 
     class VariableDeclaration : public Statement {
     public:
@@ -55,12 +49,13 @@ namespace Ceres::AST {
 
         // Can be nullptr if the variable doesn't have initializer expression
         std::unique_ptr<Expression> initializerExpression;
- 
+
     public:
         VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
                             std::unique_ptr<Expression> &&initializerExpression,
-                            VariableVisibility visibility, VariableConstness constness, VariableScope scope,
-                            Type *type, std::string identifier, const SourceSpan &typeSourceSpan,
+                            VariableVisibility visibility, VariableConstness constness,
+                            VariableScope scope, Type *type, std::string identifier,
+                            const SourceSpan &typeSourceSpan,
                             const SourceSpan &identifierSourceSpan);
 
         void accept(AbstractASTVisitor &visitor) override;

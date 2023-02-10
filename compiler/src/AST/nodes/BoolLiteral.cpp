@@ -20,16 +20,12 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value) : Expression(sourceSpan),
-                                                                                     value(value) {}
+    BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value)
+        : Expression(sourceSpan), value(value) {}
 
-    void BoolLiteral::accept(AbstractASTVisitor &visitor) {
-        visitor.visitBoolLiteral(*this);
-    }
+    void BoolLiteral::accept(AbstractASTVisitor &visitor) { visitor.visitBoolLiteral(*this); }
 
-    std::vector<Node *> BoolLiteral::getChildren() const {
-        return {};
-    }
+    std::vector<Node *> BoolLiteral::getChildren() const { return {}; }
 
     std::string BoolLiteral::toStringBoolLiteralValue(BoolLiteralValue value) {
         if (value == BoolLiteralValue::True) {

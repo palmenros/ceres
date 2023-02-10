@@ -18,6 +18,4 @@
 
 #include "SymbolDeclaration.h"
 
-namespace Ceres::Binding {
-
-}// namespace Ceres::Binding
+namespace Ceres::Binding {}// namespace Ceres::Binding

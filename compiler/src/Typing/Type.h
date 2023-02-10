@@ -80,7 +80,9 @@ namespace Ceres {
 
     public:
         // Static function needed for fast LLVM RTTI
-        static bool classof(const Type *type) { return type->getKind() == TypeKind::UnresolvedType; }
+        static bool classof(const Type *type) {
+            return type->getKind() == TypeKind::UnresolvedType;
+        }
         void accept(Typing::TypeVisitor &visitor) override;
 
     public:
@@ -104,12 +106,16 @@ namespace Ceres {
 
     class NotYetInferredType : public Type {
     private:
-        static std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> instances;
-        explicit NotYetInferredType(NotYetInferredKind kind) : kind(kind), Type(TypeKind::NotYetInferredType) {}
+        static std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>>
+                instances;
+        explicit NotYetInferredType(NotYetInferredKind kind)
+            : kind(kind), Type(TypeKind::NotYetInferredType) {}
 
     public:
         // Static function needed for fast LLVM RTTI
-        static bool classof(const Type *type) { return type->getKind() == TypeKind::NotYetInferredType; }
+        static bool classof(const Type *type) {
+            return type->getKind() == TypeKind::NotYetInferredType;
+        }
         void accept(Typing::TypeVisitor &visitor) override;
 
     public:
@@ -142,7 +148,9 @@ namespace Ceres {
 
     public:
         // Static function needed for fast LLVM RTTI
-        static bool classof(const Type *type) { return type->getKind() == TypeKind::NotYetInferredType; }
+        static bool classof(const Type *type) {
+            return type->getKind() == TypeKind::NotYetInferredType;
+        }
         void accept(Typing::TypeVisitor &visitor) override;
 
     public:

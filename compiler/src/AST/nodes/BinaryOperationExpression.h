@@ -51,8 +51,7 @@ namespace Ceres::AST {
 
         SourceSpan opSpan;
 
-        BinaryOperationExpression(const SourceSpan &sourceSpan,
-                                  std::unique_ptr<Expression> &&left,
+        BinaryOperationExpression(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&left,
                                   std::unique_ptr<Expression> &&right, BinaryOp op,
                                   SourceSpan opSpan);
 

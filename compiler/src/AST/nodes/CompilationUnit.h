@@ -32,9 +32,10 @@ namespace Ceres::AST {
         std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
         std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
 
-        CompilationUnit(const SourceSpan &sourceSpan,
-                        std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
-                        std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations);
+        CompilationUnit(
+                const SourceSpan &sourceSpan,
+                std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
+                std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations);
 
         CompilationUnit(const SourceSpan &sourceSpan);
 

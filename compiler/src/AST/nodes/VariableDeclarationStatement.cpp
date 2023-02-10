@@ -20,8 +20,9 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    VariableDeclarationStatement::VariableDeclarationStatement(const SourceSpan &sourceSpan,
-                                                               std::unique_ptr<VariableDeclaration> &&variableDeclaration)
+    VariableDeclarationStatement::VariableDeclarationStatement(
+            const SourceSpan &sourceSpan,
+            std::unique_ptr<VariableDeclaration> &&variableDeclaration)
         : Statement(sourceSpan), variableDeclaration(std::move(variableDeclaration)) {}
 
     void VariableDeclarationStatement::accept(AbstractASTVisitor &visitor) {

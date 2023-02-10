@@ -22,17 +22,21 @@
 #include <utility>
 
 namespace Ceres::AST {
-    FunctionDefinition::FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
-                                           std::string functionName,
-                                           std::vector<FunctionParameter> &&parameters, Type *returnType,
+    FunctionDefinition::FunctionDefinition(const SourceSpan &sourceSpan,
+                                           FunctionVisibility visibility, std::string functionName,
+                                           std::vector<FunctionParameter> &&parameters,
+                                           Type *returnType,
                                            std::unique_ptr<BlockStatement> &&block,
-                                           const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan) : Node(sourceSpan), visibility(visibility), functionName(std::move(functionName)), parameters(std::move(parameters)), returnType(std::move(returnType)), block(std::move(block)), returnTypeSpan(returnTypeSpan), functionNameSpan(functionNameSpan) {}
+                                           const SourceSpan &returnTypeSpan,
+                                           const SourceSpan &functionNameSpan)
+        : Node(sourceSpan), visibility(visibility), functionName(std::move(functionName)),
+          parameters(std::move(parameters)), returnType(std::move(returnType)),
+          block(std::move(block)), returnTypeSpan(returnTypeSpan),
+          functionNameSpan(functionNameSpan) {}
 
     void FunctionDefinition::accept(AbstractASTVisitor &visitor) {
         visitor.visitFunctionDefinition(*this);
     }
 
-    std::vector<Node *> FunctionDefinition::getChildren() const {
-        return {block.get()};
-    }
+    std::vector<Node *> FunctionDefinition::getChildren() const { return {block.get()}; }
 }// namespace Ceres::AST

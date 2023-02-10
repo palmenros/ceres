@@ -54,13 +54,15 @@ namespace Ceres {
             report(range, id, {}, {}, std::forward<Args>(args)...);
         }
         template<typename... Args>
-        static void report(const SourceSpan &range, Diag id, std::vector<SourceSpan> extraRanges, Args &&...args) {
+        static void report(const SourceSpan &range, Diag id, std::vector<SourceSpan> extraRanges,
+                           Args &&...args) {
             report(range, id, extraRanges, {}, std::forward<Args>(args)...);
         }
 
         template<typename... Args>
         static void report(const llvm::SMLoc &loc, Diag id, Args &&...args) {
-            std::string msg = fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
+            std::string msg =
+                    fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
             auto kind = getDiagnosticKind(id);
             auto &srcMgr = SourceManager::get().getLLVMSourceMgr();
 
@@ -68,16 +70,17 @@ namespace Ceres {
         }
 
         template<typename... Args>
-        static void report(const SourceSpan &range, Diag id, const std::vector<SourceSpan> &extraRanges, const std::vector<FixItSpan> &fixitRanges, Args &&...args) {
-            std::string msg = fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
+        static void report(const SourceSpan &range, Diag id,
+                           const std::vector<SourceSpan> &extraRanges,
+                           const std::vector<FixItSpan> &fixitRanges, Args &&...args) {
+            std::string msg =
+                    fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
             auto kind = getDiagnosticKind(id);
 
             auto &srcMgr = SourceManager::get().getLLVMSourceMgr();
 
             llvm::SMLoc loc{};
-            if (range.isSpanValid) {
-                loc = getSMLocFromSourceSpan(range);
-            }
+            if (range.isSpanValid) { loc = getSMLocFromSourceSpan(range); }
 
             std::vector<llvm::SMRange> smRanges;
             smRanges.reserve(extraRanges.size() + 1);
@@ -94,9 +97,7 @@ namespace Ceres {
             std::vector<llvm::SMFixIt> smFixIt;
             smFixIt.reserve(fixitRanges.size());
 
-            for (const auto &fixIt: fixitRanges) {
-                smFixIt.push_back(getSMFixItFromFixIt(fixIt));
-            }
+            for (const auto &fixIt: fixitRanges) { smFixIt.push_back(getSMFixItFromFixIt(fixIt)); }
 
             srcMgr.PrintMessage(loc, kind, msg, smRanges, smFixIt);
 

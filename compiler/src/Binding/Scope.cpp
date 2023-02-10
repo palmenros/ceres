@@ -18,6 +18,4 @@
 
 #include "Scope.h"
 
-namespace Ceres::Binding {
-
-}// namespace Ceres::Binding
+namespace Ceres::Binding {}// namespace Ceres::Binding

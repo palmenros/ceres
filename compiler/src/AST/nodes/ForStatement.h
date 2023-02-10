@@ -44,7 +44,8 @@ namespace Ceres::AST {
         ForStatement(const SourceSpan &sourceSpan,
                      std::unique_ptr<VariableDeclaration> &&maybeInitDeclaration,
                      std::unique_ptr<Expression> &&maybeInitExpression,
-                     std::unique_ptr<Expression> &&conditionExpr, std::unique_ptr<Expression> &&updateExpr,
+                     std::unique_ptr<Expression> &&conditionExpr,
+                     std::unique_ptr<Expression> &&updateExpr,
                      std::unique_ptr<BlockStatement> &&body);
 
         void accept(AbstractASTVisitor &visitor) override;

@@ -46,12 +46,18 @@ namespace Ceres {
     }
 
     llvm::SMLoc Diagnostics::getSMLocFromSourceSpan(const SourceSpan &span) {
-        const char *bufferStart = SourceManager::get().getLLVMSourceMgr().getMemoryBuffer((unsigned) span.fileId)->getBufferStart();
+        const char *bufferStart = SourceManager::get()
+                                          .getLLVMSourceMgr()
+                                          .getMemoryBuffer((unsigned) span.fileId)
+                                          ->getBufferStart();
         return llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex);
     }
 
     llvm::SMRange Diagnostics::getSMRangeFromSourceSpan(const SourceSpan &span) {
-        const char *bufferStart = SourceManager::get().getLLVMSourceMgr().getMemoryBuffer((unsigned) span.fileId)->getBufferStart();
+        const char *bufferStart = SourceManager::get()
+                                          .getLLVMSourceMgr()
+                                          .getMemoryBuffer((unsigned) span.fileId)
+                                          ->getBufferStart();
         return {llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex),
                 llvm::SMLoc::getFromPointer(bufferStart + span.endCharacterIndex + 1)};
     }

@@ -26,12 +26,7 @@
 
 namespace Ceres::AST {
 
-    enum class IntLiteralBase {
-        Dec,
-        Hex,
-        Oct,
-        Bin
-    };
+    enum class IntLiteralBase { Dec, Hex, Oct, Bin };
 
     class IntLiteralExpression : public Expression {
     public:
@@ -41,7 +36,8 @@ namespace Ceres::AST {
         // and the type. For example: 0xfc783u32 -> fc783
         std::string str;
 
-        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type, std::string str);
+        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type,
+                             std::string str);
 
         void accept(AbstractASTVisitor &visitor) override;
 

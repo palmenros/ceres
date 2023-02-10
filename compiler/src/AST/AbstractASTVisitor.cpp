@@ -21,9 +21,7 @@
 
 namespace Ceres::AST {
 
-    void AbstractASTVisitor::visit(Node &node) {
-        node.accept(*this);
-    }
+    void AbstractASTVisitor::visit(Node &node) { node.accept(*this); }
 
     void AbstractASTVisitor::visitChildren(Node &node) {
         for (auto childPtr: node.getChildren()) {

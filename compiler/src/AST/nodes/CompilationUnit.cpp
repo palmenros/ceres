@@ -20,11 +20,11 @@
 #include "../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    CompilationUnit::CompilationUnit(const SourceSpan &sourceSpan,
-                                     std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
-                                     std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations)
-        : Node(sourceSpan),
-          functionDefinitions(std::move(functionDefinitions)),
+    CompilationUnit::CompilationUnit(
+            const SourceSpan &sourceSpan,
+            std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
+            std::vector<std::unique_ptr<VariableDeclaration>> &&globalVariableDeclarations)
+        : Node(sourceSpan), functionDefinitions(std::move(functionDefinitions)),
           globalVariableDeclarations(std::move(globalVariableDeclarations)) {}
 
     void CompilationUnit::accept(AbstractASTVisitor &visitor) {
@@ -35,13 +35,9 @@ namespace Ceres::AST {
         std::vector<Node *> v;
         v.reserve(functionDefinitions.size() + globalVariableDeclarations.size());
 
-        for (auto &ptr: functionDefinitions) {
-            v.push_back(ptr.get());
-        }
+        for (auto &ptr: functionDefinitions) { v.push_back(ptr.get()); }
 
-        for (auto &ptr: globalVariableDeclarations) {
-            v.push_back(ptr.get());
-        }
+        for (auto &ptr: globalVariableDeclarations) { v.push_back(ptr.get()); }
         return v;
     }
 

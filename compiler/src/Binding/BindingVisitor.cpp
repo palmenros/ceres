@@ -19,6 +19,5 @@
 #include "BindingVisitor.h"
 
 namespace Ceres {
-    namespace Binding {
-    }// namespace Binding
+    namespace Binding {}// namespace Binding
 }// namespace Ceres

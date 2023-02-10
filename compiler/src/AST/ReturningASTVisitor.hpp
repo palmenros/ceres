@@ -145,7 +145,8 @@ namespace Ceres::AST {
     }
 
     template<class T>
-    T ReturningASTVisitor<T>::doVisitVariableDeclarationStatement(VariableDeclarationStatement &stm) {
+    T ReturningASTVisitor<T>::doVisitVariableDeclarationStatement(
+            VariableDeclarationStatement &stm) {
         return this->visitChildren(stm);
     }
 

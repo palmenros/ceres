@@ -23,10 +23,7 @@
 #include <memory>
 
 namespace Ceres::AST {
-    enum class PostfixOp {
-        PostfixIncrement,
-        PostfixDecrement
-    };
+    enum class PostfixOp { PostfixIncrement, PostfixDecrement };
 
     class PostfixExpression : public Expression {
     public:
@@ -35,8 +32,8 @@ namespace Ceres::AST {
 
         SourceSpan opSourceSpan;
 
-        PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op, std::unique_ptr<Expression> &&expr,
-                          SourceSpan opSourceSpan);
+        PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
+                          std::unique_ptr<Expression> &&expr, SourceSpan opSourceSpan);
 
         void accept(AbstractASTVisitor &visitor) override;
 

@@ -49,7 +49,7 @@ int main(int argc, const char *argv[]) {
     // Performs initialization and destruction on scope end
     Ceres::InitCeres ceres;
     llvm::InitLLVM X(argc, argv);
-    
+
     if (argc < 2) {
         std::cout << "Not enough arguments" << std::endl;
         std::cout << "Usage: '" << argv[0] << "' [filename]" << std::endl;
@@ -68,7 +68,8 @@ int main(int argc, const char *argv[]) {
         CeresParser parser(&tokens);
         parser.removeErrorListeners();
 
-        std::unique_ptr<ParserErrorListener> parserErrorListener = std::make_unique<ParserErrorListener>(fileId);
+        std::unique_ptr<ParserErrorListener> parserErrorListener =
+                std::make_unique<ParserErrorListener>(fileId);
         parser.addErrorListener(parserErrorListener.get());
 
         tree::ParseTree *tree = parser.compilationUnit();
@@ -105,8 +106,6 @@ int main(int argc, const char *argv[]) {
         // llvm::LLVMContext llvmContext;
         // auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
         //    std::cout << "LLVM says: " << module->getName().str() << std::endl;
-    } catch (std::exception &e) {
-        Log::critical("Uncaught Exception: {}", e.what());
-    }
+    } catch (std::exception &e) { Log::critical("Uncaught Exception: {}", e.what()); }
     return 0;
 }

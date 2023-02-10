@@ -21,15 +21,14 @@
 
 namespace Ceres::AST {
 
-    PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op, std::unique_ptr<Expression> &&expr,
-                                       const SourceSpan &opSourceSpan) : Expression(sourceSpan), op(op), expr(std::move(expr)),
-                                                                         opSourceSpan(opSourceSpan) {}
+    PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op,
+                                       std::unique_ptr<Expression> &&expr,
+                                       const SourceSpan &opSourceSpan)
+        : Expression(sourceSpan), op(op), expr(std::move(expr)), opSourceSpan(opSourceSpan) {}
 
     void PrefixExpression::accept(AbstractASTVisitor &visitor) {
         visitor.visitPrefixExpression(*this);
     }
 
-    std::vector<Node *> PrefixExpression::getChildren() const {
-        return {expr.get()};
-    }
+    std::vector<Node *> PrefixExpression::getChildren() const { return {expr.get()}; }
 }// namespace Ceres::AST
