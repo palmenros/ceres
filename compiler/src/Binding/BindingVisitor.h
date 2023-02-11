@@ -20,6 +20,7 @@
 #define COMPILER_BINDINGVISITOR_H
 
 #include "../AST/ASTVisitor.h"
+#include "Scope.h"
 
 namespace Ceres::Binding {
 
@@ -31,9 +32,14 @@ namespace Ceres::Binding {
     //          the needed symbols.
 
     class BindingVisitor : public ASTVisitor {
-        // TODO: Override the needed visitor functions to perform the binding on the AST
-    };
+    public:
+        Scope *currentScope;
 
+        // Since we don't resolve anything in this pass we just have to add the defined names to the tables
+        void visitBlockStatement(BlockStatement &stm) override;
+        void visitFunctionDefinition(FunctionDefinition &def) override;
+        void visitVariableDeclaration(VariableDeclaration &decl) override;
+    };
 }// namespace Ceres::Binding
 
 #endif//COMPILER_BINDINGVISITOR_H

@@ -35,6 +35,9 @@ namespace Ceres::Binding {
     public:
         SymbolDeclarationKind kind;
         AST::Node *declarationNode;
+
+        SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode)
+            : kind(kind), declarationNode(declarationNode){};
     };
 
 }// namespace Ceres::Binding

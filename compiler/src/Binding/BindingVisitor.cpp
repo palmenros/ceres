@@ -17,7 +17,50 @@
  */
 
 #include "BindingVisitor.h"
+#include "Scope.h"
+#include "SymbolDeclaration.h"
 
 namespace Ceres {
-    namespace Binding {}// namespace Binding
+    namespace Binding {
+        void BindingVisitor::visitBlockStatement(BlockStatement &stm) {
+            // TODO: needs a special name?
+            stm.scope = Scope("block", currentScope);
+            currentScope = &stm.scope;
+
+            for (auto c: stm.getChildren()) { visit(*c); }
+
+            currentScope = currentScope->getEnclosingScope();
+        }
+
+
+        void BindingVisitor::visitFunctionDefinition(FunctionDefinition &def) {
+            // Put everything, arguments included in block scope
+            def.block->scope = Scope(def.functionName, currentScope);
+            currentScope = &def.block->scope;
+
+            SymbolDeclaration fsymbol =
+                    SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
+            currentScope->define(def.functionName, fsymbol);
+
+            for (auto p: def.parameters) {
+                // TODO: bind to function node?
+                SymbolDeclaration symbol =
+                        SymbolDeclaration(SymbolDeclarationKind::LocalVariableDeclaration, &def);
+                currentScope->define(p.name, symbol);
+            }
+
+            for (auto c: def.block->getChildren()) { visit(*c); }
+
+            currentScope = currentScope->getEnclosingScope();
+        }
+
+
+        void BindingVisitor::visitVariableDeclaration(VariableDeclaration &decl) {
+            SymbolDeclarationKind kind = decl.scope == VariableScope::Global
+                                                 ? SymbolDeclarationKind::GlobalVariableDeclaration
+                                                 : SymbolDeclarationKind::LocalVariableDeclaration;
+            SymbolDeclaration symbol = SymbolDeclaration(kind, &decl);
+            currentScope->define(decl.identifier, symbol);
+        }
+    }// namespace Binding
 }// namespace Ceres

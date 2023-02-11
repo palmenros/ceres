@@ -19,6 +19,7 @@
 #ifndef COMPILER_BLOCKSTATEMENT_H
 #define COMPILER_BLOCKSTATEMENT_H
 
+#include "../../Binding/Scope.h"
 #include "Statement.h"
 #include <memory>
 #include <unordered_map>
@@ -28,6 +29,7 @@ namespace Ceres::AST {
     class BlockStatement : public Statement {
 
     public:
+        Binding::Scope scope;
         std::vector<std::unique_ptr<Statement>> statements;
 
         BlockStatement(const SourceSpan &sourceSpan,

@@ -21,25 +21,41 @@
 
 #include "SymbolDeclaration.h"
 #include <string>
+#include <unordered_map>
 
 namespace Ceres::Binding {
 
     // Abstract class representing a scope
     class Scope {
-    public:
-        virtual std::string getScopeName() = 0;
-        virtual Scope *getEnclosingScope() = 0;
-        virtual void define(const SymbolDeclaration &symbol) = 0;
-        virtual SymbolDeclaration resolve(const std::string &name) = 0;
-    };
+        std::unordered_map<std::string, SymbolDeclaration> map;
+        std::string name;
+        Scope *enclosingScope;
 
-    // TODO: Maybe GlobalScope can also be implemented as a LocalScope so rename it.
-    //          We will however need different scopes for structs, enums, etc.
-    class LocalScope : public Scope {
     public:
-        // TODO: Implement Local Scope, etc.
-    };
+        Scope(std::string name, Scope *enclosingScope)
+            : name(name), enclosingScope(enclosingScope){};
 
+        std::string getScopeName() { return name; };
+        Scope *getEnclosingScope() { return enclosingScope; };
+
+        void define(std::string &name, const SymbolDeclaration &symbol) {
+            if (auto search = map.find(name); search != map.end()) {
+                // TODO: dont panic
+                Log::panic("duplicate symbol");
+            } else {
+                map[name] = symbol;
+            }
+        };
+
+        SymbolDeclaration resolve(const std::string &name) {
+            if (auto search = map.find(name); search != map.end()) {
+                return map[name];
+            } else {
+                // TODO: dont panic
+                Log::panic("undefined symbol");
+            }
+        };
+    };
 }// namespace Ceres::Binding
 
 #endif//COMPILER_SCOPE_H
