@@ -16,24 +16,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_VARIABLEDECLARATIONSTATEMENT_H
-#define COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#ifndef COMPILER_WHILESTATEMENT_H
+#define COMPILER_WHILESTATEMENT_H
 
+#include "../Expressions/Expression.h"
+#include "BlockStatement.h"
 #include "Statement.h"
-#include "VariableDeclaration.h"
 #include <memory>
 
 namespace Ceres::AST {
 
-    // Class that wraps a Variable Declaration.
-    // It's intended for operations that should only be done on Variable Declaration Statement vs global
-    // variable declarations.
-    class VariableDeclarationStatement : public Statement {
+    class WhileStatement : public Statement {
     public:
-        std::unique_ptr<VariableDeclaration> variableDeclaration;
+        std::unique_ptr<Expression> condition;
+        std::unique_ptr<BlockStatement> body;
 
-        VariableDeclarationStatement(const SourceSpan &sourceSpan,
-                                     std::unique_ptr<VariableDeclaration> &&variableDeclaration);
+        WhileStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                       std::unique_ptr<BlockStatement> &&body);
 
         void accept(AbstractASTVisitor &visitor) override;
 
@@ -42,4 +41,4 @@ namespace Ceres::AST {
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#endif//COMPILER_WHILESTATEMENT_H

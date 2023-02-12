@@ -17,7 +17,7 @@
  */
 
 #include "IfStatement.h"
-#include "../AbstractASTVisitor.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
     IfStatement::IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,

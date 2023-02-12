@@ -16,20 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "BlockStatement.h"
-#include "../AbstractASTVisitor.h"
+#include "ReturnStatement.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    BlockStatement::BlockStatement(const SourceSpan &sourceSpan,
-                                   std::vector<std::unique_ptr<Statement>> &&statements)
-        : Statement(sourceSpan), statements(std::move(statements)) {}
+    ReturnStatement::ReturnStatement(const SourceSpan &sourceSpan,
+                                     std::unique_ptr<Expression> &&expr)
+        : Statement(sourceSpan), expr(std::move(expr)) {}
 
-    void BlockStatement::accept(AbstractASTVisitor &visitor) { visitor.visitBlockStatement(*this); }
-
-    std::vector<Node *> BlockStatement::getChildren() const {
-        std::vector<Node *> v;
-        v.reserve(statements.size());
-        for (auto &a: statements) { v.push_back(a.get()); }
-        return v;
+    void ReturnStatement::accept(AbstractASTVisitor &visitor) {
+        visitor.visitReturnStatement(*this);
     }
+
+    std::vector<Node *> ReturnStatement::getChildren() const { return {expr.get()}; }
 }// namespace Ceres::AST

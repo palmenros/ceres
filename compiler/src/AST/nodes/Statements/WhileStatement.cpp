@@ -16,27 +16,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_EXPRESSIONSTATEMENT_H
-#define COMPILER_EXPRESSIONSTATEMENT_H
-
-#include "Expression.h"
-#include "Statement.h"
-#include <memory>
+#include "WhileStatement.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
+    WhileStatement::WhileStatement(const SourceSpan &sourceSpan,
+                                   std::unique_ptr<Expression> &&condition,
+                                   std::unique_ptr<BlockStatement> &&body)
+        : Statement(sourceSpan), condition(std::move(condition)), body(std::move(body)) {}
 
-    class ExpressionStatement : public Statement {
-    public:
-        std::unique_ptr<Expression> expression;
+    void WhileStatement::accept(AbstractASTVisitor &visitor) { visitor.visitWhileStatement(*this); }
 
-        ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
-
-        void accept(AbstractASTVisitor &visitor) override;
-
-        std::vector<Node *> getChildren() const override;
-    };
-
-
+    std::vector<Node *> WhileStatement::getChildren() const {
+        return {condition.get(), body.get()};
+    }
 }// namespace Ceres::AST
-
-#endif//COMPILER_EXPRESSIONSTATEMENT_H

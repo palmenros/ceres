@@ -17,8 +17,8 @@
  */
 
 #include "BinaryOperationExpression.h"
-#include "../../utils/log.hpp"
-#include "../AbstractASTVisitor.h"
+#include "../../../utils/log.hpp"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
     BinaryOperationExpression::BinaryOperationExpression(const SourceSpan &sourceSpan,

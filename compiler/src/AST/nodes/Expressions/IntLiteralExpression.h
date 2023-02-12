@@ -16,29 +16,28 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_IFSTATEMENT_H
-#define COMPILER_IFSTATEMENT_H
+#ifndef COMPILER_INTLITERALEXPRESSION_H
+#define COMPILER_INTLITERALEXPRESSION_H
 
-#include "BlockStatement.h"
+#include "../../../Typing/Type.h"
 #include "Expression.h"
-#include "Statement.h"
 #include <memory>
+#include <string>
 
 namespace Ceres::AST {
 
-    class IfStatement : public Statement {
+    enum class IntLiteralBase { Dec, Hex, Oct, Bin };
+
+    class IntLiteralExpression : public Expression {
     public:
-        std::unique_ptr<Expression> condition;
+        IntLiteralBase base;
 
-        std::unique_ptr<BlockStatement> thenBlock;
+        // String containing the integer literal in base "base" without the introducer characters for the base
+        // and the type. For example: 0xfc783u32 -> fc783
+        std::string str;
 
-        // Currently: the else statement can only be a BlockStatement, another IfStatement or a nullptr
-        // Note: maybeElseStatement can be a nullptr
-        std::unique_ptr<Statement> maybeElseStatement;
-
-        IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
-                    std::unique_ptr<BlockStatement> &&thenBlock,
-                    std::unique_ptr<Statement> &&elseStatement);
+        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type,
+                             std::string str);
 
         void accept(AbstractASTVisitor &visitor) override;
 
@@ -47,4 +46,4 @@ namespace Ceres::AST {
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_IFSTATEMENT_H
+#endif//COMPILER_INTLITERALEXPRESSION_H

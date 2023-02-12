@@ -19,10 +19,10 @@
 #ifndef COMPILER_FORSTATEMENT_H
 #define COMPILER_FORSTATEMENT_H
 
+#include "../Expressions/Expression.h"
+#include "../VariableDeclaration.h"
 #include "BlockStatement.h"
-#include "Expression.h"
 #include "Statement.h"
-#include "VariableDeclaration.h"
 #include <memory>
 
 namespace Ceres::AST {

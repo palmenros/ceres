@@ -22,26 +22,26 @@
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
 #include "CeresParser.h"
-#include "nodes/AssignmentExpression.h"
-#include "nodes/BinaryOperationExpression.h"
-#include "nodes/BlockStatement.h"
-#include "nodes/BoolLiteral.h"
-#include "nodes/CommaExpression.h"
 #include "nodes/CompilationUnit.h"
-#include "nodes/ExpressionStatement.h"
-#include "nodes/FloatLiteralExpression.h"
-#include "nodes/ForStatement.h"
-#include "nodes/FunctionCallExpression.h"
+#include "nodes/Expressions/AssignmentExpression.h"
+#include "nodes/Expressions/BinaryOperationExpression.h"
+#include "nodes/Expressions/BoolLiteralExpression.h"
+#include "nodes/Expressions/CommaExpression.h"
+#include "nodes/Expressions/FloatLiteralExpression.h"
+#include "nodes/Expressions/FunctionCallExpression.h"
+#include "nodes/Expressions/IdentifierExpression.h"
+#include "nodes/Expressions/IntLiteralExpression.h"
+#include "nodes/Expressions/PostfixExpression.h"
+#include "nodes/Expressions/PrefixExpression.h"
 #include "nodes/FunctionDefinition.h"
-#include "nodes/IdentifierExpression.h"
-#include "nodes/IfStatement.h"
-#include "nodes/IntLiteralExpression.h"
-#include "nodes/PostfixExpression.h"
-#include "nodes/PrefixExpression.h"
-#include "nodes/ReturnStatement.h"
+#include "nodes/Statements/BlockStatement.h"
+#include "nodes/Statements/ExpressionStatement.h"
+#include "nodes/Statements/ForStatement.h"
+#include "nodes/Statements/IfStatement.h"
+#include "nodes/Statements/ReturnStatement.h"
+#include "nodes/Statements/VariableDeclarationStatement.h"
+#include "nodes/Statements/WhileStatement.h"
 #include "nodes/VariableDeclaration.h"
-#include "nodes/VariableDeclarationStatement.h"
-#include "nodes/WhileStatement.h"
 #include <memory>
 #include <optional>
 
@@ -739,7 +739,7 @@ namespace Ceres::AST {
                        text_literal);
         }
 
-        return static_cast<Expression *>(new BoolLiteral(getSourceSpan(*ctx), value));
+        return static_cast<Expression *>(new BoolLiteralExpression(getSourceSpan(*ctx), value));
     }
 
     std::any AntlrASTGeneratorVisitor::visitIntLiteral(CeresParser::IntLiteralContext *ctx) {

@@ -16,29 +16,35 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_BOOLLITERAL_H
-#define COMPILER_BOOLLITERAL_H
+#ifndef COMPILER_IFSTATEMENT_H
+#define COMPILER_IFSTATEMENT_H
 
-#include "Expression.h"
-#include <string>
+#include "../Expressions/Expression.h"
+#include "BlockStatement.h"
+#include "Statement.h"
+#include <memory>
 
 namespace Ceres::AST {
 
-    enum class BoolLiteralValue { True, False };
-
-    class BoolLiteral : public Expression {
+    class IfStatement : public Statement {
     public:
-        BoolLiteralValue value;
+        std::unique_ptr<Expression> condition;
 
-        BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value);
+        std::unique_ptr<BlockStatement> thenBlock;
+
+        // Currently: the else statement can only be a BlockStatement, another IfStatement or a nullptr
+        // Note: maybeElseStatement can be a nullptr
+        std::unique_ptr<Statement> maybeElseStatement;
+
+        IfStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&condition,
+                    std::unique_ptr<BlockStatement> &&thenBlock,
+                    std::unique_ptr<Statement> &&elseStatement);
 
         void accept(AbstractASTVisitor &visitor) override;
 
         std::vector<Node *> getChildren() const override;
-
-        static std::string toStringBoolLiteralValue(BoolLiteralValue value);
     };
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_BOOLLITERAL_H
+#endif//COMPILER_IFSTATEMENT_H

@@ -34,6 +34,7 @@
 #include "AST/ASTVisitor.h"
 #include "AST/AntlrASTGeneratorVisitor.h"
 #include "AST/nodes/CompilationUnit.h"
+#include "Binding/BindingVisitor.h"
 #include "Diagnostics/Diagnostics.h"
 #include "Diagnostics/ParserErrorListener.h"
 #include "utils/InitCeres.h"
@@ -87,6 +88,10 @@ int main(int argc, const char *argv[]) {
         AST::ASTStringifierVisitor stringifierVisitor;
         auto str = stringifierVisitor.visit(*AST);
         Log::info("AST: {}", str);
+
+        Binding::BindingVisitor bindingVisitor;
+        bindingVisitor.visit(*AST);
+        Log::info("Binding visitor run!");
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def) override {

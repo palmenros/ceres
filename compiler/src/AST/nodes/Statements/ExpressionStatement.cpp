@@ -16,29 +16,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_BLOCKSTATEMENT_H
-#define COMPILER_BLOCKSTATEMENT_H
-
-#include "../../Binding/Scope.h"
-#include "Statement.h"
-#include <memory>
-#include <unordered_map>
-#include <vector>
+#include "ExpressionStatement.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    class BlockStatement : public Statement {
+    ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
+                                             std::unique_ptr<Expression> &&expression)
+        : Statement(sourceSpan), expression(std::move(expression)) {}
 
-    public:
-        Binding::Scope scope;
-        std::vector<std::unique_ptr<Statement>> statements;
+    void ExpressionStatement::accept(AbstractASTVisitor &visitor) {
+        visitor.visitExpressionStatement(*this);
+    }
 
-        BlockStatement(const SourceSpan &sourceSpan,
-                       std::vector<std::unique_ptr<Statement>> &&statements);
-
-        void accept(AbstractASTVisitor &visitor) override;
-
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> ExpressionStatement::getChildren() const { return {expression.get()}; }
 }// namespace Ceres::AST
-
-#endif//COMPILER_BLOCKSTATEMENT_H

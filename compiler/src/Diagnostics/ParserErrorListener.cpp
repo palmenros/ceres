@@ -26,7 +26,7 @@ namespace Ceres {
                                           size_t charPositionInLine, const std::string &msg,
                                           std::exception_ptr e) {
         auto loc = SourceManager::get().getLLVMSourceMgr().FindLocForLineAndColumn(
-                fileId, line, charPositionInLine);
+                fileId, line, (unsigned int) charPositionInLine);
         Diagnostics::report(loc, Diag::parse_error, msg);
     }
 

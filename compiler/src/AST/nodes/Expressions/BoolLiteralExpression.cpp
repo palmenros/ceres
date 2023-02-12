@@ -16,23 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "CommaExpression.h"
-#include "../AbstractASTVisitor.h"
+#include "BoolLiteralExpression.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    CommaExpression::CommaExpression(const SourceSpan &sourceSpan,
-                                     std::vector<std::unique_ptr<Expression>> &&expressions)
-        : Expression(sourceSpan), expressions(std::move(expressions)) {}
+    BoolLiteralExpression::BoolLiteralExpression(const SourceSpan &sourceSpan,
+                                                 BoolLiteralValue value)
+        : Expression(sourceSpan), value(value) {}
 
-    void CommaExpression::accept(AbstractASTVisitor &visitor) {
-        visitor.visitCommaExpression(*this);
+    void BoolLiteralExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitBoolLiteral(*this);
     }
 
-    std::vector<Node *> CommaExpression::getChildren() const {
-        std::vector<Node *> v;
-        v.reserve(expressions.size());
+    std::vector<Node *> BoolLiteralExpression::getChildren() const { return {}; }
 
-        for (auto &a: expressions) { v.push_back(a.get()); }
-        return v;
+    std::string BoolLiteralExpression::toStringBoolLiteralValue(BoolLiteralValue value) {
+        if (value == BoolLiteralValue::True) {
+            return "true";
+        } else {
+            return "false";
+        }
     }
 }// namespace Ceres::AST

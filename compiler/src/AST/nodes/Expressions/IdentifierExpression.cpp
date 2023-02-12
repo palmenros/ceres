@@ -16,22 +16,16 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "BoolLiteral.h"
-#include "../AbstractASTVisitor.h"
+#include "IdentifierExpression.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    BoolLiteral::BoolLiteral(const SourceSpan &sourceSpan, BoolLiteralValue value)
-        : Expression(sourceSpan), value(value) {}
+    IdentifierExpression::IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier)
+        : Expression(sourceSpan), identifier(std::move(identifier)) {}
 
-    void BoolLiteral::accept(AbstractASTVisitor &visitor) { visitor.visitBoolLiteral(*this); }
-
-    std::vector<Node *> BoolLiteral::getChildren() const { return {}; }
-
-    std::string BoolLiteral::toStringBoolLiteralValue(BoolLiteralValue value) {
-        if (value == BoolLiteralValue::True) {
-            return "true";
-        } else {
-            return "false";
-        }
+    void IdentifierExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitIdentifierExpression(*this);
     }
+
+    std::vector<Node *> IdentifierExpression::getChildren() const { return {}; }
 }// namespace Ceres::AST

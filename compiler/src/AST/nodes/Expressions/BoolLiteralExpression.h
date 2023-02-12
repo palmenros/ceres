@@ -16,20 +16,29 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "VariableDeclarationStatement.h"
-#include "../AbstractASTVisitor.h"
+#ifndef COMPILER_BOOLLITERALEXPRESSION_H
+#define COMPILER_BOOLLITERALEXPRESSION_H
+
+#include "Expression.h"
+#include <string>
 
 namespace Ceres::AST {
-    VariableDeclarationStatement::VariableDeclarationStatement(
-            const SourceSpan &sourceSpan,
-            std::unique_ptr<VariableDeclaration> &&variableDeclaration)
-        : Statement(sourceSpan), variableDeclaration(std::move(variableDeclaration)) {}
 
-    void VariableDeclarationStatement::accept(AbstractASTVisitor &visitor) {
-        visitor.visitVariableDeclarationStatement(*this);
-    }
+    enum class BoolLiteralValue { True, False };
 
-    std::vector<Node *> VariableDeclarationStatement::getChildren() const {
-        return {variableDeclaration.get()};
-    }
+    class BoolLiteralExpression : public Expression {
+    public:
+        BoolLiteralValue value;
+
+        BoolLiteralExpression(const SourceSpan &sourceSpan, BoolLiteralValue value);
+
+        void accept(AbstractASTVisitor &visitor) override;
+
+        std::vector<Node *> getChildren() const override;
+
+        static std::string toStringBoolLiteralValue(BoolLiteralValue value);
+    };
+
 }// namespace Ceres::AST
+
+#endif//COMPILER_BOOLLITERALEXPRESSION_H

@@ -21,8 +21,8 @@
 
 #include "../../Typing/Type.h"
 #include "../FunctionParameter.h"
-#include "BlockStatement.h"
 #include "Node.h"
+#include "Statements/BlockStatement.h"
 #include <memory>
 #include <string>
 #include <vector>

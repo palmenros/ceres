@@ -16,26 +16,20 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_RETURNSTATEMENT_H
-#define COMPILER_RETURNSTATEMENT_H
-
-#include "Expression.h"
-#include "Statement.h"
-#include <memory>
+#include "VariableDeclarationStatement.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
+    VariableDeclarationStatement::VariableDeclarationStatement(
+            const SourceSpan &sourceSpan,
+            std::unique_ptr<VariableDeclaration> &&variableDeclaration)
+        : Statement(sourceSpan), variableDeclaration(std::move(variableDeclaration)) {}
 
-    class ReturnStatement : public Statement {
-    public:
-        std::unique_ptr<Expression> expr;
+    void VariableDeclarationStatement::accept(AbstractASTVisitor &visitor) {
+        visitor.visitVariableDeclarationStatement(*this);
+    }
 
-        ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
-
-        void accept(AbstractASTVisitor &visitor) override;
-
-        std::vector<Node *> getChildren() const override;
-    };
-
+    std::vector<Node *> VariableDeclarationStatement::getChildren() const {
+        return {variableDeclaration.get()};
+    }
 }// namespace Ceres::AST
-
-#endif//COMPILER_RETURNSTATEMENT_H

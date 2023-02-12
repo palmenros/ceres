@@ -19,24 +19,24 @@
 #ifndef COMPILER_ABSTRACTASTVISITOR_H
 #define COMPILER_ABSTRACTASTVISITOR_H
 
-#include "nodes/AssignmentExpression.h"
-#include "nodes/BlockStatement.h"
-#include "nodes/BoolLiteral.h"
-#include "nodes/CommaExpression.h"
 #include "nodes/CompilationUnit.h"
-#include "nodes/ExpressionStatement.h"
-#include "nodes/FloatLiteralExpression.h"
-#include "nodes/ForStatement.h"
-#include "nodes/FunctionCallExpression.h"
-#include "nodes/IdentifierExpression.h"
-#include "nodes/IfStatement.h"
-#include "nodes/IntLiteralExpression.h"
+#include "nodes/Expressions/AssignmentExpression.h"
+#include "nodes/Expressions/BoolLiteralExpression.h"
+#include "nodes/Expressions/CommaExpression.h"
+#include "nodes/Expressions/FloatLiteralExpression.h"
+#include "nodes/Expressions/FunctionCallExpression.h"
+#include "nodes/Expressions/IdentifierExpression.h"
+#include "nodes/Expressions/IntLiteralExpression.h"
+#include "nodes/Expressions/PostfixExpression.h"
+#include "nodes/Expressions/PrefixExpression.h"
 #include "nodes/Node.h"
-#include "nodes/PostfixExpression.h"
-#include "nodes/PrefixExpression.h"
-#include "nodes/ReturnStatement.h"
-#include "nodes/VariableDeclarationStatement.h"
-#include "nodes/WhileStatement.h"
+#include "nodes/Statements/BlockStatement.h"
+#include "nodes/Statements/ExpressionStatement.h"
+#include "nodes/Statements/ForStatement.h"
+#include "nodes/Statements/IfStatement.h"
+#include "nodes/Statements/ReturnStatement.h"
+#include "nodes/Statements/VariableDeclarationStatement.h"
+#include "nodes/Statements/WhileStatement.h"
 
 namespace Ceres::AST {
 
@@ -50,7 +50,7 @@ namespace Ceres::AST {
         virtual void visitAssignmentExpression(AssignmentExpression &expr) = 0;
         virtual void visitBinaryOperationExpression(BinaryOperationExpression &expr) = 0;
         virtual void visitBlockStatement(BlockStatement &stm) = 0;
-        virtual void visitBoolLiteral(BoolLiteral &lit) = 0;
+        virtual void visitBoolLiteral(BoolLiteralExpression &lit) = 0;
         virtual void visitCommaExpression(CommaExpression &expr) = 0;
         virtual void visitCompilationUnit(CompilationUnit &unit) = 0;
         virtual void visitExpressionStatement(ExpressionStatement &stm) = 0;
@@ -67,6 +67,7 @@ namespace Ceres::AST {
         virtual void visitVariableDeclaration(VariableDeclaration &decl) = 0;
         virtual void visitVariableDeclarationStatement(VariableDeclarationStatement &stm) = 0;
         virtual void visitWhileStatement(WhileStatement &stm) = 0;
+
     };
 
 }// namespace Ceres::AST

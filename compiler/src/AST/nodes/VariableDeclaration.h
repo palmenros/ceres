@@ -20,8 +20,8 @@
 #define COMPILER_VARIABLEDECLARATION_H
 
 #include "../../Typing/Type.h"
-#include "Expression.h"
-#include "Statement.h"
+#include "Expressions/Expression.h"
+#include "Statements/Statement.h"
 #include <memory>
 #include <string>
 

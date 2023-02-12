@@ -16,19 +16,26 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "IntLiteralExpression.h"
-#include "../AbstractASTVisitor.h"
-#include <unordered_map>
+#ifndef COMPILER_RETURNSTATEMENT_H
+#define COMPILER_RETURNSTATEMENT_H
+
+#include "../Expressions/Expression.h"
+#include "Statement.h"
+#include <memory>
 
 namespace Ceres::AST {
 
-    IntLiteralExpression::IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base,
-                                               Type *type, std::string str)
-        : Expression(sourceSpan, type), base(base), str(std::move(str)) {}
+    class ReturnStatement : public Statement {
+    public:
+        std::unique_ptr<Expression> expr;
 
-    void IntLiteralExpression::accept(AbstractASTVisitor &visitor) {
-        visitor.visitIntLiteralExpression(*this);
-    }
+        ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
 
-    std::vector<Node *> IntLiteralExpression::getChildren() const { return {}; }
+        void accept(AbstractASTVisitor &visitor) override;
+
+        std::vector<Node *> getChildren() const override;
+    };
+
 }// namespace Ceres::AST
+
+#endif//COMPILER_RETURNSTATEMENT_H

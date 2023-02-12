@@ -29,7 +29,7 @@ namespace Ceres::AST {
 
     void ASTVisitor::visitBlockStatement(BlockStatement &stm) { visitChildren(stm); }
 
-    void ASTVisitor::visitBoolLiteral(BoolLiteral &lit) { visitChildren(lit); }
+    void ASTVisitor::visitBoolLiteral(BoolLiteralExpression &lit) { visitChildren(lit); }
 
     void ASTVisitor::visitCommaExpression(CommaExpression &expr) { visitChildren(expr); }
 

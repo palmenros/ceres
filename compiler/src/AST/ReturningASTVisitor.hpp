@@ -33,7 +33,7 @@ namespace Ceres::AST {
         virtual T doVisitAssignmentExpression(AssignmentExpression &expr) override;
         virtual T doVisitBinaryOperationExpression(BinaryOperationExpression &expr) override;
         virtual T doVisitBlockStatement(BlockStatement &stm) override;
-        virtual T doVisitBoolLiteral(BoolLiteral &lit) override;
+        virtual T doVisitBoolLiteral(BoolLiteralExpression &lit) override;
         virtual T doVisitCommaExpression(CommaExpression &expr) override;
         virtual T doVisitCompilationUnit(CompilationUnit &unit) override;
         virtual T doVisitExpressionStatement(ExpressionStatement &stm) override;
@@ -70,7 +70,7 @@ namespace Ceres::AST {
     }
 
     template<class T>
-    T ReturningASTVisitor<T>::doVisitBoolLiteral(BoolLiteral &lit) {
+    T ReturningASTVisitor<T>::doVisitBoolLiteral(BoolLiteralExpression &lit) {
         return this->visitChildren(lit);
     }
 

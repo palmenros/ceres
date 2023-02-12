@@ -152,8 +152,9 @@ namespace Ceres::AST {
         return fmt::format("(Block '{}')", res);
     }
 
-    std::string ASTStringifierVisitor::doVisitBoolLiteral(BoolLiteral &lit) {
-        return fmt::format("(BoolLiteral {})", BoolLiteral::toStringBoolLiteralValue(lit.value));
+    std::string ASTStringifierVisitor::doVisitBoolLiteral(BoolLiteralExpression &lit) {
+        return fmt::format("(BoolLiteralExpression {})",
+                           BoolLiteralExpression::toStringBoolLiteralValue(lit.value));
     }
 
     std::string ASTStringifierVisitor::doVisitCommaExpression(CommaExpression &expr) {

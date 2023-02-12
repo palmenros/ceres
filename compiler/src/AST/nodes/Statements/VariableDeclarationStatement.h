@@ -16,25 +16,30 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_EXPRESSION_H
-#define COMPILER_EXPRESSION_H
+#ifndef COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#define COMPILER_VARIABLEDECLARATIONSTATEMENT_H
 
-#include "../../Typing/Type.h"
-#include "Node.h"
-
+#include "../VariableDeclaration.h"
+#include "Statement.h"
+#include <memory>
 
 namespace Ceres::AST {
-    class Expression : public Node {
+
+    // Class that wraps a Variable Declaration.
+    // It's intended for operations that should only be done on Variable Declaration Statement vs global
+    // variable declarations.
+    class VariableDeclarationStatement : public Statement {
     public:
-        Type *type;
+        std::unique_ptr<VariableDeclaration> variableDeclaration;
 
-        explicit Expression(const SourceSpan &sourceSpan);
+        VariableDeclarationStatement(const SourceSpan &sourceSpan,
+                                     std::unique_ptr<VariableDeclaration> &&variableDeclaration);
 
-        explicit Expression(const SourceSpan &sourceSpan, Type *type);
+        void accept(AbstractASTVisitor &visitor) override;
 
-        virtual ~Expression() = default;
+        std::vector<Node *> getChildren() const override;
     };
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_EXPRESSION_H
+#endif//COMPILER_VARIABLEDECLARATIONSTATEMENT_H

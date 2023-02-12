@@ -34,20 +34,20 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/AST/nodes/Node.cpp src/AST/nodes/Node.h src/utils/SourceSpan.cpp src/utils/SourceSpan.h
         src/AST/nodes/CompilationUnit.cpp src/AST/nodes/CompilationUnit.h src/AST/nodes/FunctionDefinition.cpp
         src/AST/nodes/FunctionDefinition.h src/AST/nodes/VariableDeclaration.cpp src/AST/nodes/VariableDeclaration.h
-        src/AST/nodes/Expression.cpp src/AST/nodes/Expression.h src/AST/nodes/CommaExpression.cpp
-        src/AST/nodes/CommaExpression.h src/AST/nodes/IntLiteralExpression.cpp src/AST/nodes/IntLiteralExpression.h
-        src/AST/nodes/FloatLiteralExpression.cpp src/AST/nodes/FloatLiteralExpression.h src/AST/nodes/BoolLiteral.cpp
-        src/AST/nodes/BoolLiteral.h src/AST/nodes/IdentifierExpression.cpp src/AST/nodes/IdentifierExpression.h
-        src/AST/nodes/BinaryOperationExpression.cpp src/AST/nodes/BinaryOperationExpression.h
-        src/AST/nodes/PostfixExpression.cpp src/AST/nodes/PostfixExpression.h src/AST/nodes/PrefixExpression.cpp
-        src/AST/nodes/PrefixExpression.h src/AST/nodes/FunctionCallExpression.cpp src/AST/nodes/FunctionCallExpression.h
-        src/AST/nodes/AssignmentExpression.cpp src/AST/nodes/AssignmentExpression.h src/AST/FunctionParameter.cpp
-        src/AST/FunctionParameter.h src/AST/nodes/Statement.cpp src/AST/nodes/Statement.h src/AST/nodes/BlockStatement.cpp
-        src/AST/nodes/BlockStatement.h src/AST/nodes/VariableDeclarationStatement.cpp
-        src/AST/nodes/VariableDeclarationStatement.h src/AST/nodes/ExpressionStatement.cpp
-        src/AST/nodes/ExpressionStatement.h src/AST/nodes/ReturnStatement.cpp src/AST/nodes/ReturnStatement.h
-        src/AST/nodes/IfStatement.cpp src/AST/nodes/IfStatement.h src/AST/nodes/WhileStatement.cpp
-        src/AST/nodes/WhileStatement.h src/AST/nodes/ForStatement.cpp src/AST/nodes/ForStatement.h
+        src/AST/nodes/Expressions/Expression.cpp src/AST/nodes/Expressions/Expression.h src/AST/nodes/Expressions/CommaExpression.cpp
+        src/AST/nodes/Expressions/CommaExpression.h src/AST/nodes/Expressions/IntLiteralExpression.cpp src/AST/nodes/Expressions/IntLiteralExpression.h
+        src/AST/nodes/Expressions/FloatLiteralExpression.cpp src/AST/nodes/Expressions/FloatLiteralExpression.h src/AST/nodes/Expressions/BoolLiteralExpression.cpp
+        src/AST/nodes/Expressions/BoolLiteralExpression.h src/AST/nodes/Expressions/IdentifierExpression.cpp src/AST/nodes/Expressions/IdentifierExpression.h
+        src/AST/nodes/Expressions/BinaryOperationExpression.cpp src/AST/nodes/Expressions/BinaryOperationExpression.h
+        src/AST/nodes/Expressions/PostfixExpression.cpp src/AST/nodes/Expressions/PostfixExpression.h src/AST/nodes/Expressions/PrefixExpression.cpp
+        src/AST/nodes/Expressions/PrefixExpression.h src/AST/nodes/Expressions/FunctionCallExpression.cpp src/AST/nodes/Expressions/FunctionCallExpression.h
+        src/AST/nodes/Expressions/AssignmentExpression.cpp src/AST/nodes/Expressions/AssignmentExpression.h src/AST/FunctionParameter.cpp
+        src/AST/FunctionParameter.h src/AST/nodes/Statements/Statement.cpp src/AST/nodes/Statements/Statement.h src/AST/nodes/Statements/BlockStatement.cpp
+        src/AST/nodes/Statements/BlockStatement.h src/AST/nodes/Statements/VariableDeclarationStatement.cpp
+        src/AST/nodes/Statements/VariableDeclarationStatement.h src/AST/nodes/Statements/ExpressionStatement.cpp
+        src/AST/nodes/Statements/ExpressionStatement.h src/AST/nodes/Statements/ReturnStatement.cpp src/AST/nodes/Statements/ReturnStatement.h
+        src/AST/nodes/Statements/IfStatement.cpp src/AST/nodes/Statements/IfStatement.h src/AST/nodes/Statements/WhileStatement.cpp
+        src/AST/nodes/Statements/WhileStatement.h src/AST/nodes/Statements/ForStatement.cpp src/AST/nodes/Statements/ForStatement.h
         src/AST/AbstractASTVisitor.cpp src/AST/AbstractASTVisitor.h src/AST/ASTVisitor.cpp src/AST/ASTVisitor.h
         src/AST/AbstractReturningASTVisitor.hpp src/AST/ReturningASTVisitor.hpp src/AST/ASTStringifierVisitor.cpp
         src/AST/ASTStringifierVisitor.h src/utils/SourceManager.cpp src/utils/SourceManager.h

@@ -16,19 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "PrefixExpression.h"
-#include "../AbstractASTVisitor.h"
+#ifndef COMPILER_STATEMENT_H
+#define COMPILER_STATEMENT_H
+
+#include "../Node.h"
 
 namespace Ceres::AST {
+    class Statement : public Node {
+    public:
+        explicit Statement(const SourceSpan &sourceSpan);
 
-    PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op,
-                                       std::unique_ptr<Expression> &&expr,
-                                       const SourceSpan &opSourceSpan)
-        : Expression(sourceSpan), op(op), expr(std::move(expr)), opSourceSpan(opSourceSpan) {}
+        virtual ~Statement() = default;
+    };
 
-    void PrefixExpression::accept(AbstractASTVisitor &visitor) {
-        visitor.visitPrefixExpression(*this);
-    }
-
-    std::vector<Node *> PrefixExpression::getChildren() const { return {expr.get()}; }
 }// namespace Ceres::AST
+
+#endif//COMPILER_STATEMENT_H

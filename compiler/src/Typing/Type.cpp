@@ -19,6 +19,7 @@
 #include "Type.h"
 #include "TypeVisitor.h"
 
+#include <stdint.h>
 #include <utility>
 
 namespace Ceres {
@@ -29,6 +30,10 @@ namespace Ceres {
             NotYetInferredType::instances;
     std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>>
             PrimitiveScalarType::instances;
+    std::unordered_map<std::pair<Type *, std::vector<Type *>>, std::unique_ptr<FunctionType>,
+                       FunctionSignatureHash>
+            FunctionType::instances;
+
 
     std::string UnitVoidType::toString() const { return "void"; }
 
@@ -145,4 +150,55 @@ namespace Ceres {
     }
 
     void UnresolvedType::accept(Typing::TypeVisitor &visitor) { visitor.visitUnresolvedType(this); }
+
+    void FunctionType::accept(Typing::TypeVisitor &visitor) { visitor.visitFunctionType(this); }
+
+    FunctionType::FunctionType(Type *returnType, std::vector<Type *> argumentTypes)
+        : returnType(returnType), argumentTypes(std::move(argumentTypes)),
+          Type(TypeKind::FunctionType) {}
+
+
+    FunctionType *FunctionType::get(Type *returnType, const std::vector<Type *> &argumentTypes) {
+        auto &ptr = instances[std::make_pair(returnType, argumentTypes)];
+        if (ptr == nullptr) { ptr.reset(new FunctionType(returnType, argumentTypes)); }
+        return ptr.get();
+    }
+
+    std::string FunctionType::toString() const {
+        std::string arguments;
+        bool first = true;
+        for (auto arg: argumentTypes) {
+            if (first) {
+                first = false;
+            } else {
+                arguments += ", ";
+            }
+            arguments += arg->toString();
+        }
+
+        return fmt::format("fn ({}) {}", arguments, returnType->toString());
+    }
+
+    template<class T>
+    inline void hash_combine(std::size_t &seed, const T &v) {
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+
+    size_t
+    FunctionSignatureHash::operator()(const std::pair<Type *, std::vector<Type *>> &p) const {
+        const auto &vec = p.second;
+        Type *t = p.first;
+
+        size_t seed = vec.size();
+        hash_combine(seed, (uintptr_t) t);
+        for (auto ptr: vec) {
+            auto x = (uintptr_t) ptr;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = (x >> 16) ^ x;
+            seed ^= x + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
 }// namespace Ceres

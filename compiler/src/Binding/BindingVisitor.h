@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Pedro Palacios Almendros
+ * Copyright (C) 2023 Pedro Palacios Almendros, Ricardo Maurizio Paul
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace Ceres::Binding {
 
     class BindingVisitor : public ASTVisitor {
     public:
-        Scope *currentScope;
+        Scope *currentScope = nullptr;
 
         // Since we don't resolve anything in this pass we just have to add the defined names to the tables
         void visitBlockStatement(BlockStatement &stm) override;

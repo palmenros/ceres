@@ -16,17 +16,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "ExpressionStatement.h"
-#include "../AbstractASTVisitor.h"
+#include "FloatLiteralExpression.h"
+
+#include "../../AbstractASTVisitor.h"
+#include <utility>
 
 namespace Ceres::AST {
-    ExpressionStatement::ExpressionStatement(SourceSpan &&sourceSpan,
-                                             std::unique_ptr<Expression> &&expression)
-        : Statement(sourceSpan), expression(std::move(expression)) {}
 
-    void ExpressionStatement::accept(AbstractASTVisitor &visitor) {
-        visitor.visitExpressionStatement(*this);
+    FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan,
+                                                   FloatLiteralBase base, Type *type,
+                                                   std::string str)
+        : Expression(sourceSpan, type), base(base), str(std::move(str)) {}
+
+    void FloatLiteralExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitFloatLiteralExpression(*this);
     }
 
-    std::vector<Node *> ExpressionStatement::getChildren() const { return {expression.get()}; }
+    std::vector<Node *> FloatLiteralExpression::getChildren() const { return {}; }
 }// namespace Ceres::AST

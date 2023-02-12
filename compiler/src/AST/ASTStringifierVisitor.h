@@ -29,7 +29,7 @@ namespace Ceres::AST {
         std::string doVisitAssignmentExpression(AssignmentExpression &expr) override;
         std::string doVisitBinaryOperationExpression(BinaryOperationExpression &expr) override;
         std::string doVisitBlockStatement(BlockStatement &stm) override;
-        std::string doVisitBoolLiteral(BoolLiteral &lit) override;
+        std::string doVisitBoolLiteral(BoolLiteralExpression &lit) override;
         std::string doVisitCommaExpression(CommaExpression &expr) override;
         std::string doVisitCompilationUnit(CompilationUnit &unit) override;
         std::string doVisitExpressionStatement(ExpressionStatement &stm) override;

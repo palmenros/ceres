@@ -16,21 +16,23 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "FloatLiteralExpression.h"
-
-#include "../AbstractASTVisitor.h"
-#include <utility>
+#include "CommaExpression.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
+    CommaExpression::CommaExpression(const SourceSpan &sourceSpan,
+                                     std::vector<std::unique_ptr<Expression>> &&expressions)
+        : Expression(sourceSpan), expressions(std::move(expressions)) {}
 
-    FloatLiteralExpression::FloatLiteralExpression(const SourceSpan &sourceSpan,
-                                                   FloatLiteralBase base, Type *type,
-                                                   std::string str)
-        : Expression(sourceSpan, type), base(base), str(std::move(str)) {}
-
-    void FloatLiteralExpression::accept(AbstractASTVisitor &visitor) {
-        visitor.visitFloatLiteralExpression(*this);
+    void CommaExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitCommaExpression(*this);
     }
 
-    std::vector<Node *> FloatLiteralExpression::getChildren() const { return {}; }
+    std::vector<Node *> CommaExpression::getChildren() const {
+        std::vector<Node *> v;
+        v.reserve(expressions.size());
+
+        for (auto &a: expressions) { v.push_back(a.get()); }
+        return v;
+    }
 }// namespace Ceres::AST

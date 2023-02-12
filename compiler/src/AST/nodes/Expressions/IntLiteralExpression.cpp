@@ -16,16 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "IdentifierExpression.h"
-#include "../AbstractASTVisitor.h"
+#include "IntLiteralExpression.h"
+#include "../../AbstractASTVisitor.h"
+#include <unordered_map>
 
 namespace Ceres::AST {
-    IdentifierExpression::IdentifierExpression(const SourceSpan &sourceSpan, std::string identifier)
-        : Expression(sourceSpan), identifier(std::move(identifier)) {}
 
-    void IdentifierExpression::accept(AbstractASTVisitor &visitor) {
-        visitor.visitIdentifierExpression(*this);
+    IntLiteralExpression::IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base,
+                                               Type *type, std::string str)
+        : Expression(sourceSpan, type), base(base), str(std::move(str)) {}
+
+    void IntLiteralExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitIntLiteralExpression(*this);
     }
 
-    std::vector<Node *> IdentifierExpression::getChildren() const { return {}; }
+    std::vector<Node *> IntLiteralExpression::getChildren() const { return {}; }
 }// namespace Ceres::AST

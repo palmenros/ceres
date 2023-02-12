@@ -16,28 +16,28 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_INTLITERALEXPRESSION_H
-#define COMPILER_INTLITERALEXPRESSION_H
+#ifndef COMPILER_FLOATLITERALEXPRESSION_H
+#define COMPILER_FLOATLITERALEXPRESSION_H
 
-#include "../../Typing/Type.h"
+#include "../../../Typing/Type.h"
 #include "Expression.h"
 #include <memory>
 #include <string>
 
 namespace Ceres::AST {
 
-    enum class IntLiteralBase { Dec, Hex, Oct, Bin };
+    enum class FloatLiteralBase { Dec, Hex };
 
-    class IntLiteralExpression : public Expression {
+    class FloatLiteralExpression : public Expression {
     public:
-        IntLiteralBase base;
+        FloatLiteralBase base;
 
         // String containing the integer literal in base "base" without the introducer characters for the base
         // and the type. For example: 0xfc783u32 -> fc783
         std::string str;
 
-        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type,
-                             std::string str);
+        FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, Type *type,
+                               std::string str);
 
         void accept(AbstractASTVisitor &visitor) override;
 
@@ -46,4 +46,4 @@ namespace Ceres::AST {
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_INTLITERALEXPRESSION_H
+#endif//COMPILER_FLOATLITERALEXPRESSION_H

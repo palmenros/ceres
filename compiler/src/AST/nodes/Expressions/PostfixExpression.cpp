@@ -17,7 +17,7 @@
  */
 
 #include "PostfixExpression.h"
-#include "../AbstractASTVisitor.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
     PostfixExpression::PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,

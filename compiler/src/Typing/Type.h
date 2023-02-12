@@ -41,7 +41,8 @@ namespace Ceres {
             UnitVoidType,
             UnresolvedType,
             NotYetInferredType,
-            PrimitiveScalarType
+            PrimitiveScalarType,
+            FunctionType
         };
 
     private:
@@ -163,6 +164,31 @@ namespace Ceres {
         std::string toString() const override;
     };
 
+    struct FunctionSignatureHash {
+        size_t operator()(const std::pair<Type *, std::vector<Type *>> &p) const;
+    };
+
+    class FunctionType : public Type {
+    private:
+        static std::unordered_map<std::pair<Type *, std::vector<Type *>>,
+                                  std::unique_ptr<FunctionType>, FunctionSignatureHash>
+                instances;
+
+        explicit FunctionType(Type *returnType, std::vector<Type *> argumentTypes);
+
+    public:
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::FunctionType; }
+
+        void accept(Typing::TypeVisitor &visitor) override;
+
+    public:
+        Type *returnType;
+        std::vector<Type *> argumentTypes;
+
+        static FunctionType *get(Type *returnType, const std::vector<Type *> &argumentTypes);
+
+        std::string toString() const override;
+    };
 
 }// namespace Ceres
 

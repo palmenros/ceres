@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Pedro Palacios Almendros
+ * Copyright (C) 2023 Pedro Palacios Almendros, Ricardo Maurizio Paul
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,35 +22,37 @@
 #include "SymbolDeclaration.h"
 #include <string>
 #include <unordered_map>
+#include <utility>
 
 namespace Ceres::Binding {
 
     // Abstract class representing a scope
     class Scope {
         std::unordered_map<std::string, SymbolDeclaration> map;
-        std::string name;
+        std::string scopeName;
         Scope *enclosingScope;
 
     public:
         Scope(std::string name, Scope *enclosingScope)
-            : name(name), enclosingScope(enclosingScope){};
+            : scopeName(std::move(name)), enclosingScope(enclosingScope){};
 
-        std::string getScopeName() { return name; };
+        std::string getScopeName() { return scopeName; };
         Scope *getEnclosingScope() { return enclosingScope; };
 
-        void define(std::string &name, const SymbolDeclaration &symbol) {
-            if (auto search = map.find(name); search != map.end()) {
-                // TODO: dont panic
+        void define(const std::string &name, const SymbolDeclaration &symbol) {
+            auto [it, inserted_new] = map.insert(std::make_pair(name, symbol));
+            if (!inserted_new) {
+                // An element with that scopeName already existed
                 Log::panic("duplicate symbol");
-            } else {
-                map[name] = symbol;
             }
         };
 
         SymbolDeclaration resolve(const std::string &name) {
-            if (auto search = map.find(name); search != map.end()) {
-                return map[name];
+            auto it = map.find(name);
+            if (it != map.end()) {
+                return it->second;
             } else {
+                // TODO: Visit parent scope
                 // TODO: dont panic
                 Log::panic("undefined symbol");
             }

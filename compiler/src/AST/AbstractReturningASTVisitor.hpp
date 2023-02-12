@@ -41,7 +41,9 @@ namespace Ceres::AST {
         void visitBlockStatement(BlockStatement &stm) override {
             _result = doVisitBlockStatement(stm);
         }
-        void visitBoolLiteral(BoolLiteral &lit) override { _result = doVisitBoolLiteral(lit); }
+        void visitBoolLiteral(BoolLiteralExpression &lit) override {
+            _result = doVisitBoolLiteral(lit);
+        }
         void visitCommaExpression(CommaExpression &expr) override {
             _result = doVisitCommaExpression(expr);
         }
@@ -114,7 +116,7 @@ namespace Ceres::AST {
         virtual T doVisitAssignmentExpression(AssignmentExpression &expr) = 0;
         virtual T doVisitBinaryOperationExpression(BinaryOperationExpression &expr) = 0;
         virtual T doVisitBlockStatement(BlockStatement &stm) = 0;
-        virtual T doVisitBoolLiteral(BoolLiteral &lit) = 0;
+        virtual T doVisitBoolLiteral(BoolLiteralExpression &lit) = 0;
         virtual T doVisitCommaExpression(CommaExpression &expr) = 0;
         virtual T doVisitCompilationUnit(CompilationUnit &unit) = 0;
         virtual T doVisitExpressionStatement(ExpressionStatement &stm) = 0;

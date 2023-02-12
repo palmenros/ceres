@@ -17,8 +17,8 @@
  */
 
 #include "AssignmentExpression.h"
-#include "../../utils/log.hpp"
-#include "../AbstractASTVisitor.h"
+#include "../../../utils/log.hpp"
+#include "../../AbstractASTVisitor.h"
 #include <utility>
 
 namespace Ceres::AST {

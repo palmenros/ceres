@@ -16,34 +16,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_FLOATLITERALEXPRESSION_H
-#define COMPILER_FLOATLITERALEXPRESSION_H
+#ifndef COMPILER_EXPRESSIONSTATEMENT_H
+#define COMPILER_EXPRESSIONSTATEMENT_H
 
-#include "../../Typing/Type.h"
-#include "Expression.h"
+#include "../Expressions/Expression.h"
+#include "Statement.h"
 #include <memory>
-#include <string>
 
 namespace Ceres::AST {
 
-    enum class FloatLiteralBase { Dec, Hex };
-
-    class FloatLiteralExpression : public Expression {
+    class ExpressionStatement : public Statement {
     public:
-        FloatLiteralBase base;
+        std::unique_ptr<Expression> expression;
 
-        // String containing the integer literal in base "base" without the introducer characters for the base
-        // and the type. For example: 0xfc783u32 -> fc783
-        std::string str;
-
-        FloatLiteralExpression(const SourceSpan &sourceSpan, FloatLiteralBase base, Type *type,
-                               std::string str);
+        ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
 
         void accept(AbstractASTVisitor &visitor) override;
 
         std::vector<Node *> getChildren() const override;
     };
 
+
 }// namespace Ceres::AST
 
-#endif//COMPILER_FLOATLITERALEXPRESSION_H
+#endif//COMPILER_EXPRESSIONSTATEMENT_H

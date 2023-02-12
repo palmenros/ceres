@@ -16,18 +16,19 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "WhileStatement.h"
-#include "../AbstractASTVisitor.h"
+#include "PrefixExpression.h"
+#include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
-    WhileStatement::WhileStatement(const SourceSpan &sourceSpan,
-                                   std::unique_ptr<Expression> &&condition,
-                                   std::unique_ptr<BlockStatement> &&body)
-        : Statement(sourceSpan), condition(std::move(condition)), body(std::move(body)) {}
 
-    void WhileStatement::accept(AbstractASTVisitor &visitor) { visitor.visitWhileStatement(*this); }
+    PrefixExpression::PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op,
+                                       std::unique_ptr<Expression> &&expr,
+                                       const SourceSpan &opSourceSpan)
+        : Expression(sourceSpan), op(op), expr(std::move(expr)), opSourceSpan(opSourceSpan) {}
 
-    std::vector<Node *> WhileStatement::getChildren() const {
-        return {condition.get(), body.get()};
+    void PrefixExpression::accept(AbstractASTVisitor &visitor) {
+        visitor.visitPrefixExpression(*this);
     }
+
+    std::vector<Node *> PrefixExpression::getChildren() const { return {expr.get()}; }
 }// namespace Ceres::AST

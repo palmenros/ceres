@@ -16,19 +16,25 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef COMPILER_STATEMENT_H
-#define COMPILER_STATEMENT_H
+#ifndef COMPILER_EXPRESSION_H
+#define COMPILER_EXPRESSION_H
 
-#include "Node.h"
+#include "../../../Typing/Type.h"
+#include "../Node.h"
+
 
 namespace Ceres::AST {
-    class Statement : public Node {
+    class Expression : public Node {
     public:
-        explicit Statement(const SourceSpan &sourceSpan);
+        Type *type;
 
-        virtual ~Statement() = default;
+        explicit Expression(const SourceSpan &sourceSpan);
+
+        explicit Expression(const SourceSpan &sourceSpan, Type *type);
+
+        virtual ~Expression() = default;
     };
 
 }// namespace Ceres::AST
 
-#endif//COMPILER_STATEMENT_H
+#endif//COMPILER_EXPRESSION_H
