@@ -50,7 +50,7 @@ namespace Ceres::Binding {
                 SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
         currentScope->define(def.functionName, fsymbol);
 
-        for (auto p: def.parameters) {
+        for (const auto &p: def.parameters) {
             // TODO: bind to function node?
             SymbolDeclaration symbol =
                     SymbolDeclaration(SymbolDeclarationKind::LocalVariableDeclaration, &def);

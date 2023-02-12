@@ -35,7 +35,7 @@ namespace Ceres::AST {
     public:
         FunctionVisibility visibility;
         std::string functionName;
-        std::vector<FunctionParameter> parameters;
+        std::vector<FunctionParameter>  parameters;
         Type *returnType;
         std::unique_ptr<BlockStatement> block;
 
