@@ -21,6 +21,24 @@
 #include "SymbolDeclaration.h"
 
 namespace Ceres::Binding {
+    void BindingVisitor::visitCompilationUnit(CompilationUnit &unit) {
+        // TODO: fix when we have multiple translation units
+
+        ASSERT(translationUnitScope == nullptr);
+
+        // TODO: add global scope class with no parent
+        unit.scope = Scope("Translation", nullptr);
+        // TODO: does this panic on None option?
+        translationUnitScope = &unit.scope.value();
+        currentScope = translationUnitScope;
+
+        ASSERT(translationUnitScope != nullptr);
+        ASSERT(currentScope != nullptr);
+
+        for (auto c: unit.getChildren()) { visit(*c); }
+    }
+
+
     void BindingVisitor::visitBlockStatement(BlockStatement &stm) {
         // TODO: needs a special scopeName?
         stm.scope = Scope("block", currentScope);
@@ -39,16 +57,22 @@ namespace Ceres::Binding {
         // Put everything, arguments included in block scope
         ASSERT(def.block != nullptr);
 
-        def.block->scope = Scope(def.functionName, currentScope);
+        {
+            // TODO: Add function to current scope to allow recursion,
+            // this should be the same as the translation scope, but its better this
+            // way in case we decide to allow nested functions
+            SymbolDeclaration fsymbol =
+                    SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
+            ASSERT(currentScope == translationUnitScope);
+            currentScope->define(def.functionName, fsymbol);
+
+            def.block->scope = Scope(def.functionName, currentScope);
+        }
 
         ASSERT(def.block->scope.has_value());
         currentScope = &def.block->scope.value();
-
         ASSERT(currentScope != nullptr);
 
-        SymbolDeclaration fsymbol =
-                SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
-        currentScope->define(def.functionName, fsymbol);
 
         for (const auto &p: def.parameters) {
             // TODO: bind to function node?

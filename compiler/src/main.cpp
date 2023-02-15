@@ -85,9 +85,9 @@ int main(int argc, const char *argv[]) {
 
         auto AST = std::unique_ptr<AST::CompilationUnit>(res);
 
-        AST::ASTStringifierVisitor stringifierVisitor;
-        auto str = stringifierVisitor.visit(*AST);
-        Log::info("AST: {}", str);
+        // AST::ASTStringifierVisitor stringifierVisitor;
+        // auto str = stringifierVisitor.visit(*AST);
+        // Log::info("AST: {}", str);
 
         Binding::BindingVisitor bindingVisitor;
         bindingVisitor.visit(*AST);

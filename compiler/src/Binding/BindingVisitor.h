@@ -33,9 +33,11 @@ namespace Ceres::Binding {
 
     class BindingVisitor : public ASTVisitor {
     public:
+        Scope *translationUnitScope = nullptr;
         Scope *currentScope = nullptr;
 
         // Since we don't resolve anything in this pass we just have to add the defined names to the tables
+        void visitCompilationUnit(CompilationUnit &unit) override;
         void visitBlockStatement(BlockStatement &stm) override;
         void visitFunctionDefinition(FunctionDefinition &def) override;
         void visitVariableDeclaration(VariableDeclaration &decl) override;
