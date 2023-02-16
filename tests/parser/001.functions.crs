@@ -21,8 +21,8 @@ fn returns_void() {
 
 fn gcd(a: i32, b: i32) i32 {
     var max = a;
-    var min = b;    
-    
+    var min = b;
+
     if b > a {
         max = b;
         min = a;
@@ -40,8 +40,8 @@ fn gcd(a: i32, b: i32) i32 {
 fn iterative_gcd(var a: i32, var b: i32) i32 {
     var q: i32;
     var r: i32;
-    // var q, r : i32;    
-    
+    // var q, r : i32;
+
     while b > 0 {
         q = a / b;
         r = a % b;

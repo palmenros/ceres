@@ -28,14 +28,15 @@ namespace Ceres::Binding {
 
     // Abstract class representing a scope
     class Scope {
+    protected:
         std::unordered_map<std::string, SymbolDeclaration> map;
         std::string scopeName;
         Scope *enclosingScope;
 
-    public:
         Scope(std::string name, Scope *enclosingScope)
             : scopeName(std::move(name)), enclosingScope(enclosingScope){};
 
+    public:
         std::string getScopeName() { return scopeName; };
         Scope *getEnclosingScope() { return enclosingScope; };
 
@@ -49,14 +50,25 @@ namespace Ceres::Binding {
 
         SymbolDeclaration resolve(const std::string &name) {
             auto it = map.find(name);
-            if (it != map.end()) {
-                return it->second;
-            } else {
-                // TODO: Visit parent scope
-                // TODO: dont panic
-                Log::panic("undefined symbol");
-            }
+            if (it != map.end()) { return it->second; }
+
+            if (getEnclosingScope() == nullptr) { Log::panic("undefined symbol"); }
+
+            return getEnclosingScope()->resolve(name);
         };
+    };
+
+    // TODO: hack to avoid duplicating code, interface should be stable
+    // for when we need to change it
+    class BlockScope : public Scope {
+    public:
+        BlockScope(std::string name, Scope *enclosingScope)
+            : Scope(std::move(name), enclosingScope){};
+    };
+
+    class TranslationScope : public Scope {
+    public:
+        TranslationScope(std::string name) : Scope(std::move(name), nullptr){};
     };
 }// namespace Ceres::Binding
 

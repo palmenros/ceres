@@ -33,7 +33,6 @@ namespace Ceres::Binding {
 
     class BindingVisitor : public ASTVisitor {
     public:
-        Scope *translationUnitScope = nullptr;
         Scope *currentScope = nullptr;
 
         // Since we don't resolve anything in this pass we just have to add the defined names to the tables

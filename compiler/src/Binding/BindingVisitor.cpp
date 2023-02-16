@@ -19,43 +19,47 @@
 #include "BindingVisitor.h"
 #include "Scope.h"
 #include "SymbolDeclaration.h"
+#include <optional>
 
 namespace Ceres::Binding {
     void BindingVisitor::visitCompilationUnit(CompilationUnit &unit) {
         // TODO: fix when we have multiple translation units
 
-        ASSERT(translationUnitScope == nullptr);
+        ASSERT(currentScope == nullptr);
 
         // TODO: add global scope class with no parent
-        unit.scope = Scope("Translation", nullptr);
+        unit.scope = TranslationScope("Translation");
         // TODO: does this panic on None option?
-        translationUnitScope = &unit.scope.value();
-        currentScope = translationUnitScope;
+        currentScope = &unit.scope.value();
 
-        ASSERT(translationUnitScope != nullptr);
         ASSERT(currentScope != nullptr);
 
-        for (auto c: unit.getChildren()) { visit(*c); }
+        Log::info("{}", currentScope->getScopeName());
+
+        visitChildren(unit);
     }
 
 
     void BindingVisitor::visitBlockStatement(BlockStatement &stm) {
         // TODO: needs a special scopeName?
-        stm.scope = Scope("block", currentScope);
+        stm.scope = BlockScope("block", currentScope);
 
         ASSERT(stm.scope.has_value());
         currentScope = &stm.scope.value();
 
         ASSERT(currentScope != nullptr);
 
-        for (auto c: stm.getChildren()) { visit(*c); }
+        visitChildren(stm);
 
         currentScope = currentScope->getEnclosingScope();
+
+        Log::info("{}", stm.scope->getScopeName());
     }
 
     void BindingVisitor::visitFunctionDefinition(FunctionDefinition &def) {
         // Put everything, arguments included in block scope
         ASSERT(def.block != nullptr);
+        ASSERT(currentScope != nullptr);
 
         {
             // TODO: Add function to current scope to allow recursion,
@@ -63,15 +67,13 @@ namespace Ceres::Binding {
             // way in case we decide to allow nested functions
             SymbolDeclaration fsymbol =
                     SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
-            ASSERT(currentScope == translationUnitScope);
             currentScope->define(def.functionName, fsymbol);
 
-            def.block->scope = Scope(def.functionName, currentScope);
-        }
+            def.block->scope = BlockScope(def.functionName, currentScope);
+            currentScope = &def.block->scope.value();
 
-        ASSERT(def.block->scope.has_value());
-        currentScope = &def.block->scope.value();
-        ASSERT(currentScope != nullptr);
+            Log::info("{}", currentScope->getScopeName());
+        }
 
 
         for (const auto &p: def.parameters) {
@@ -81,7 +83,7 @@ namespace Ceres::Binding {
             currentScope->define(p.name, symbol);
         }
 
-        for (auto c: def.block->getChildren()) { visit(*c); }
+        visitChildren(*def.block);
 
         currentScope = currentScope->getEnclosingScope();
     }
@@ -90,6 +92,7 @@ namespace Ceres::Binding {
         SymbolDeclarationKind kind = decl.scope == VariableScope::Global
                                              ? SymbolDeclarationKind::GlobalVariableDeclaration
                                              : SymbolDeclarationKind::LocalVariableDeclaration;
+
         SymbolDeclaration symbol = SymbolDeclaration(kind, &decl);
 
         ASSERT(currentScope != nullptr);
