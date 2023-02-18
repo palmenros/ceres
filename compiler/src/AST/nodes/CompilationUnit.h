@@ -31,7 +31,7 @@ namespace Ceres::AST {
     public:
         std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
         std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
-        std::optional<Binding::TranslationScope> scope;
+        std::optional<Binding::SymbolTableScope> scope;
 
         CompilationUnit(
                 const SourceSpan &sourceSpan,

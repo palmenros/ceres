@@ -28,13 +28,13 @@ namespace Ceres::Binding {
         ASSERT(currentScope == nullptr);
 
         // TODO: add global scope class with no parent
-        unit.scope = TranslationScope("Translation");
+        unit.scope = SymbolTableScope("Translation", nullptr);
         // TODO: does this panic on None option?
         currentScope = &unit.scope.value();
 
         ASSERT(currentScope != nullptr);
 
-        Log::info("{}", currentScope->getScopeName());
+        // Log::info("{}", currentScope->getScopeName());
 
         visitChildren(unit);
     }
@@ -42,7 +42,7 @@ namespace Ceres::Binding {
 
     void BindingVisitor::visitBlockStatement(BlockStatement &stm) {
         // TODO: needs a special scopeName?
-        stm.scope = BlockScope("block", currentScope);
+        stm.scope = SymbolTableScope("block", currentScope);
 
         ASSERT(stm.scope.has_value());
         currentScope = &stm.scope.value();
@@ -53,7 +53,7 @@ namespace Ceres::Binding {
 
         currentScope = currentScope->getEnclosingScope();
 
-        Log::info("{}", stm.scope->getScopeName());
+        // Log::info("{}", stm.scope->getScopeName());
     }
 
     void BindingVisitor::visitFunctionDefinition(FunctionDefinition &def) {
@@ -69,10 +69,10 @@ namespace Ceres::Binding {
                     SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
             currentScope->define(def.functionName, fsymbol);
 
-            def.block->scope = BlockScope(def.functionName, currentScope);
+            def.block->scope = SymbolTableScope(def.functionName, currentScope);
             currentScope = &def.block->scope.value();
 
-            Log::info("{}", currentScope->getScopeName());
+            // Log::info("{}", currentScope->getScopeName());
         }
 
 
@@ -99,5 +99,5 @@ namespace Ceres::Binding {
         currentScope->define(decl.identifier, symbol);
     }
 
-    // TODO: Add scope for compilationUnit
+
 }// namespace Ceres::Binding

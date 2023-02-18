@@ -40,6 +40,8 @@ namespace Ceres::Binding {
         void visitBlockStatement(BlockStatement &stm) override;
         void visitFunctionDefinition(FunctionDefinition &def) override;
         void visitVariableDeclaration(VariableDeclaration &decl) override;
+        // TODO: think about this
+        // void visitForStatement(ForStatement &stm) override;
     };
 }// namespace Ceres::Binding
 

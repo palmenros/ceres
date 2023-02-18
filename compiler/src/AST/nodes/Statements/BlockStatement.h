@@ -31,7 +31,7 @@ namespace Ceres::AST {
 
     public:
         //TODO: Convert to std::optional<Binding::SymbolTableScope>
-        std::optional<Binding::BlockScope> scope;
+        std::optional<Binding::SymbolTableScope> scope;
         std::vector<std::unique_ptr<Statement>> statements;
 
         BlockStatement(const SourceSpan &sourceSpan,

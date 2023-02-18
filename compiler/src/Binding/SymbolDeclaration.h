@@ -21,6 +21,8 @@
 
 #include "../AST/nodes/Node.h"
 #include "../Typing/Type.h"
+#include <cstddef>
+#include <optional>
 #include <string>
 
 namespace Ceres::Binding {
@@ -28,16 +30,29 @@ namespace Ceres::Binding {
     enum class SymbolDeclarationKind {
         FunctionDeclaration,
         LocalVariableDeclaration,
-        GlobalVariableDeclaration
+        GlobalVariableDeclaration,
+        FunctionParamDeclaration,
     };
 
     class SymbolDeclaration {
     public:
         SymbolDeclarationKind kind;
         AST::Node *declarationNode;
+        std::optional<size_t> paramIdx = 0;
 
-        SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode)
-            : kind(kind), declarationNode(declarationNode){};
+        // TODO: sadly this is not rust so we cant create a constructor for a variant,
+        // just pray no one uses this incorrectly
+        SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode);
+        SymbolDeclaration(AST::Node *declarationNode, size_t param_idx);
+
+        // Methods
+        SymbolDeclarationKind getKind();
+
+        AST::Node *getDeclarationNode();
+
+        std::optional<size_t> getParam_idx();
+
+        Type *getType();
     };
 
 }// namespace Ceres::Binding

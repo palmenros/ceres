@@ -17,5 +17,49 @@
  */
 
 #include "SymbolDeclaration.h"
+#include "../AST/nodes/FunctionDefinition.h"
 
-namespace Ceres::Binding {}// namespace Ceres::Binding
+namespace Ceres::Binding {
+    AST::FunctionParameter *getParam(SymbolDeclaration &symbol) {
+        ASSERT(symbol.paramIdx.has_value());
+
+        auto node = dynamic_cast<AST::FunctionDefinition *>(symbol.declarationNode);
+        ASSERT(node != nullptr);
+        ASSERT(node->parameters.size() < symbol.paramIdx.value());
+
+        auto param = &node->parameters[symbol.paramIdx.value()];
+
+        return param;
+    }
+
+    AST::Expression *getExpr(SymbolDeclaration &symbol) {
+        auto node = dynamic_cast<AST::Expression *>(symbol.declarationNode);
+        ASSERT(node != nullptr);
+
+        return node;
+    }
+
+    // Constructors
+    SymbolDeclaration::SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode)
+        : kind(kind), declarationNode(declarationNode){};
+
+    SymbolDeclaration::SymbolDeclaration(AST::Node *declarationNode, size_t param_idx)
+        : kind(SymbolDeclarationKind::FunctionParamDeclaration), declarationNode(declarationNode),
+          paramIdx(param_idx){};
+
+
+    // Methods
+    SymbolDeclarationKind SymbolDeclaration::getKind() { return kind; }
+
+    AST::Node *SymbolDeclaration::getDeclarationNode() { return declarationNode; }
+
+    std::optional<size_t> SymbolDeclaration::getParam_idx() { return paramIdx; }
+
+    Type *SymbolDeclaration::getType() {
+        if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+            return getParam(*this)->type;
+        } else {
+            return getExpr(*this)->type;
+        }
+    }
+}// namespace Ceres::Binding

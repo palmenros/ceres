@@ -60,15 +60,10 @@ namespace Ceres::Binding {
 
     // TODO: hack to avoid duplicating code, interface should be stable
     // for when we need to change it
-    class BlockScope : public Scope {
+    class SymbolTableScope : public Scope {
     public:
-        BlockScope(std::string name, Scope *enclosingScope)
+        SymbolTableScope(std::string name, Scope *enclosingScope)
             : Scope(std::move(name), enclosingScope){};
-    };
-
-    class TranslationScope : public Scope {
-    public:
-        TranslationScope(std::string name) : Scope(std::move(name), nullptr){};
     };
 }// namespace Ceres::Binding
 
