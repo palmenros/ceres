@@ -33,7 +33,7 @@ namespace Ceres {
     std::unordered_map<std::pair<Type *, std::vector<Type *>>, std::unique_ptr<FunctionType>,
                        FunctionSignatureHash>
             FunctionType::instances;
-
+    std::unique_ptr<ErrorType> ErrorType::instance = nullptr;
 
     std::string UnitVoidType::toString() const { return "void"; }
 
@@ -201,4 +201,55 @@ namespace Ceres {
         }
         return seed;
     }
+
+    void ErrorType::accept(Typing::TypeVisitor &visitor) { visitor.visitErrorType(this); }
+
+    ErrorType *ErrorType::get() {
+        if (instance != nullptr) { return instance.get(); }
+
+        instance.reset(new ErrorType);
+        return instance.get();
+    }
+
+    std::string ErrorType::toString() const { return "<ErrorType>"; }
+
+    // Return ErrorType if the coercion is not pssible
+    Type *Type::getImplicitlyCoercedType(Type *a, Type *b) {
+        // a will hold the type with the *smallest* typeKind
+        if (b->getKind() < a->getKind()) { std::swap(a, b); }
+
+        switch (a->getKind()) {
+            case TypeKind::UnitVoidType: {
+                return ErrorType::get();
+            }
+            case TypeKind::UnresolvedType: {
+                Log::panic("Unresolved type when coercing");
+            }
+            case TypeKind::NotYetInferredType: {
+                NotYetInferredType *notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
+                ASSERT(notYetInferredType != nullptr);
+                if (auto *primitiveScalarType = llvm::dyn_cast<PrimitiveScalarType>(b)) {
+                    if (notYetInferredType->kind == NotYetInferredKind::NumberLiteral) { return b; }
+                }
+                return ErrorType::get();
+            }
+            case TypeKind::PrimitiveScalarType: {
+                // TODO: If we allow for implicit safe scalar type coercion u8 -> u32, this is
+                //          where to add it.
+                return ErrorType::get();
+            }
+            case TypeKind::FunctionType: {
+                return ErrorType::get();
+            }
+            case TypeKind::ErrorType: {
+                return ErrorType::get();
+            }
+            default:
+                NOT_IMPLEMENTED();
+        }
+
+        NOT_IMPLEMENTED();
+    }
+
+
 }// namespace Ceres

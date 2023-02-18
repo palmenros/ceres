@@ -24,5 +24,6 @@
 
 DIAG(parse_error, Error, "{}")
 DIAG(unknown_type, Error, "unknown type '{}'")
+DIAG(mismatch_type_error, Error, "mismatched types: '{}' and '{}'")
 
 #undef DIAG

@@ -37,12 +37,17 @@ namespace Ceres {
     public:
         /// Discriminator for LLVM-style RTTI (dyn_cast<> et al.)
         // TODO: When adding a new type kind, you also have to add it here
+        // TODO: When adding a new type kind, add it *at the end* and update the coerced types table
         enum class TypeKind {
-            UnitVoidType,
+            UnitVoidType = 0,
             UnresolvedType,
             NotYetInferredType,
             PrimitiveScalarType,
-            FunctionType
+            FunctionType,
+
+
+            // TODO: Error Type must be the last tye
+            ErrorType// This type represents an error type (for example, an invalid type given by the user)
         };
 
     private:
@@ -55,6 +60,8 @@ namespace Ceres {
         virtual void accept(Typing::TypeVisitor &visitor) = 0;
         virtual std::string toString() const = 0;
         virtual ~Type() = default;
+
+        static Type *getImplicitlyCoercedType(Type *a, Type *b);
     };
 
     class UnitVoidType : public Type {
@@ -69,6 +76,21 @@ namespace Ceres {
 
     public:
         static UnitVoidType *get();
+        std::string toString() const override;
+    };
+
+    class ErrorType : public Type {
+    private:
+        static std::unique_ptr<ErrorType> instance;
+        ErrorType() : Type(TypeKind::ErrorType) {}
+
+    public:
+        // Static function needed for fast LLVM RTTI
+        static bool classof(const Type *type) { return type->getKind() == TypeKind::ErrorType; }
+        void accept(Typing::TypeVisitor &visitor) override;
+
+    public:
+        static ErrorType *get();
         std::string toString() const override;
     };
 

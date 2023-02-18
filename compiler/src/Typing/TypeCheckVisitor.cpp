@@ -1,5 +1,6 @@
 #include "TypeCheckVisitor.h"
 #include "../Binding/Scope.h"
+#include "../Diagnostics/Diagnostics.h"
 #include "Type.h"
 #include <optional>
 
@@ -45,6 +46,11 @@ namespace Ceres::Typing {
             }
 
             if (decl.type != *extype) {
+
+                // TODO: Better errors
+                Diagnostics::report(decl.sourceSpan, Diag::mismatch_type_error,
+                                    decl.type->toString(), (*extype)->toString());
+
                 // TODO: implement print on span, with line and char
                 Log::panic("Variable decl mismatched types on line: ");
             }

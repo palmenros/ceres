@@ -36,6 +36,7 @@ namespace Ceres::Typing {
         virtual void visitNotYetInferredType(NotYetInferredType *type) = 0;
         virtual void visitPrimitiveScalarType(PrimitiveScalarType *type) = 0;
         virtual void visitFunctionType(FunctionType *type) = 0;
+        virtual void visitErrorType(ErrorType *type) = 0;
     };
 
 }// namespace Ceres::Typing
