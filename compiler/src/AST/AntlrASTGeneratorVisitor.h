@@ -24,130 +24,145 @@
 
 namespace Ceres::AST {
 
-    class AntlrASTGeneratorVisitor : public antlrgenerated::CeresParserVisitor {
+class AntlrASTGeneratorVisitor : public antlrgenerated::CeresParserVisitor {
 
-    private:
-        [[noreturn]] static void handleParseError();
+private:
+    [[noreturn]] static void handleParseError();
 
-        inline void checkException(const antlr4::ParserRuleContext &context);
+    inline void checkException(const antlr4::ParserRuleContext &context);
 
-        SourceSpan getSourceSpan(const antlr4::ParserRuleContext &context);
+    SourceSpan getSourceSpan(const antlr4::ParserRuleContext &context);
 
-        SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &context);
+    SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &context);
 
-    protected:
-        std::any defaultResult() override;
+protected:
+    std::any defaultResult() override;
 
-    public:
-        unsigned fileId;
+public:
+    unsigned fileId;
 
-        AntlrASTGeneratorVisitor(unsigned int fileId);
+    AntlrASTGeneratorVisitor(unsigned int fileId);
 
-        std::any visitErrorNode(antlr4::tree::ErrorNode *node) override;
+    std::any visitErrorNode(antlr4::tree::ErrorNode *node) override;
 
-        std::any
-        visitCompilationUnit(antlrgenerated::CeresParser::CompilationUnitContext *ctx) override;
+    std::any visitCompilationUnit(
+        antlrgenerated::CeresParser::CompilationUnitContext *ctx) override;
 
-        std::any visitGlobalVarDeclaration(
-                antlrgenerated::CeresParser::GlobalVarDeclarationContext *ctx) override;
+    std::any visitGlobalVarDeclaration(
+        antlrgenerated::CeresParser::GlobalVarDeclarationContext *ctx) override;
 
-        std::any visitFunctionDefinition(
-                antlrgenerated::CeresParser::FunctionDefinitionContext *ctx) override;
+    std::any visitFunctionDefinition(
+        antlrgenerated::CeresParser::FunctionDefinitionContext *ctx) override;
 
-        std::any
-        visitFormalParameters(antlrgenerated::CeresParser::FormalParametersContext *ctx) override;
+    std::any visitFormalParameters(
+        antlrgenerated::CeresParser::FormalParametersContext *ctx) override;
 
-        std::any visitParameter(antlrgenerated::CeresParser::ParameterContext *ctx) override;
+    std::any
+    visitParameter(antlrgenerated::CeresParser::ParameterContext *ctx) override;
 
-        std::any visitBlock(antlrgenerated::CeresParser::BlockContext *ctx) override;
+    std::any
+    visitBlock(antlrgenerated::CeresParser::BlockContext *ctx) override;
 
-        std::any visitType(antlrgenerated::CeresParser::TypeContext *ctx) override;
+    std::any visitType(antlrgenerated::CeresParser::TypeContext *ctx) override;
 
-        std::any
-        visitVarDeclaration(antlrgenerated::CeresParser::VarDeclarationContext *ctx) override;
+    std::any visitVarDeclaration(
+        antlrgenerated::CeresParser::VarDeclarationContext *ctx) override;
 
-        std::any
-        visitReturnStatement(antlrgenerated::CeresParser::ReturnStatementContext *ctx) override;
+    std::any visitReturnStatement(
+        antlrgenerated::CeresParser::ReturnStatementContext *ctx) override;
 
-        std::any visitIfStatement(antlrgenerated::CeresParser::IfStatementContext *ctx) override;
+    std::any visitIfStatement(
+        antlrgenerated::CeresParser::IfStatementContext *ctx) override;
 
-        std::any
-        visitWhileStatement(antlrgenerated::CeresParser::WhileStatementContext *ctx) override;
+    std::any visitWhileStatement(
+        antlrgenerated::CeresParser::WhileStatementContext *ctx) override;
 
-        std::any visitForStatement(antlrgenerated::CeresParser::ForStatementContext *ctx) override;
+    std::any visitForStatement(
+        antlrgenerated::CeresParser::ForStatementContext *ctx) override;
 
-        std::any
-        visitAssignment_expr(antlrgenerated::CeresParser::Assignment_exprContext *ctx) override;
+    std::any visitAssignment_expr(
+        antlrgenerated::CeresParser::Assignment_exprContext *ctx) override;
 
-        std::any visitPostfix_expr(antlrgenerated::CeresParser::Postfix_exprContext *ctx) override;
+    std::any visitPostfix_expr(
+        antlrgenerated::CeresParser::Postfix_exprContext *ctx) override;
 
-        std::any visitPrefix_expr(antlrgenerated::CeresParser::Prefix_exprContext *ctx) override;
+    std::any visitPrefix_expr(
+        antlrgenerated::CeresParser::Prefix_exprContext *ctx) override;
 
-        std::any visitFunction_call_expr(
-                antlrgenerated::CeresParser::Function_call_exprContext *ctx) override;
+    std::any visitFunction_call_expr(
+        antlrgenerated::CeresParser::Function_call_exprContext *ctx) override;
 
-        std::any visitPrimary_expr(antlrgenerated::CeresParser::Primary_exprContext *ctx) override;
+    std::any visitPrimary_expr(
+        antlrgenerated::CeresParser::Primary_exprContext *ctx) override;
 
-        std::any
-        visitBinary_op_expr(antlrgenerated::CeresParser::Binary_op_exprContext *ctx) override;
+    std::any visitBinary_op_expr(
+        antlrgenerated::CeresParser::Binary_op_exprContext *ctx) override;
 
-        std::any visitExpression(antlrgenerated::CeresParser::ExpressionContext *ctx) override;
+    std::any visitExpression(
+        antlrgenerated::CeresParser::ExpressionContext *ctx) override;
 
-        std::any visitParens_expr(antlrgenerated::CeresParser::Parens_exprContext *ctx) override;
+    std::any visitParens_expr(
+        antlrgenerated::CeresParser::Parens_exprContext *ctx) override;
 
-        std::any visitId_expr(antlrgenerated::CeresParser::Id_exprContext *ctx) override;
+    std::any
+    visitId_expr(antlrgenerated::CeresParser::Id_exprContext *ctx) override;
 
-        std::any
-        visitInt_literal_expr(antlrgenerated::CeresParser::Int_literal_exprContext *ctx) override;
+    std::any visitInt_literal_expr(
+        antlrgenerated::CeresParser::Int_literal_exprContext *ctx) override;
 
-        std::any visitFloat_literal_expr(
-                antlrgenerated::CeresParser::Float_literal_exprContext *ctx) override;
+    std::any visitFloat_literal_expr(
+        antlrgenerated::CeresParser::Float_literal_exprContext *ctx) override;
 
-        std::any
-        visitBool_literal_expr(antlrgenerated::CeresParser::Bool_literal_exprContext *ctx) override;
+    std::any visitBool_literal_expr(
+        antlrgenerated::CeresParser::Bool_literal_exprContext *ctx) override;
 
-        std::any visitIntLiteral(antlrgenerated::CeresParser::IntLiteralContext *ctx) override;
+    std::any visitIntLiteral(
+        antlrgenerated::CeresParser::IntLiteralContext *ctx) override;
 
-        std::any visitFloatLiteral(antlrgenerated::CeresParser::FloatLiteralContext *ctx) override;
+    std::any visitFloatLiteral(
+        antlrgenerated::CeresParser::FloatLiteralContext *ctx) override;
 
-        std::any visitFunctionCall(antlrgenerated::CeresParser::FunctionCallContext *ctx) override;
+    std::any visitFunctionCall(
+        antlrgenerated::CeresParser::FunctionCallContext *ctx) override;
 
-        std::any visitVar_decl_statement(
-                antlrgenerated::CeresParser::Var_decl_statementContext *context) override;
+    std::any visitVar_decl_statement(
+        antlrgenerated::CeresParser::Var_decl_statementContext *context)
+        override;
 
-        std::any visitReturn_statement(
-                antlrgenerated::CeresParser::Return_statementContext *context) override;
+    std::any visitReturn_statement(
+        antlrgenerated::CeresParser::Return_statementContext *context) override;
 
-        std::any
-        visitExpr_statement(antlrgenerated::CeresParser::Expr_statementContext *context) override;
+    std::any visitExpr_statement(
+        antlrgenerated::CeresParser::Expr_statementContext *context) override;
 
-        std::any
-        visitIf_statement(antlrgenerated::CeresParser::If_statementContext *context) override;
+    std::any visitIf_statement(
+        antlrgenerated::CeresParser::If_statementContext *context) override;
 
-        std::any
-        visitWhile_statement(antlrgenerated::CeresParser::While_statementContext *context) override;
+    std::any visitWhile_statement(
+        antlrgenerated::CeresParser::While_statementContext *context) override;
 
-        std::any
-        visitFor_statement(antlrgenerated::CeresParser::For_statementContext *context) override;
+    std::any visitFor_statement(
+        antlrgenerated::CeresParser::For_statementContext *context) override;
 
-        std::any
-        visitBlock_statement(antlrgenerated::CeresParser::Block_statementContext *context) override;
+    std::any visitBlock_statement(
+        antlrgenerated::CeresParser::Block_statementContext *context) override;
 
-        std::any
-        visitEmpty_statement(antlrgenerated::CeresParser::Empty_statementContext *context) override;
+    std::any visitEmpty_statement(
+        antlrgenerated::CeresParser::Empty_statementContext *context) override;
 
-        SourceSpan getSourceSpan(const antlr4::Token *token) const;
+    SourceSpan getSourceSpan(const antlr4::Token *token) const;
 
-        SourceSpan getSourceSpan(const antlr4::Token *first, const antlr4::Token *second) const;
+    SourceSpan getSourceSpan(const antlr4::Token *first,
+                             const antlr4::Token *second) const;
 
-        SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start,
-                                 const antlr4::tree::TerminalNode &end);
+    SourceSpan getSourceSpan(const antlr4::tree::TerminalNode &start,
+                             const antlr4::tree::TerminalNode &end);
 
-        std::any visit(antlr4::tree::ParseTree *tree) override;
+    std::any visit(antlr4::tree::ParseTree *tree) override;
 
-        std::any visitTerminal(antlr4::tree::TerminalNode *node) override;
-    };
+    std::any visitTerminal(antlr4::tree::TerminalNode *node) override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_ANTLRASTGENERATORVISITOR_H
+#endif // COMPILER_ANTLRASTGENERATORVISITOR_H

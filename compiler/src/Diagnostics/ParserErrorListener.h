@@ -23,22 +23,24 @@
 
 namespace Ceres {
 
-    class ParserErrorListener : public antlr4::BaseErrorListener {
-    protected:
-        unsigned fileId;
+class ParserErrorListener : public antlr4::BaseErrorListener {
+protected:
+    unsigned fileId;
 
-    public:
-        explicit ParserErrorListener(unsigned int fileId);
+public:
+    explicit ParserErrorListener(unsigned int fileId);
 
-        void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol,
-                         size_t line, size_t charPositionInLine, const std::string &msg,
-                         std::exception_ptr e) override;
-        void reportAmbiguity(antlr4::Parser *recognizer, const antlr4::dfa::DFA &dfa,
-                             size_t startIndex, size_t stopIndex, bool exact,
-                             const antlrcpp::BitSet &ambigAlts,
-                             antlr4::atn::ATNConfigSet *configs) override;
-    };
+    void syntaxError(antlr4::Recognizer *recognizer,
+                     antlr4::Token *offendingSymbol, size_t line,
+                     size_t charPositionInLine, const std::string &msg,
+                     std::exception_ptr e) override;
+    void reportAmbiguity(antlr4::Parser *recognizer,
+                         const antlr4::dfa::DFA &dfa, size_t startIndex,
+                         size_t stopIndex, bool exact,
+                         const antlrcpp::BitSet &ambigAlts,
+                         antlr4::atn::ATNConfigSet *configs) override;
+};
 
-}// namespace Ceres
+} // namespace Ceres
 
-#endif//COMPILER_PARSERERRORLISTENER_H
+#endif // COMPILER_PARSERERRORLISTENER_H

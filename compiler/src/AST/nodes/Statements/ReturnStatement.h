@@ -25,17 +25,18 @@
 
 namespace Ceres::AST {
 
-    class ReturnStatement : public Statement {
-    public:
-        std::unique_ptr<Expression> expr;
+class ReturnStatement : public Statement {
+public:
+    std::unique_ptr<Expression> expr;
 
-        ReturnStatement(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&expr);
+    ReturnStatement(const SourceSpan &sourceSpan,
+                    std::unique_ptr<Expression> &&expr);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_RETURNSTATEMENT_H
+#endif // COMPILER_RETURNSTATEMENT_H

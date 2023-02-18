@@ -29,29 +29,32 @@
 
 namespace Ceres::AST {
 
-    enum class FunctionVisibility { Public, Private };
+enum class FunctionVisibility { Public, Private };
 
-    class FunctionDefinition : public Node {
-    public:
-        FunctionVisibility visibility;
-        std::string functionName;
-        std::vector<FunctionParameter>  parameters;
-        Type *returnType;
-        std::unique_ptr<BlockStatement> block;
+class FunctionDefinition : public Node {
+public:
+    FunctionVisibility visibility;
+    std::string functionName;
+    std::vector<FunctionParameter> parameters;
+    Type *returnType;
+    std::unique_ptr<BlockStatement> block;
 
-        SourceSpan returnTypeSpan;
-        SourceSpan functionNameSpan;
+    SourceSpan returnTypeSpan;
+    SourceSpan functionNameSpan;
 
-        FunctionDefinition(const SourceSpan &sourceSpan, FunctionVisibility visibility,
-                           std::string functionName, std::vector<FunctionParameter> &&parameters,
-                           Type *returnType, std::unique_ptr<BlockStatement> &&block,
-                           const SourceSpan &returnTypeSpan, const SourceSpan &functionNameSpan);
+    FunctionDefinition(const SourceSpan &sourceSpan,
+                       FunctionVisibility visibility, std::string functionName,
+                       std::vector<FunctionParameter> &&parameters,
+                       Type *returnType,
+                       std::unique_ptr<BlockStatement> &&block,
+                       const SourceSpan &returnTypeSpan,
+                       const SourceSpan &functionNameSpan);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_FUNCTIONDEFINITION_H
+#endif // COMPILER_FUNCTIONDEFINITION_H

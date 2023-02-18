@@ -26,22 +26,23 @@
 
 namespace Ceres::AST {
 
-    class FunctionCallExpression : public Expression {
-    public:
-        std::string functionIdentifier;
-        std::vector<std::unique_ptr<Expression>> arguments;
+class FunctionCallExpression : public Expression {
+public:
+    std::string functionIdentifier;
+    std::vector<std::unique_ptr<Expression>> arguments;
 
-        SourceSpan functionIdentifierSourceSpan;
+    SourceSpan functionIdentifierSourceSpan;
 
-        FunctionCallExpression(const SourceSpan &sourceSpan, std::string functionIdentifier,
-                               std::vector<std::unique_ptr<Expression>> &&arguments,
-                               SourceSpan functionIdentifierSourceSpan);
+    FunctionCallExpression(const SourceSpan &sourceSpan,
+                           std::string functionIdentifier,
+                           std::vector<std::unique_ptr<Expression>> &&arguments,
+                           SourceSpan functionIdentifierSourceSpan);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_FUNCTIONCALLEXPRESSION_H
+#endif // COMPILER_FUNCTIONCALLEXPRESSION_H

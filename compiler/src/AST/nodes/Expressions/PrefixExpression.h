@@ -24,30 +24,31 @@
 
 namespace Ceres::AST {
 
-    enum class PrefixOp {
-        PrefixIncrement,
-        PrefixDecrement,
-        UnaryPlus,
-        UnaryMinus,
-        UnaryLogicalNot,
-        UnaryBitwiseNot
-    };
+enum class PrefixOp {
+    PrefixIncrement,
+    PrefixDecrement,
+    UnaryPlus,
+    UnaryMinus,
+    UnaryLogicalNot,
+    UnaryBitwiseNot
+};
 
-    class PrefixExpression : public Expression {
-    public:
-        PrefixOp op;
-        std::unique_ptr<Expression> expr;
+class PrefixExpression : public Expression {
+public:
+    PrefixOp op;
+    std::unique_ptr<Expression> expr;
 
-        SourceSpan opSourceSpan;
+    SourceSpan opSourceSpan;
 
-        PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op,
-                         std::unique_ptr<Expression> &&expr, const SourceSpan &opSourceSpan);
+    PrefixExpression(const SourceSpan &sourceSpan, PrefixOp op,
+                     std::unique_ptr<Expression> &&expr,
+                     const SourceSpan &opSourceSpan);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_PREFIXEXPRESSION_H
+#endif // COMPILER_PREFIXEXPRESSION_H

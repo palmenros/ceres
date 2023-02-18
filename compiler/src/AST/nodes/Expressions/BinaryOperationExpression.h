@@ -23,43 +23,44 @@
 #include <memory>
 
 namespace Ceres::AST {
-    enum class BinaryOp {
-        Mult,
-        Div,
-        Modulo,
-        Sum,
-        Subtraction,
-        BitshiftLeft,
-        BitshiftRight,
-        LessOrEqual,
-        GreaterOrEqual,
-        GreaterThan,
-        LessThan,
-        BitwiseAnd,
-        BitwiseOr,
-        BitwiseXor,
-        Equals,
-        NotEquals,
-        LogicalAnd,
-        LogicalOr
-    };
+enum class BinaryOp {
+    Mult,
+    Div,
+    Modulo,
+    Sum,
+    Subtraction,
+    BitshiftLeft,
+    BitshiftRight,
+    LessOrEqual,
+    GreaterOrEqual,
+    GreaterThan,
+    LessThan,
+    BitwiseAnd,
+    BitwiseOr,
+    BitwiseXor,
+    Equals,
+    NotEquals,
+    LogicalAnd,
+    LogicalOr
+};
 
-    class BinaryOperationExpression : public Expression {
-    public:
-        std::unique_ptr<Expression> left, right;
-        BinaryOp op;
+class BinaryOperationExpression : public Expression {
+public:
+    std::unique_ptr<Expression> left, right;
+    BinaryOp op;
 
-        SourceSpan opSpan;
+    SourceSpan opSpan;
 
-        BinaryOperationExpression(const SourceSpan &sourceSpan, std::unique_ptr<Expression> &&left,
-                                  std::unique_ptr<Expression> &&right, BinaryOp op,
-                                  SourceSpan opSpan);
+    BinaryOperationExpression(const SourceSpan &sourceSpan,
+                              std::unique_ptr<Expression> &&left,
+                              std::unique_ptr<Expression> &&right, BinaryOp op,
+                              SourceSpan opSpan);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_BINARYOPERATIONEXPRESSION_H
+#endif // COMPILER_BINARYOPERATIONEXPRESSION_H

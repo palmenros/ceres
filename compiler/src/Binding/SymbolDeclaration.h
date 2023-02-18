@@ -27,34 +27,34 @@
 
 namespace Ceres::Binding {
 
-    enum class SymbolDeclarationKind {
-        FunctionDeclaration,
-        LocalVariableDeclaration,
-        GlobalVariableDeclaration,
-        FunctionParamDeclaration,
-    };
+enum class SymbolDeclarationKind {
+    FunctionDeclaration,
+    LocalVariableDeclaration,
+    GlobalVariableDeclaration,
+    FunctionParamDeclaration,
+};
 
-    class SymbolDeclaration {
-    public:
-        SymbolDeclarationKind kind;
-        AST::Node *declarationNode;
-        std::optional<size_t> paramIdx = 0;
+class SymbolDeclaration {
+public:
+    SymbolDeclarationKind kind;
+    AST::Node *declarationNode;
+    std::optional<size_t> paramIdx = 0;
 
-        // TODO: sadly this is not rust so we cant create a constructor for a variant,
-        // just pray no one uses this incorrectly
-        SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode);
-        SymbolDeclaration(AST::Node *declarationNode, size_t param_idx);
+    // TODO: sadly this is not rust so we cant create a constructor for a
+    // variant, just pray no one uses this incorrectly
+    SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode);
+    SymbolDeclaration(AST::Node *declarationNode, size_t param_idx);
 
-        // Methods
-        SymbolDeclarationKind getKind();
+    // Methods
+    SymbolDeclarationKind getKind();
 
-        AST::Node *getDeclarationNode();
+    AST::Node *getDeclarationNode();
 
-        std::optional<size_t> getParam_idx();
+    std::optional<size_t> getParam_idx();
 
-        Type *getType();
-    };
+    Type *getType();
+};
 
-}// namespace Ceres::Binding
+} // namespace Ceres::Binding
 
-#endif//COMPILER_SYMBOLDECLARATION_H
+#endif // COMPILER_SYMBOLDECLARATION_H

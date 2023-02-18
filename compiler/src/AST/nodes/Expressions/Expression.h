@@ -22,19 +22,18 @@
 #include "../../../Typing/Type.h"
 #include "../Node.h"
 
-
 namespace Ceres::AST {
-    class Expression : public Node {
-    public:
-        Type *type;
+class Expression : public Node {
+public:
+    Type *type;
 
-        explicit Expression(const SourceSpan &sourceSpan);
+    explicit Expression(const SourceSpan &sourceSpan);
 
-        explicit Expression(const SourceSpan &sourceSpan, Type *type);
+    explicit Expression(const SourceSpan &sourceSpan, Type *type);
 
-        virtual ~Expression() = default;
-    };
+    virtual ~Expression() = default;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_EXPRESSION_H
+#endif // COMPILER_EXPRESSION_H

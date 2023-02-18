@@ -25,21 +25,22 @@
 
 namespace Ceres::AST {
 
-    // Class that wraps a Variable Declaration.
-    // It's intended for operations that should only be done on Variable Declaration Statement vs global
-    // variable declarations.
-    class VariableDeclarationStatement : public Statement {
-    public:
-        std::unique_ptr<VariableDeclaration> variableDeclaration;
+// Class that wraps a Variable Declaration.
+// It's intended for operations that should only be done on Variable Declaration
+// Statement vs global variable declarations.
+class VariableDeclarationStatement : public Statement {
+public:
+    std::unique_ptr<VariableDeclaration> variableDeclaration;
 
-        VariableDeclarationStatement(const SourceSpan &sourceSpan,
-                                     std::unique_ptr<VariableDeclaration> &&variableDeclaration);
+    VariableDeclarationStatement(
+        const SourceSpan &sourceSpan,
+        std::unique_ptr<VariableDeclaration> &&variableDeclaration);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_VARIABLEDECLARATIONSTATEMENT_H
+#endif // COMPILER_VARIABLEDECLARATIONSTATEMENT_H

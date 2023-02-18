@@ -23,23 +23,24 @@
 #include <memory>
 
 namespace Ceres::AST {
-    enum class PostfixOp { PostfixIncrement, PostfixDecrement };
+enum class PostfixOp { PostfixIncrement, PostfixDecrement };
 
-    class PostfixExpression : public Expression {
-    public:
-        PostfixOp op;
-        std::unique_ptr<Expression> expr;
+class PostfixExpression : public Expression {
+public:
+    PostfixOp op;
+    std::unique_ptr<Expression> expr;
 
-        SourceSpan opSourceSpan;
+    SourceSpan opSourceSpan;
 
-        PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
-                          std::unique_ptr<Expression> &&expr, SourceSpan opSourceSpan);
+    PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
+                      std::unique_ptr<Expression> &&expr,
+                      SourceSpan opSourceSpan);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_POSTFIXEXPRESSION_H
+#endif // COMPILER_POSTFIXEXPRESSION_H

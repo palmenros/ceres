@@ -22,13 +22,13 @@
 #include "../Node.h"
 
 namespace Ceres::AST {
-    class Statement : public Node {
-    public:
-        explicit Statement(const SourceSpan &sourceSpan);
+class Statement : public Node {
+public:
+    explicit Statement(const SourceSpan &sourceSpan);
 
-        virtual ~Statement() = default;
-    };
+    virtual ~Statement() = default;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_STATEMENT_H
+#endif // COMPILER_STATEMENT_H

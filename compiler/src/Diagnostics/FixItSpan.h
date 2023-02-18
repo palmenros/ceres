@@ -24,16 +24,16 @@
 
 namespace Ceres {
 
-    class FixItSpan {
-    public:
-        // Span to be replaced
-        SourceSpan sourceSpan;
+class FixItSpan {
+public:
+    // Span to be replaced
+    SourceSpan sourceSpan;
 
-        // What the selected range should be replaced with
-        std::string replacementString;
-        FixItSpan(const SourceSpan &sourceSpan, std::string replacementString);
-    };
+    // What the selected range should be replaced with
+    std::string replacementString;
+    FixItSpan(const SourceSpan &sourceSpan, std::string replacementString);
+};
 
-}// namespace Ceres
+} // namespace Ceres
 
-#endif//COMPILER_FIXITSPAN_H
+#endif // COMPILER_FIXITSPAN_H

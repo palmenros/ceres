@@ -24,21 +24,21 @@
 
 namespace Ceres::AST {
 
-    enum class BoolLiteralValue { True, False };
+enum class BoolLiteralValue { True, False };
 
-    class BoolLiteralExpression : public Expression {
-    public:
-        BoolLiteralValue value;
+class BoolLiteralExpression : public Expression {
+public:
+    BoolLiteralValue value;
 
-        BoolLiteralExpression(const SourceSpan &sourceSpan, BoolLiteralValue value);
+    BoolLiteralExpression(const SourceSpan &sourceSpan, BoolLiteralValue value);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
+    std::vector<Node *> getChildren() const override;
 
-        static std::string toStringBoolLiteralValue(BoolLiteralValue value);
-    };
+    static std::string toStringBoolLiteralValue(BoolLiteralValue value);
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_BOOLLITERALEXPRESSION_H
+#endif // COMPILER_BOOLLITERALEXPRESSION_H

@@ -25,18 +25,19 @@
 
 namespace Ceres::AST {
 
-    struct FunctionParameter {
-        Type *type;
-        std::string name;
-        VariableConstness constness;
+struct FunctionParameter {
+    Type *type;
+    std::string name;
+    VariableConstness constness;
 
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
+    SourceSpan typeSourceSpan;
+    SourceSpan parameterNameSourceSpan;
 
-        FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
-    };
+    FunctionParameter(Type *type, std::string name, VariableConstness constness,
+                      SourceSpan typeSourceSpan,
+                      SourceSpan parameterNameSourceSpan);
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+#endif // COMPILER_FUNCTIONPARAMETER_H

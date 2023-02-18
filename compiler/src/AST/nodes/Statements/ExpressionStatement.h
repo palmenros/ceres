@@ -25,18 +25,18 @@
 
 namespace Ceres::AST {
 
-    class ExpressionStatement : public Statement {
-    public:
-        std::unique_ptr<Expression> expression;
+class ExpressionStatement : public Statement {
+public:
+    std::unique_ptr<Expression> expression;
 
-        ExpressionStatement(SourceSpan &&sourceSpan, std::unique_ptr<Expression> &&expression);
+    ExpressionStatement(SourceSpan &&sourceSpan,
+                        std::unique_ptr<Expression> &&expression);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
+} // namespace Ceres::AST
 
-}// namespace Ceres::AST
-
-#endif//COMPILER_EXPRESSIONSTATEMENT_H
+#endif // COMPILER_EXPRESSIONSTATEMENT_H

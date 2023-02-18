@@ -26,24 +26,25 @@
 
 namespace Ceres::AST {
 
-    enum class IntLiteralBase { Dec, Hex, Oct, Bin };
+enum class IntLiteralBase { Dec, Hex, Oct, Bin };
 
-    class IntLiteralExpression : public Expression {
-    public:
-        IntLiteralBase base;
+class IntLiteralExpression : public Expression {
+public:
+    IntLiteralBase base;
 
-        // String containing the integer literal in base "base" without the introducer characters for the base
-        // and the type. For example: 0xfc783u32 -> fc783
-        std::string str;
+    // String containing the integer literal in base "base" without the
+    // introducer characters for the base and the type. For example: 0xfc783u32
+    // -> fc783
+    std::string str;
 
-        IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base, Type *type,
-                             std::string str);
+    IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base,
+                         Type *type, std::string str);
 
-        void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor &visitor) override;
 
-        std::vector<Node *> getChildren() const override;
-    };
+    std::vector<Node *> getChildren() const override;
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_INTLITERALEXPRESSION_H
+#endif // COMPILER_INTLITERALEXPRESSION_H

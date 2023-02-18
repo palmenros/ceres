@@ -25,49 +25,55 @@
 #include <utility>
 
 namespace Ceres::Binding {
-    // Abstract class representing a scope
-    class Scope {
-    protected:
-        // TODO: is this necessary? is it better than a hash?
-        std::string scopeName;
-        Scope *enclosingScope;
+// Abstract class representing a scope
+class Scope {
+protected:
+    // TODO: is this necessary? is it better than a hash?
+    std::string scopeName;
+    Scope *enclosingScope;
 
-        Scope(std::string name, Scope *enclosingScope)
-            : scopeName(std::move(name)), enclosingScope(enclosingScope){};
+    Scope(std::string name, Scope *enclosingScope)
+        : scopeName(std::move(name)), enclosingScope(enclosingScope){};
 
-    public:
-        std::string getScopeName() { return scopeName; };
-        Scope *getEnclosingScope() { return enclosingScope; };
+public:
+    std::string getScopeName() { return scopeName; };
+    Scope *getEnclosingScope() { return enclosingScope; };
 
-        virtual void define(const std::string &name, const SymbolDeclaration &symbol) = 0;
-        virtual SymbolDeclaration resolve(const std::string &name) = 0;
+    virtual void define(const std::string &name,
+                        const SymbolDeclaration &symbol) = 0;
+    virtual SymbolDeclaration resolve(const std::string &name) = 0;
+};
+
+class SymbolTableScope : public Scope {
+private:
+    std::unordered_map<std::string, SymbolDeclaration> map;
+
+public:
+    SymbolTableScope(std::string name, Scope *enclosingScope)
+        : Scope(std::move(name), enclosingScope){};
+
+    void define(const std::string &name,
+                const SymbolDeclaration &symbol) override {
+        auto [it, inserted_new] = map.insert(std::make_pair(name, symbol));
+        if (!inserted_new) {
+            // An element with that scopeName already existed
+            Log::panic("duplicate symbol");
+        }
     };
 
-    class SymbolTableScope : public Scope {
-    private:
-        std::unordered_map<std::string, SymbolDeclaration> map;
+    SymbolDeclaration resolve(const std::string &name) override {
+        auto it = map.find(name);
+        if (it != map.end()) {
+            return it->second;
+        }
 
-    public:
-        SymbolTableScope(std::string name, Scope *enclosingScope)
-            : Scope(std::move(name), enclosingScope){};
+        if (getEnclosingScope() == nullptr) {
+            Log::panic("undefined symbol");
+        }
 
-        void define(const std::string &name, const SymbolDeclaration &symbol) override {
-            auto [it, inserted_new] = map.insert(std::make_pair(name, symbol));
-            if (!inserted_new) {
-                // An element with that scopeName already existed
-                Log::panic("duplicate symbol");
-            }
-        };
-
-        SymbolDeclaration resolve(const std::string &name) override {
-            auto it = map.find(name);
-            if (it != map.end()) { return it->second; }
-
-            if (getEnclosingScope() == nullptr) { Log::panic("undefined symbol"); }
-
-            return getEnclosingScope()->resolve(name);
-        };
+        return getEnclosingScope()->resolve(name);
     };
-}// namespace Ceres::Binding
+};
+} // namespace Ceres::Binding
 
-#endif//COMPILER_SCOPE_H
+#endif // COMPILER_SCOPE_H
