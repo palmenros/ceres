@@ -25,11 +25,10 @@
 #include <utility>
 
 namespace Ceres::Binding {
-
     // Abstract class representing a scope
     class Scope {
     protected:
-        std::unordered_map<std::string, SymbolDeclaration> map;
+        // TODO: is this necessary? is it better than a hash?
         std::string scopeName;
         Scope *enclosingScope;
 
@@ -40,7 +39,19 @@ namespace Ceres::Binding {
         std::string getScopeName() { return scopeName; };
         Scope *getEnclosingScope() { return enclosingScope; };
 
-        void define(const std::string &name, const SymbolDeclaration &symbol) {
+        virtual void define(const std::string &name, const SymbolDeclaration &symbol) = 0;
+        virtual SymbolDeclaration resolve(const std::string &name) = 0;
+    };
+
+    class SymbolTableScope : public Scope {
+    private:
+        std::unordered_map<std::string, SymbolDeclaration> map;
+
+    public:
+        SymbolTableScope(std::string name, Scope *enclosingScope)
+            : Scope(std::move(name), enclosingScope){};
+
+        void define(const std::string &name, const SymbolDeclaration &symbol) override {
             auto [it, inserted_new] = map.insert(std::make_pair(name, symbol));
             if (!inserted_new) {
                 // An element with that scopeName already existed
@@ -48,7 +59,7 @@ namespace Ceres::Binding {
             }
         };
 
-        SymbolDeclaration resolve(const std::string &name) {
+        SymbolDeclaration resolve(const std::string &name) override {
             auto it = map.find(name);
             if (it != map.end()) { return it->second; }
 
@@ -56,14 +67,6 @@ namespace Ceres::Binding {
 
             return getEnclosingScope()->resolve(name);
         };
-    };
-
-    // TODO: hack to avoid duplicating code, interface should be stable
-    // for when we need to change it
-    class SymbolTableScope : public Scope {
-    public:
-        SymbolTableScope(std::string name, Scope *enclosingScope)
-            : Scope(std::move(name), enclosingScope){};
     };
 }// namespace Ceres::Binding
 

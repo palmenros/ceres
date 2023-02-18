@@ -30,6 +30,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
 add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
+        src/Typing/TypeCheckVisitor.cpp
+        src/Typing/TypeCheckVisitor.h
         src/main.cpp src/utils/log.hpp src/AST/AntlrASTGeneratorVisitor.cpp src/AST/AntlrASTGeneratorVisitor.h
         src/AST/nodes/Node.cpp src/AST/nodes/Node.h src/utils/SourceSpan.cpp src/utils/SourceSpan.h
         src/AST/nodes/CompilationUnit.cpp src/AST/nodes/CompilationUnit.h src/AST/nodes/FunctionDefinition.cpp

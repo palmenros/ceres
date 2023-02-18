@@ -37,6 +37,7 @@ namespace Ceres::AST {
         std::string identifierLHS;
 
         // Expression that is being assigned (possibly after performing a binary operation)
+        // TODO: nullable?
         std::unique_ptr<Expression> expressionRHS;
 
         SourceSpan opSourceSpan;

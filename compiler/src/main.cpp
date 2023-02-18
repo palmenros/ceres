@@ -21,6 +21,7 @@
 
 #include "CeresLexer.h"
 #include "CeresParser.h"
+#include "Typing/TypeVisitor.h"
 #include "antlr4-runtime.h"
 
 #include "llvm/ADT/APFloat.h"
@@ -37,6 +38,7 @@
 #include "Binding/BindingVisitor.h"
 #include "Diagnostics/Diagnostics.h"
 #include "Diagnostics/ParserErrorListener.h"
+#include "Typing/TypeCheckVisitor.h"
 #include "utils/InitCeres.h"
 #include "utils/SourceManager.h"
 #include "utils/log.hpp"
@@ -92,6 +94,10 @@ int main(int argc, const char *argv[]) {
         Binding::BindingVisitor bindingVisitor;
         bindingVisitor.visit(*AST);
         Log::info("Binding visitor run!");
+
+        Typing::TypeCheckVisitor typeCheckVisitor;
+        typeCheckVisitor.visit(*AST);
+        Log::info("Type check visitor run!");
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def) override {

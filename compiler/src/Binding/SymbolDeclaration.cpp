@@ -32,8 +32,15 @@ namespace Ceres::Binding {
         return param;
     }
 
-    AST::Expression *getExpr(SymbolDeclaration &symbol) {
-        auto node = dynamic_cast<AST::Expression *>(symbol.declarationNode);
+    AST::VariableDeclaration *getVarDecl(SymbolDeclaration &symbol) {
+        auto node = dynamic_cast<AST::VariableDeclaration *>(symbol.declarationNode);
+        ASSERT(node != nullptr);
+
+        return node;
+    }
+
+    AST::FunctionDefinition *getFunDecl(SymbolDeclaration &symbol) {
+        auto node = dynamic_cast<AST::FunctionDefinition *>(symbol.declarationNode);
         ASSERT(node != nullptr);
 
         return node;
@@ -58,8 +65,10 @@ namespace Ceres::Binding {
     Type *SymbolDeclaration::getType() {
         if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
             return getParam(*this)->type;
+        } else if (kind == SymbolDeclarationKind::FunctionDeclaration) {
+            return getFunDecl(*this)->returnType;
         } else {
-            return getExpr(*this)->type;
+            return getVarDecl(*this)->type;
         }
     }
 }// namespace Ceres::Binding
