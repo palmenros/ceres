@@ -94,8 +94,19 @@ namespace Ceres::Binding {
         SymbolDeclaration symbol = SymbolDeclaration(kind, &decl);
 
         ASSERT(currentScope != nullptr);
+
+        visitChildren(decl);
+
         currentScope->define(decl.identifier, symbol);
     }
 
+    void BindingVisitor::visitIdentifierExpression(IdentifierExpression &expr) {
+        // TODO: Panics on NULL, better return optional
+        currentScope->resolve(expr.identifier);
+    }
 
+    void BindingVisitor::visitAssignmentExpression(AssignmentExpression &expr) {
+        currentScope->resolve(expr.identifierLHS);
+        visitChildren(expr);
+    }
 }// namespace Ceres::Binding

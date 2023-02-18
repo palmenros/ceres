@@ -127,6 +127,4 @@ namespace Ceres::Typing {
             Log::panic("Useless panic");
         }
     }
-
-
 }// namespace Ceres::Typing

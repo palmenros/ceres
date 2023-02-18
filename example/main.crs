@@ -1,25 +1,4 @@
 fn main() {
-    var a: i32 = 32 + 18;
-    const b: i32 = 5;
-    // TODO: should fail
-    const c: i32 = 0.0;
-    gcd(a, b);
-}
-
-fn gcd(a: i32, b: i32) i32 {
-    var max: i32 = a;
-    var min: i32 = b;
-
-    if b > a {
-        max = b;
-        min = a;
-    } else {
-        max = b;
-    }
-
-    if min == 0 {
-        return max;
-    }
-
-    return gcd(b, a % b);
+    const a: i32 = 4 + b;
+    const b: i32 = 325;
 }
