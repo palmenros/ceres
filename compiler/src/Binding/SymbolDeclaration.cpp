@@ -25,7 +25,7 @@ namespace Ceres::Binding {
 
         auto node = dynamic_cast<AST::FunctionDefinition *>(symbol.declarationNode);
         ASSERT(node != nullptr);
-        ASSERT(node->parameters.size() < symbol.paramIdx.value());
+        ASSERT(symbol.paramIdx.value() < node->parameters.size());
 
         auto param = &node->parameters[symbol.paramIdx.value()];
 

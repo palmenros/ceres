@@ -15,6 +15,7 @@ namespace Ceres::Typing {
     class TypeCheckVisitor : public ASTVisitor {
     public:
         Binding::Scope *currentScope = nullptr;
+        AST::FunctionDefinition *currentFunction = nullptr;
 
         // Reconstruct scopes
         void visitCompilationUnit(CompilationUnit &unit) override;
@@ -29,6 +30,7 @@ namespace Ceres::Typing {
         // void visitCommaExpression(CommaExpression &expr) override;
         void visitFunctionCallExpression(FunctionCallExpression &expr) override;
         void visitIdentifierExpression(IdentifierExpression &expr) override;
+        void visitReturnStatement(ReturnStatement &stm) override;
         // TODO:
         // void visitPostfixExpression(PostfixExpression &expr) override;
         // void visitPrefixExpression(PrefixExpression &expr) override;

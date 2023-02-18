@@ -123,6 +123,8 @@ namespace Ceres {
                 return "$UnresolvedNumberLiteral";
             case NotYetInferredKind::VariableDeclaration:
                 return "$UnresolvedVariableDeclaration";
+            case NotYetInferredKind::Expression:
+                return "$UnresolvedExpression";
             default:
                 NOT_IMPLEMENTED();
         }
@@ -215,6 +217,9 @@ namespace Ceres {
 
     // Return ErrorType if the coercion is not pssible
     Type *Type::getImplicitlyCoercedType(Type *a, Type *b) {
+        // If same coercion is obvious
+        if (a == b) { return b; }
+
         // a will hold the type with the *smallest* typeKind
         if (b->getKind() < a->getKind()) { std::swap(a, b); }
 
@@ -226,7 +231,7 @@ namespace Ceres {
                 Log::panic("Unresolved type when coercing");
             }
             case TypeKind::NotYetInferredType: {
-                NotYetInferredType *notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
+                auto *notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
                 ASSERT(notYetInferredType != nullptr);
                 if (auto *primitiveScalarType = llvm::dyn_cast<PrimitiveScalarType>(b)) {
                     if (notYetInferredType->kind == NotYetInferredKind::NumberLiteral) { return b; }

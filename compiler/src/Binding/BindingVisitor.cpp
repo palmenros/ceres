@@ -76,11 +76,9 @@ namespace Ceres::Binding {
         }
 
 
-        for (const auto &p: def.parameters) {
-            // TODO: bind to function node?
-            SymbolDeclaration symbol =
-                    SymbolDeclaration(SymbolDeclarationKind::LocalVariableDeclaration, &def);
-            currentScope->define(p.name, symbol);
+        for (auto i = 0; i < def.parameters.size(); ++i) {
+            SymbolDeclaration symbol = SymbolDeclaration(&def, i);
+            currentScope->define(def.parameters[i].name, symbol);
         }
 
         visitChildren(*def.block);

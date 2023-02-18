@@ -5,6 +5,17 @@
 #include <optional>
 
 namespace Ceres::Typing {
+    void expandCoercion(Type *coerced, Expression &lhs) {
+        // Assign variable type to all members of expression
+        if (lhs.type != coerced) {
+            lhs.type = coerced;
+            for (const auto e: lhs.getChildren()) {
+                auto ee = static_cast<AST::Expression *>(e);
+                ee->type = coerced;
+            }
+        }
+    }
+
     // Reconstruct scopes
     void TypeCheckVisitor::visitCompilationUnit(CompilationUnit &unit) {
         currentScope = &unit.scope.value();
@@ -19,8 +30,10 @@ namespace Ceres::Typing {
 
     void TypeCheckVisitor::visitFunctionDefinition(FunctionDefinition &def) {
         currentScope = &def.block->scope.value();
+        currentFunction = &def;
         visitChildren(*def.block);
         currentScope = currentScope->getEnclosingScope();
+        currentFunction = nullptr;
     }
 
     // Type check
@@ -31,28 +44,19 @@ namespace Ceres::Typing {
 
         if (decl.initializerExpression != nullptr) {
             visit(*decl.initializerExpression);
-            auto extype = &decl.initializerExpression->type;
+            auto extype = decl.initializerExpression->type;
 
-            if (*extype == NotYetInferredType::get(NotYetInferredKind::NumberLiteral)) {
-                // TODO: how can we check for compatible type conversions?
-                Log::info("Encountered untyped literal");
+            // TODO: this should always be the variable type
+            auto coerced = Type::getImplicitlyCoercedType(extype, decl.type);
 
+            if (coerced != ErrorType::get()) {
                 // Assign variable type to all members of RHS
-                decl.initializerExpression->type = decl.type;
-                for (const auto e: decl.initializerExpression->getChildren()) {
-                    auto ee = static_cast<AST::Expression *>(e);
-                    ee->type = decl.type;
-                }
-            }
-
-            if (decl.type != *extype) {
-
+                expandCoercion(coerced, *decl.initializerExpression);
+            } else {
                 // TODO: Better errors
                 Diagnostics::report(decl.sourceSpan, Diag::mismatch_type_error,
-                                    decl.type->toString(), (*extype)->toString());
-
-                // TODO: implement print on span, with line and char
-                Log::panic("Variable decl mismatched types on line: ");
+                                    decl.type->toString(), extype->toString());
+                Log::panic("Useless panic");
             }
         }
     }
@@ -60,17 +64,21 @@ namespace Ceres::Typing {
     void TypeCheckVisitor::visitAssignmentExpression(AssignmentExpression &expr) {
         if (expr.expressionRHS != nullptr) {
             visit(*expr.expressionRHS);
-            auto rhs = currentScope->resolve(expr.identifierLHS);
+            auto lhs = currentScope->resolve(expr.identifierLHS);
 
-            if (rhs.getType() != expr.expressionRHS->type) {
-                // TODO: implement print on span, with line and char
-                Log::panic("Mismatched types on line: ");
+            auto coerced = Type::getImplicitlyCoercedType(lhs.getType(), expr.expressionRHS->type);
+
+            if (coerced != ErrorType::get()) {
+                // Assign variable type to all members of RHS
+                expandCoercion(coerced, *expr.expressionRHS);
+            } else {
+                Diagnostics::report(expr.sourceSpan, Diag::mismatch_type_error,
+                                    lhs.getType()->toString(),
+                                    expr.expressionRHS->type->toString());
+                Log::panic("Useless panic");
             }
 
             expr.type = expr.expressionRHS->type;
-        } else {
-            // TODO: maybe impossible by syntax
-            Log::panic("Empty assignment");
         }
     }
 
@@ -79,15 +87,18 @@ namespace Ceres::Typing {
             visit(*expr.right);
             visit(*expr.left);
 
-            if (expr.left->type != expr.right->type) {
-                // TODO: implement print on span, with line and char
-                Log::panic("Mismatched types on line: ");
+            auto coerced = Type::getImplicitlyCoercedType(expr.right->type, expr.left->type);
+
+            if (coerced != ErrorType::get()) {
+                expandCoercion(coerced, *expr.left);
+                expandCoercion(coerced, *expr.right);
+            } else {
+                Diagnostics::report(expr.sourceSpan, Diag::mismatch_type_error,
+                                    expr.left->type->toString(), expr.right->type->toString());
+                Log::panic("Useless panic");
             }
 
             expr.type = expr.right->type;
-        } else {
-            // TODO: maybe impossible by syntax
-            Log::panic("Empty assignment");
         }
     }
 
@@ -99,6 +110,22 @@ namespace Ceres::Typing {
     void TypeCheckVisitor::visitIdentifierExpression(IdentifierExpression &expr) {
         auto rhs = currentScope->resolve(expr.identifier);
         expr.type = rhs.getType();
+    }
+
+    void TypeCheckVisitor::visitReturnStatement(ReturnStatement &stm) {
+        auto retType = currentFunction->returnType;
+        visit(*stm.expr);
+
+        auto coerced = Type::getImplicitlyCoercedType(retType, stm.expr->type);
+
+        if (coerced != ErrorType::get()) {
+            // Assign variable type to all members of RHS
+            expandCoercion(coerced, *stm.expr);
+        } else {
+            Diagnostics::report(stm.sourceSpan, Diag::mismatch_type_error, retType->toString(),
+                                stm.expr->type->toString());
+            Log::panic("Useless panic");
+        }
     }
 
 

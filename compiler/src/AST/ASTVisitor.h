@@ -29,7 +29,6 @@ namespace Ceres::AST {
         // Expressions
         virtual void visitAssignmentExpression(AssignmentExpression &expr) override;
         virtual void visitBinaryOperationExpression(BinaryOperationExpression &expr) override;
-        virtual void visitExpressionStatement(ExpressionStatement &stm) override;
         virtual void visitCommaExpression(CommaExpression &expr) override;
         virtual void visitFloatLiteralExpression(FloatLiteralExpression &expr) override;
         virtual void visitFunctionCallExpression(FunctionCallExpression &expr) override;
@@ -40,6 +39,7 @@ namespace Ceres::AST {
         virtual void visitBoolLiteral(BoolLiteralExpression &lit) override;
 
         // Statements
+        virtual void visitExpressionStatement(ExpressionStatement &stm) override;
         virtual void visitVariableDeclaration(VariableDeclaration &decl) override;
         virtual void visitCompilationUnit(CompilationUnit &unit) override;
         virtual void visitBlockStatement(BlockStatement &stm) override;

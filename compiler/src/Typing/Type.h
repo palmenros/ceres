@@ -172,7 +172,7 @@ namespace Ceres {
     public:
         // Static function needed for fast LLVM RTTI
         static bool classof(const Type *type) {
-            return type->getKind() == TypeKind::NotYetInferredType;
+            return type->getKind() == TypeKind::PrimitiveScalarType;
         }
         void accept(Typing::TypeVisitor &visitor) override;
 
