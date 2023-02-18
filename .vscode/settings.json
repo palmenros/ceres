@@ -1,6 +1,6 @@
 {
     "cmake.sourceDirectory": "${workspaceFolder}/compiler",
-    "cmake.buildDirectory": "${workspaceFolder}/compiler/cmake-build",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
     "clangd.arguments": [
         "-log=verbose",
         "-pretty",
@@ -8,6 +8,6 @@
         "-header-insertion=iwyu",
         "--inlay-hints",
         "--function-arg-placeholders",
-        "--compile-commands-dir=${workspaceFolder}/compiler/cmake-build"
+        "--compile-commands-dir=${workspaceFolder}/build"
     ]
 }

@@ -105,6 +105,22 @@ namespace Ceres::Typing {
     void TypeCheckVisitor::visitFunctionCallExpression(FunctionCallExpression &expr) {
         auto rhs = currentScope->resolve(expr.functionIdentifier);
         expr.type = rhs.getType();
+        auto decl = dynamic_cast<FunctionDefinition *>(rhs.getDeclarationNode());
+
+        for (auto i = 0; i < expr.arguments.size(); ++i) {
+            visit(*expr.arguments[i]);
+            auto ty = decl->parameters[i].type;
+
+            auto coerced = Type::getImplicitlyCoercedType(ty, expr.arguments[i]->type);
+
+            if (coerced != ErrorType::get()) {
+                expandCoercion(coerced, *expr.arguments[i]);
+            } else {
+                Diagnostics::report(expr.arguments[i]->sourceSpan, Diag::mismatch_type_error,
+                                    ty->toString(), expr.arguments[i]->type->toString());
+                Log::panic("Useless panic");
+            }
+        }
     }
 
     void TypeCheckVisitor::visitIdentifierExpression(IdentifierExpression &expr) {
