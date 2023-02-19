@@ -78,4 +78,18 @@ Type* SymbolDeclaration::getType()
 
     return getVarDecl(*this)->type;
 }
+
+AST::VariableConstness SymbolDeclaration::getConstness()
+{
+    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+        return getParam(*this)->constness;
+    }
+
+    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
+        Log::panic("Trying to check constness of function");
+    }
+
+    return getVarDecl(*this)->constness;
+}
+
 } // namespace Ceres::Binding

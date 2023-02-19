@@ -171,8 +171,13 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
         Log::panic("Assignment with no body");
     }
 
-    visit(*expr.expressionRHS);
     auto lhs = currentScope->resolve(expr.identifierLHS);
+
+    if (lhs.getConstness() != AST::VariableConstness::NonConst) {
+        Log::panic("Trying to assign to constant variable");
+    }
+
+    visit(*expr.expressionRHS);
 
     auto* coerced = Type::getImplicitlyCoercedType(lhs.getType(), expr.expressionRHS->type);
 

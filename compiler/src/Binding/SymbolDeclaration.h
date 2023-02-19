@@ -20,6 +20,7 @@
 #define COMPILER_SYMBOLDECLARATION_H
 
 #include "../AST/nodes/Node.h"
+#include "../AST/nodes/VariableDeclaration.h"
 #include "../Typing/Type.h"
 #include <cstddef>
 #include <optional>
@@ -50,6 +51,7 @@ public:
     SymbolDeclarationKind getKind();
     AST::Node* getDeclarationNode();
     std::optional<size_t> getParamIdx();
+    AST::VariableConstness getConstness();
     Type* getType();
 };
 
