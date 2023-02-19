@@ -19,7 +19,7 @@ Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
         case AST::BinaryOp::Div:
         case AST::BinaryOp::Sum:
         case AST::BinaryOp::Subtraction: {
-            if (PrimitiveScalarType::isInteger(type) or PrimitiveScalarType::isFloating(type)) {
+            if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
                 return type;
             }
             break;
@@ -41,7 +41,7 @@ Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
         case AST::BinaryOp::LessThan:
         case AST::BinaryOp::Equals:
         case AST::BinaryOp::NotEquals: {
-            if (PrimitiveScalarType::isInteger(type) or PrimitiveScalarType::isFloating(type)) {
+            if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
                 return PrimitiveScalarType::get(PrimitiveKind::BOOL);
             }
             break;
