@@ -143,7 +143,9 @@ void TypeCheckVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
 void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 {
     // TODO: Dont infer types yet
-    ASSERT(decl.type != NotYetInferredType::get(NotYetInferredKind::VariableDeclaration));
+    if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
+        Log::panic("We dont have type inference yet");
+    }
 
     if (decl.initializerExpression != nullptr) {
         visit(*decl.initializerExpression);

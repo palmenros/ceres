@@ -38,12 +38,12 @@ Checks: >
   -readability-named-parameter,
   -readability-uppercase-literal-suffix,
   -readability-use-anyofallof,
-WarningsAsErrors: ''
-HeaderFilterRegex: 'AK|Userland|Kernel|Tests'
+WarningsAsErrors: ""
+HeaderFilterRegex: "AK|Userland|Kernel|Tests"
 FormatStyle: none
 CheckOptions:
   - key: bugprone-dangling-handle.HandleClasses
-    value: 'AK::StringView;AK::Span'
+    value: "AK::StringView;AK::Span"
   - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value: true
   - key: readability-implicit-bool-conversion.AllowPointerConditions
