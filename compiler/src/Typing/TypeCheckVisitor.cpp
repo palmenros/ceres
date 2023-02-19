@@ -5,6 +5,100 @@
 #include <optional>
 
 namespace Ceres::Typing {
+Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
+{
+    // Should already be of the same type
+    // if (lhs != rhs) {
+    //     return ErrorType::get();
+    // }
+
+    auto* type = dynamic_cast<PrimitiveScalarType*>(lhs);
+    if (type != nullptr) {
+        switch (op) {
+        case AST::BinaryOp::Mult:
+        case AST::BinaryOp::Div:
+        case AST::BinaryOp::Sum:
+        case AST::BinaryOp::Subtraction: {
+            if (PrimitiveScalarType::isInteger(type) or PrimitiveScalarType::isFloating(type)) {
+                return type;
+            }
+            break;
+        }
+        case AST::BinaryOp::Modulo:
+        case AST::BinaryOp::BitwiseAnd:
+        case AST::BinaryOp::BitwiseOr:
+        case AST::BinaryOp::BitwiseXor:
+        case AST::BinaryOp::BitshiftLeft:
+        case AST::BinaryOp::BitshiftRight: {
+            if (PrimitiveScalarType::isInteger(type)) {
+                return type;
+            }
+            break;
+        }
+        case AST::BinaryOp::LessOrEqual:
+        case AST::BinaryOp::GreaterOrEqual:
+        case AST::BinaryOp::GreaterThan:
+        case AST::BinaryOp::LessThan:
+        case AST::BinaryOp::Equals:
+        case AST::BinaryOp::NotEquals: {
+            if (PrimitiveScalarType::isInteger(type) or PrimitiveScalarType::isFloating(type)) {
+                return PrimitiveScalarType::get(PrimitiveKind::BOOL);
+            }
+            break;
+        }
+        case AST::BinaryOp::LogicalAnd:
+        case AST::BinaryOp::LogicalOr: {
+            if (PrimitiveScalarType::isBool(type)) {
+                return type;
+            }
+            break;
+        }
+        }
+    }
+    auto* type2 = dynamic_cast<NotYetInferredType*>(lhs);
+    if (type2 != nullptr) {
+        if (type2 != NotYetInferredType::get(NotYetInferredKind::NumberLiteral)) {
+            Log::panic("Expected number literal, got something else");
+        }
+
+        // TODO: divide number literal in integer literal, floating literal and bool literal
+        switch (op) {
+        case AST::BinaryOp::Mult:
+        case AST::BinaryOp::Div:
+        case AST::BinaryOp::Sum:
+        case AST::BinaryOp::Subtraction: {
+            // TODO: if literal integer or float
+            break;
+        }
+        case AST::BinaryOp::Modulo:
+        case AST::BinaryOp::BitwiseAnd:
+        case AST::BinaryOp::BitwiseOr:
+        case AST::BinaryOp::BitwiseXor:
+        case AST::BinaryOp::BitshiftLeft:
+        case AST::BinaryOp::BitshiftRight: {
+            // TODO: if literal integer
+            break;
+        }
+        case AST::BinaryOp::LessOrEqual:
+        case AST::BinaryOp::GreaterOrEqual:
+        case AST::BinaryOp::GreaterThan:
+        case AST::BinaryOp::LessThan:
+        case AST::BinaryOp::Equals:
+        case AST::BinaryOp::NotEquals: {
+            // TODO: if literal integer or float
+            break;
+        }
+        case AST::BinaryOp::LogicalAnd:
+        case AST::BinaryOp::LogicalOr: {
+            // TODO: if literal bool
+            break;
+        }
+        }
+    }
+
+    Log::panic("Could not resolve binary expr type");
+}
+
 void expandCoercion(Type* coerced, AST::Expression& lhs)
 {
     // Assign variable type to all members of expression
@@ -35,8 +129,9 @@ void TypeCheckVisitor::visitBlockStatement(AST::BlockStatement& stm)
 
 void TypeCheckVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
 {
-    ASSERT(def.block->scope.has_value());
-    currentScope = &def.block->scope.value();
+    auto* scope = &def.block->scope;
+    ASSERT(scope->has_value());
+    currentScope = &scope->value();
     currentFunction = &def;
     visitChildren(*def.block);
     currentScope = currentScope->getEnclosingScope();
@@ -110,7 +205,8 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
             Log::panic("Useless panic");
         }
 
-        expr.type = expr.right->type;
+        auto* result = binOpResult(expr.op, expr.left->type, expr.right->type);
+        expr.type = result;
     }
 }
 

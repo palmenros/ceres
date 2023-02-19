@@ -82,7 +82,7 @@ public:
     static bool classof(Type const* type) { return type->getKind() == TypeKind::UnitVoidType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     static UnitVoidType* get();
     [[nodiscard]] std::string toString() const override;
 };
@@ -100,7 +100,7 @@ public:
     static bool classof(Type const* type) { return type->getKind() == TypeKind::ErrorType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     static ErrorType* get();
     [[nodiscard]] std::string toString() const override;
 };
@@ -119,7 +119,7 @@ public:
     static bool classof(Type const* type) { return type->getKind() == TypeKind::UnresolvedType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     std::string typeIdentifier;
 
     // TODO: Consider using std::string_view instead of std::string here and
@@ -155,7 +155,7 @@ public:
     static bool classof(Type const* type) { return type->getKind() == TypeKind::NotYetInferredType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     NotYetInferredKind kind;
 
     static NotYetInferredType* get(NotYetInferredKind kind);
@@ -176,6 +176,8 @@ enum class PrimitiveKind {
     // float
     F32,
     F64,
+    // Bool
+    BOOL,
 };
 
 class PrimitiveScalarType : public Type {
@@ -188,13 +190,71 @@ public:
     static bool classof(Type const* type) { return type->getKind() == TypeKind::PrimitiveScalarType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     PrimitiveKind kind;
 
     static PrimitiveKind primitiveKindFromString(std::string_view str);
 
     static PrimitiveScalarType* get(PrimitiveKind kind);
     static PrimitiveScalarType* get(std::string_view str);
+
+    static bool isBool(PrimitiveScalarType* const type)
+    {
+        switch (type->kind) {
+        case PrimitiveKind::I8:
+        case PrimitiveKind::I16:
+        case PrimitiveKind::I32:
+        case PrimitiveKind::I64:
+        case PrimitiveKind::U8:
+        case PrimitiveKind::U16:
+        case PrimitiveKind::U32:
+        case PrimitiveKind::U64:
+        case PrimitiveKind::F32:
+        case PrimitiveKind::F64:
+            return false;
+        case PrimitiveKind::BOOL:
+            return true;
+        }
+    }
+
+    static bool isInteger(PrimitiveScalarType* const type)
+    {
+        switch (type->kind) {
+        case PrimitiveKind::I8:
+        case PrimitiveKind::I16:
+        case PrimitiveKind::I32:
+        case PrimitiveKind::I64:
+        case PrimitiveKind::U8:
+        case PrimitiveKind::U16:
+        case PrimitiveKind::U32:
+        case PrimitiveKind::U64:
+            return true;
+        case PrimitiveKind::F32:
+        case PrimitiveKind::F64:
+        case PrimitiveKind::BOOL:
+            return false;
+        }
+    }
+
+    static bool isFloating(PrimitiveScalarType* const type)
+    {
+        switch (type->kind) {
+        case PrimitiveKind::I8:
+        case PrimitiveKind::I16:
+        case PrimitiveKind::I32:
+        case PrimitiveKind::I64:
+        case PrimitiveKind::U8:
+        case PrimitiveKind::U16:
+        case PrimitiveKind::U32:
+        case PrimitiveKind::U64:
+        case PrimitiveKind::BOOL:
+            return false;
+        case PrimitiveKind::F32:
+        case PrimitiveKind::F64:
+            return true;
+        }
+    }
+
     [[nodiscard]] std::string toString() const override;
 };
 
@@ -211,11 +271,12 @@ private:
     explicit FunctionType(Type* returnType, std::vector<Type*> argumentTypes);
 
 public:
+    // Static function needed for fast LLVM RTTI
     static bool classof(Type const* type) { return type->getKind() == TypeKind::FunctionType; }
 
     void accept(Typing::TypeVisitor& visitor) override;
 
-public:
+    // Ours
     Type* returnType;
     std::vector<Type*> argumentTypes;
 
