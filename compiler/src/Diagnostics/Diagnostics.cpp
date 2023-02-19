@@ -19,50 +19,52 @@
 #include "Diagnostics.h"
 
 namespace Ceres {
+unsigned Diagnostics::numErrors = 0;
+unsigned Diagnostics::numWarnings = 0;
+unsigned Diagnostics::numRemarks = 0;
+unsigned Diagnostics::numNotes = 0;
 
-    unsigned Diagnostics::numErrors = 0;
-    unsigned Diagnostics::numWarnings = 0;
-    unsigned Diagnostics::numRemarks = 0;
-    unsigned Diagnostics::numNotes = 0;
-
-    const char *diagnosticTexts[] = {
+const char *diagnosticTexts[] = {
 #define DIAG(identifier, severity, formatString) formatString,
 #include "Diagnostics.def"
 #undef DIAG
-    };
+};
 
-    llvm::SourceMgr::DiagKind diagnosticsKind[] = {
-#define DIAG(identifier, severity, formatString) llvm::SourceMgr::DiagKind::DK_##severity,
+llvm::SourceMgr::DiagKind diagnosticsKind[] = {
+#define DIAG(identifier, severity, formatString)                               \
+    llvm::SourceMgr::DiagKind::DK_##severity,
 #include "Diagnostics.def"
 #undef DIAG
-    };
+};
 
-    const char *Diagnostics::getDiagnosticFormatString(Diag diagIdentifier) {
-        return diagnosticTexts[(int) diagIdentifier];
-    }
+const char *Diagnostics::getDiagnosticFormatString(Diag diagIdentifier) {
+    return diagnosticTexts[(int)diagIdentifier];
+}
 
-    llvm::SourceMgr::DiagKind Diagnostics::getDiagnosticKind(Diag diagIdentifier) {
-        return diagnosticsKind[(int) diagIdentifier];
-    }
+llvm::SourceMgr::DiagKind Diagnostics::getDiagnosticKind(Diag diagIdentifier) {
+    return diagnosticsKind[(int)diagIdentifier];
+}
 
-    llvm::SMLoc Diagnostics::getSMLocFromSourceSpan(const SourceSpan &span) {
-        const char *bufferStart = SourceManager::get()
-                                          .getLLVMSourceMgr()
-                                          .getMemoryBuffer((unsigned) span.fileId)
-                                          ->getBufferStart();
-        return llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex);
-    }
+llvm::SMLoc Diagnostics::getSMLocFromSourceSpan(const SourceSpan &span) {
+    const char *bufferStart = SourceManager::get()
+                                  .getLLVMSourceMgr()
+                                  .getMemoryBuffer((unsigned)span.fileId)
+                                  ->getBufferStart();
+    return llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex);
+}
 
-    llvm::SMRange Diagnostics::getSMRangeFromSourceSpan(const SourceSpan &span) {
-        const char *bufferStart = SourceManager::get()
-                                          .getLLVMSourceMgr()
-                                          .getMemoryBuffer((unsigned) span.fileId)
-                                          ->getBufferStart();
-        return {llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex),
-                llvm::SMLoc::getFromPointer(bufferStart + span.endCharacterIndex + 1)};
-    }
+llvm::SMRange Diagnostics::getSMRangeFromSourceSpan(const SourceSpan &span) {
+    const char *bufferStart = SourceManager::get()
+                                  .getLLVMSourceMgr()
+                                  .getMemoryBuffer((unsigned)span.fileId)
+                                  ->getBufferStart();
+    return {
+        llvm::SMLoc::getFromPointer(bufferStart + span.startCharacterIndex),
+        llvm::SMLoc::getFromPointer(bufferStart + span.endCharacterIndex + 1)};
+}
 
-    llvm::SMFixIt Diagnostics::getSMFixItFromFixIt(const FixItSpan &fixit) {
-        return {getSMRangeFromSourceSpan(fixit.sourceSpan), fixit.replacementString};
-    }
-}// namespace Ceres
+llvm::SMFixIt Diagnostics::getSMFixItFromFixIt(const FixItSpan &fixit) {
+    return {getSMRangeFromSourceSpan(fixit.sourceSpan),
+            fixit.replacementString};
+}
+} // namespace Ceres

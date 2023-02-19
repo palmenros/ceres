@@ -57,10 +57,10 @@ private:
 
 public:
     explicit Type(TypeKind kind) : kind(kind) {}
-    TypeKind getKind() const { return kind; }
+    [[nodiscard]] TypeKind getKind() const { return kind; }
 
     virtual void accept(Typing::TypeVisitor &visitor) = 0;
-    virtual std::string toString() const = 0;
+    [[nodiscard]] virtual std::string toString() const = 0;
     virtual ~Type() = default;
 
     static Type *getImplicitlyCoercedType(Type *a, Type *b);
@@ -80,7 +80,7 @@ public:
 
 public:
     static UnitVoidType *get();
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 class ErrorType : public Type {
@@ -97,7 +97,7 @@ public:
 
 public:
     static ErrorType *get();
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 // UnresolvedType is a type that hasn't been resolved yet. For example, it is a
@@ -124,7 +124,7 @@ public:
     // everywhere else
     //          where it is appropriate.
     static UnresolvedType *get(const std::string &str);
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 // NotYetInferredKind is a type that hasn't been inferred yet and has not been
@@ -158,7 +158,7 @@ public:
     NotYetInferredKind kind;
 
     static NotYetInferredType *get(NotYetInferredKind kind);
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 enum class PrimitiveKind {
@@ -198,7 +198,7 @@ public:
 
     static PrimitiveScalarType *get(PrimitiveKind kind);
     static PrimitiveScalarType *get(std::string_view str);
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 struct FunctionSignatureHash {
@@ -228,7 +228,7 @@ public:
     static FunctionType *get(Type *returnType,
                              const std::vector<Type *> &argumentTypes);
 
-    std::string toString() const override;
+    [[nodiscard]] std::string toString() const override;
 };
 
 } // namespace Ceres

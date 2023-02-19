@@ -35,23 +35,21 @@ enum class SymbolDeclarationKind {
 };
 
 class SymbolDeclaration {
-public:
+private:
     SymbolDeclarationKind kind;
     AST::Node *declarationNode;
     std::optional<size_t> paramIdx = 0;
 
+public:
     // TODO: sadly this is not rust so we cant create a constructor for a
     // variant, just pray no one uses this incorrectly
     SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode);
-    SymbolDeclaration(AST::Node *declarationNode, size_t param_idx);
+    SymbolDeclaration(size_t param_idx, AST::Node *declarationNode);
 
     // Methods
     SymbolDeclarationKind getKind();
-
     AST::Node *getDeclarationNode();
-
-    std::optional<size_t> getParam_idx();
-
+    std::optional<size_t> getParamIdx();
     Type *getType();
 };
 

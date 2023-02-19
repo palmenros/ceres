@@ -20,5 +20,5 @@
 
 namespace Ceres::AST {
 
-    Node::Node(const SourceSpan &sourceSpan) : sourceSpan(sourceSpan) {}
-}// namespace Ceres::AST
+Node::Node(const SourceSpan &sourceSpan) : sourceSpan(sourceSpan) {}
+} // namespace Ceres::AST

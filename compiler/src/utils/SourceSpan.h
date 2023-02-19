@@ -30,12 +30,12 @@ private:
 
 public:
     // fileId index as managed by SourceManager
-    unsigned fileId;
+    unsigned fileId = 0;
 
     // startCharacterIndex and endCharacterIndex start at 0. They represent the
     // index into the source char* pointer both ends are inclusive, that is, the
     // range is represented by [startCharacterIndex, endCharacterIndex]
-    size_t startCharacterIndex, endCharacterIndex;
+    size_t startCharacterIndex = 0, endCharacterIndex = 0;
 
     // Does the span contain valid data? Maybe it doesn't
     bool isSpanValid;

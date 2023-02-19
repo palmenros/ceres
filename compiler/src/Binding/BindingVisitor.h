@@ -24,26 +24,24 @@
 
 namespace Ceres::Binding {
 
-using namespace AST;
-
 // TODO: The binding visitor is only the first pass of the binding. It should
 // embed all the
 //          the declarations in the necessary scopes so the second pass (that I
 //          think can and should be combined with type-inference and
 //          type-checking) can reference the scopes for the needed symbols.
 
-class BindingVisitor : public ASTVisitor {
+class BindingVisitor : public AST::ASTVisitor {
 public:
     Scope *currentScope = nullptr;
 
     // Since we don't resolve anything in this pass we just have to add the
     // defined names to the tables
-    void visitCompilationUnit(CompilationUnit &unit) override;
-    void visitBlockStatement(BlockStatement &stm) override;
-    void visitFunctionDefinition(FunctionDefinition &def) override;
-    void visitVariableDeclaration(VariableDeclaration &decl) override;
-    void visitIdentifierExpression(IdentifierExpression &expr) override;
-    void visitAssignmentExpression(AssignmentExpression &expr) override;
+    void visitCompilationUnit(AST::CompilationUnit &unit) override;
+    void visitBlockStatement(AST::BlockStatement &stm) override;
+    void visitFunctionDefinition(AST::FunctionDefinition &def) override;
+    void visitVariableDeclaration(AST::VariableDeclaration &decl) override;
+    void visitIdentifierExpression(AST::IdentifierExpression &expr) override;
+    void visitAssignmentExpression(AST::AssignmentExpression &expr) override;
 
     // TODO: think about this
     // void visitForStatement(ForStatement &stm) override;

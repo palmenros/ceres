@@ -1,0 +1,8 @@
+fn main() {    
+    test(3.0f64);
+}
+
+fn test(b: f64) i32 {    
+    return b;
+}
+

@@ -44,7 +44,6 @@ class AbstractASTVisitor {
 public:
     // This function should not be overridden, automatically calls the children
     void visitChildren(Node &node);
-
     void visit(Node &node);
 
     virtual void visitAssignmentExpression(AssignmentExpression &expr) = 0;

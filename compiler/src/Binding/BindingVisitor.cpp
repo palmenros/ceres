@@ -22,91 +22,78 @@
 #include <optional>
 
 namespace Ceres::Binding {
-    void BindingVisitor::visitCompilationUnit(CompilationUnit &unit) {
-        // TODO: fix when we have multiple translation units
+void BindingVisitor::visitCompilationUnit(AST::CompilationUnit &unit) {
+    // TODO: fix when we have multiple translation units
+    ASSERT(currentScope == nullptr);
 
-        ASSERT(currentScope == nullptr);
+    unit.scope = SymbolTableScope(nullptr);
+    currentScope = &unit.scope.value();
 
-        // TODO: add global scope class with no parent
-        unit.scope = SymbolTableScope("Translation", nullptr);
-        // TODO: does this panic on None option?
-        currentScope = &unit.scope.value();
+    ASSERT(currentScope != nullptr);
 
-        ASSERT(currentScope != nullptr);
+    visitChildren(unit);
+}
 
-        // Log::info("{}", currentScope->getScopeName());
+void BindingVisitor::visitBlockStatement(AST::BlockStatement &stm) {
+    stm.scope = SymbolTableScope(currentScope);
 
-        visitChildren(unit);
+    ASSERT(stm.scope.has_value());
+    currentScope = &stm.scope.value();
+
+    ASSERT(currentScope != nullptr);
+
+    visitChildren(stm);
+
+    currentScope = currentScope->getEnclosingScope();
+}
+
+void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition &def) {
+    ASSERT(def.block != nullptr);
+    ASSERT(currentScope != nullptr);
+
+    // Define function in global scope
+    auto fsymbol =
+        SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
+    currentScope->define(def.functionName, fsymbol);
+
+    // Create scope for function body
+    def.block->scope = SymbolTableScope(currentScope);
+    currentScope = &def.block->scope.value();
+
+    // Add all parameters
+    for (auto param_idx = 0; param_idx < def.parameters.size(); ++param_idx) {
+        SymbolDeclaration symbol = SymbolDeclaration(param_idx, &def);
+        currentScope->define(def.parameters[param_idx].name, symbol);
     }
 
+    visitChildren(*def.block);
 
-    void BindingVisitor::visitBlockStatement(BlockStatement &stm) {
-        // TODO: needs a special scopeName?
-        stm.scope = SymbolTableScope("block", currentScope);
+    currentScope = currentScope->getEnclosingScope();
+}
 
-        ASSERT(stm.scope.has_value());
-        currentScope = &stm.scope.value();
+void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration &decl) {
+    auto kind = decl.scope == AST::VariableScope::Global
+                    ? SymbolDeclarationKind::GlobalVariableDeclaration
+                    : SymbolDeclarationKind::LocalVariableDeclaration;
 
-        ASSERT(currentScope != nullptr);
+    auto symbol = SymbolDeclaration(kind, &decl);
 
-        visitChildren(stm);
+    ASSERT(currentScope != nullptr);
 
-        currentScope = currentScope->getEnclosingScope();
+    visitChildren(decl);
 
-        // Log::info("{}", stm.scope->getScopeName());
-    }
+    currentScope->define(decl.identifier, symbol);
+}
 
-    void BindingVisitor::visitFunctionDefinition(FunctionDefinition &def) {
-        // Put everything, arguments included in block scope
-        ASSERT(def.block != nullptr);
-        ASSERT(currentScope != nullptr);
+void BindingVisitor::visitIdentifierExpression(
+    AST::IdentifierExpression &expr) {
+    // TODO: Panics on NULL, better return optional
+    currentScope->resolve(expr.identifier);
+}
 
-        {
-            // TODO: Add function to current scope to allow recursion,
-            // this should be the same as the translation scope, but its better this
-            // way in case we decide to allow nested functions
-            SymbolDeclaration fsymbol =
-                    SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
-            currentScope->define(def.functionName, fsymbol);
-
-            def.block->scope = SymbolTableScope(def.functionName, currentScope);
-            currentScope = &def.block->scope.value();
-
-            // Log::info("{}", currentScope->getScopeName());
-        }
-
-
-        for (auto i = 0; i < def.parameters.size(); ++i) {
-            SymbolDeclaration symbol = SymbolDeclaration(&def, i);
-            currentScope->define(def.parameters[i].name, symbol);
-        }
-
-        visitChildren(*def.block);
-
-        currentScope = currentScope->getEnclosingScope();
-    }
-
-    void BindingVisitor::visitVariableDeclaration(VariableDeclaration &decl) {
-        SymbolDeclarationKind kind = decl.scope == VariableScope::Global
-                                             ? SymbolDeclarationKind::GlobalVariableDeclaration
-                                             : SymbolDeclarationKind::LocalVariableDeclaration;
-
-        SymbolDeclaration symbol = SymbolDeclaration(kind, &decl);
-
-        ASSERT(currentScope != nullptr);
-
-        visitChildren(decl);
-
-        currentScope->define(decl.identifier, symbol);
-    }
-
-    void BindingVisitor::visitIdentifierExpression(IdentifierExpression &expr) {
-        // TODO: Panics on NULL, better return optional
-        currentScope->resolve(expr.identifier);
-    }
-
-    void BindingVisitor::visitAssignmentExpression(AssignmentExpression &expr) {
-        currentScope->resolve(expr.identifierLHS);
-        visitChildren(expr);
-    }
-}// namespace Ceres::Binding
+void BindingVisitor::visitAssignmentExpression(
+    AST::AssignmentExpression &expr) {
+    currentScope->resolve(expr.identifierLHS);
+    visitChildren(expr);
+}
+} // namespace Ceres::Binding

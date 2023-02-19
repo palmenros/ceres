@@ -24,6 +24,12 @@
 
 DIAG(parse_error, Error, "{}")
 DIAG(unknown_type, Error, "unknown type '{}'")
-DIAG(mismatch_type_error, Error, "mismatched types: '{}' and '{}'")
+
+// Type check
+DIAG(mismatched_type_on_function_call, Error, "mismatched types on function call: expected '{}' and got '{}'")
+DIAG(mismatched_type_on_var_decl, Error, "mismatched types on variable declaration: expected '{}' and got '{}'")
+DIAG(mismatched_return_stmt, Error, "mismatched types on return statement: expected '{}' and got '{}'")
+DIAG(mismatched_assign_stmt, Error, "mismatched types on assignment: expected '{}' and got '{}'")
+DIAG(mismatched_expr, Error, "mismatched types on expression: mixed '{}' and '{}'")
 
 #undef DIAG

@@ -24,25 +24,27 @@
 #include <utility>
 
 namespace Ceres::AST {
-    VariableDeclaration::VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
-                                             std::unique_ptr<Expression> &&initializerExpression,
-                                             VariableVisibility visibility,
-                                             VariableConstness constness, VariableScope scope,
-                                             Type *type, std::string identifier,
-                                             const SourceSpan &typeSourceSpan,
-                                             const SourceSpan &identifierSourceSpan)
-        : Statement(sourceSpan), initializerExpression(std::move(initializerExpression)),
-          visibility(visibility), constness(constness), type(type),
-          identifier(std::move(std::move(identifier))), typeSourceSpan(typeSourceSpan),
-          identifierSourceSpan(identifierSourceSpan), scope(scope) {}
+VariableDeclaration::VariableDeclaration(
+    const Ceres::SourceSpan &sourceSpan,
+    std::unique_ptr<Expression> &&initializerExpression,
+    VariableVisibility visibility, VariableConstness constness,
+    VariableScope scope, Type *type, std::string identifier,
+    const SourceSpan &typeSourceSpan, const SourceSpan &identifierSourceSpan)
+    : Statement(sourceSpan),
+      initializerExpression(std::move(initializerExpression)),
+      visibility(visibility), constness(constness), type(type),
+      identifier(std::move(std::move(identifier))),
+      typeSourceSpan(typeSourceSpan),
+      identifierSourceSpan(identifierSourceSpan), scope(scope) {}
 
+void VariableDeclaration::accept(AbstractASTVisitor &visitor) {
+    visitor.visitVariableDeclaration(*this);
+}
 
-    void VariableDeclaration::accept(AbstractASTVisitor &visitor) {
-        visitor.visitVariableDeclaration(*this);
+std::vector<Node *> VariableDeclaration::getChildren() const {
+    if (initializerExpression != nullptr) {
+        return {initializerExpression.get()};
     }
-
-    std::vector<Node *> VariableDeclaration::getChildren() const {
-        if (initializerExpression != nullptr) { return {initializerExpression.get()}; }
-        return {};
-    }
-}// namespace Ceres::AST
+    return {};
+}
+} // namespace Ceres::AST

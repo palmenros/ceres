@@ -20,55 +20,61 @@
 #include "../AST/nodes/FunctionDefinition.h"
 
 namespace Ceres::Binding {
-    AST::FunctionParameter *getParam(SymbolDeclaration &symbol) {
-        ASSERT(symbol.paramIdx.has_value());
+AST::FunctionParameter *getParam(SymbolDeclaration &symbol) {
+    ASSERT(symbol.getParamIdx().has_value());
 
-        auto node = dynamic_cast<AST::FunctionDefinition *>(symbol.declarationNode);
-        ASSERT(node != nullptr);
-        ASSERT(symbol.paramIdx.value() < node->parameters.size());
+    auto *node =
+        dynamic_cast<AST::FunctionDefinition *>(symbol.getDeclarationNode());
+    ASSERT(node != nullptr);
+    ASSERT(symbol.getParamIdx().value() < node->parameters.size());
 
-        auto param = &node->parameters[symbol.paramIdx.value()];
+    auto *param = &node->parameters[symbol.getParamIdx().value()];
 
-        return param;
+    return param;
+}
+
+AST::VariableDeclaration *getVarDecl(SymbolDeclaration &symbol) {
+    auto *node =
+        dynamic_cast<AST::VariableDeclaration *>(symbol.getDeclarationNode());
+    ASSERT(node != nullptr);
+
+    return node;
+}
+
+AST::FunctionDefinition *getFunDecl(SymbolDeclaration &symbol) {
+    auto *node =
+        dynamic_cast<AST::FunctionDefinition *>(symbol.getDeclarationNode());
+    ASSERT(node != nullptr);
+
+    return node;
+}
+
+// Constructors
+SymbolDeclaration::SymbolDeclaration(SymbolDeclarationKind kind,
+                                     AST::Node *declarationNode)
+    : kind(kind), declarationNode(declarationNode){};
+
+SymbolDeclaration::SymbolDeclaration(size_t param_idx,
+                                     AST::Node *declarationNode)
+    : kind(SymbolDeclarationKind::FunctionParamDeclaration),
+      declarationNode(declarationNode), paramIdx(param_idx){};
+
+// Methods
+SymbolDeclarationKind SymbolDeclaration::getKind() { return kind; }
+
+AST::Node *SymbolDeclaration::getDeclarationNode() { return declarationNode; }
+
+std::optional<size_t> SymbolDeclaration::getParamIdx() { return paramIdx; }
+
+Type *SymbolDeclaration::getType() {
+    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+        return getParam(*this)->type;
     }
 
-    AST::VariableDeclaration *getVarDecl(SymbolDeclaration &symbol) {
-        auto node = dynamic_cast<AST::VariableDeclaration *>(symbol.declarationNode);
-        ASSERT(node != nullptr);
-
-        return node;
+    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
+        return getFunDecl(*this)->returnType;
     }
 
-    AST::FunctionDefinition *getFunDecl(SymbolDeclaration &symbol) {
-        auto node = dynamic_cast<AST::FunctionDefinition *>(symbol.declarationNode);
-        ASSERT(node != nullptr);
-
-        return node;
-    }
-
-    // Constructors
-    SymbolDeclaration::SymbolDeclaration(SymbolDeclarationKind kind, AST::Node *declarationNode)
-        : kind(kind), declarationNode(declarationNode){};
-
-    SymbolDeclaration::SymbolDeclaration(AST::Node *declarationNode, size_t param_idx)
-        : kind(SymbolDeclarationKind::FunctionParamDeclaration), declarationNode(declarationNode),
-          paramIdx(param_idx){};
-
-
-    // Methods
-    SymbolDeclarationKind SymbolDeclaration::getKind() { return kind; }
-
-    AST::Node *SymbolDeclaration::getDeclarationNode() { return declarationNode; }
-
-    std::optional<size_t> SymbolDeclaration::getParam_idx() { return paramIdx; }
-
-    Type *SymbolDeclaration::getType() {
-        if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
-            return getParam(*this)->type;
-        } else if (kind == SymbolDeclarationKind::FunctionDeclaration) {
-            return getFunDecl(*this)->returnType;
-        } else {
-            return getVarDecl(*this)->type;
-        }
-    }
-}// namespace Ceres::Binding
+    return getVarDecl(*this)->type;
+}
+} // namespace Ceres::Binding
