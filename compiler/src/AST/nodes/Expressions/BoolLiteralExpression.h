@@ -30,11 +30,11 @@ class BoolLiteralExpression : public Expression {
 public:
     BoolLiteralValue value;
 
-    BoolLiteralExpression(const SourceSpan &sourceSpan, BoolLiteralValue value);
+    BoolLiteralExpression(SourceSpan const& sourceSpan, BoolLiteralValue value);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 
     static std::string toStringBoolLiteralValue(BoolLiteralValue value);
 };

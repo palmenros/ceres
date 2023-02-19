@@ -34,12 +34,11 @@ public:
     std::optional<Binding::SymbolTableScope> scope;
     std::vector<std::unique_ptr<Statement>> statements;
 
-    BlockStatement(const SourceSpan &sourceSpan,
-                   std::vector<std::unique_ptr<Statement>> &&statements);
+    BlockStatement(SourceSpan const& sourceSpan, std::vector<std::unique_ptr<Statement>>&& statements);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 } // namespace Ceres::AST
 

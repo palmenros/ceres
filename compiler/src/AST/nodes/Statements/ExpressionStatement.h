@@ -29,12 +29,11 @@ class ExpressionStatement : public Statement {
 public:
     std::unique_ptr<Expression> expression;
 
-    ExpressionStatement(SourceSpan &&sourceSpan,
-                        std::unique_ptr<Expression> &&expression);
+    ExpressionStatement(SourceSpan&& sourceSpan, std::unique_ptr<Expression>&& expression);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

@@ -30,21 +30,18 @@ namespace Ceres::AST {
 class CompilationUnit : public Node {
 public:
     std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
-    std::vector<std::unique_ptr<VariableDeclaration>>
-        globalVariableDeclarations;
+    std::vector<std::unique_ptr<VariableDeclaration>> globalVariableDeclarations;
     std::optional<Binding::SymbolTableScope> scope;
 
-    CompilationUnit(
-        const SourceSpan &sourceSpan,
-        std::vector<std::unique_ptr<FunctionDefinition>> &&functionDefinitions,
-        std::vector<std::unique_ptr<VariableDeclaration>>
-            &&globalVariableDeclarations);
+    CompilationUnit(SourceSpan const& sourceSpan,
+        std::vector<std::unique_ptr<FunctionDefinition>>&& functionDefinitions,
+        std::vector<std::unique_ptr<VariableDeclaration>>&& globalVariableDeclarations);
 
-    CompilationUnit(const SourceSpan &sourceSpan);
+    CompilationUnit(SourceSpan const& sourceSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

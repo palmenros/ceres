@@ -22,7 +22,8 @@
 #include <optional>
 
 namespace Ceres::Binding {
-void BindingVisitor::visitCompilationUnit(AST::CompilationUnit &unit) {
+void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
+{
     // TODO: fix when we have multiple translation units
     ASSERT(currentScope == nullptr);
 
@@ -34,7 +35,8 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit &unit) {
     visitChildren(unit);
 }
 
-void BindingVisitor::visitBlockStatement(AST::BlockStatement &stm) {
+void BindingVisitor::visitBlockStatement(AST::BlockStatement& stm)
+{
     stm.scope = SymbolTableScope(currentScope);
 
     ASSERT(stm.scope.has_value());
@@ -47,13 +49,13 @@ void BindingVisitor::visitBlockStatement(AST::BlockStatement &stm) {
     currentScope = currentScope->getEnclosingScope();
 }
 
-void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition &def) {
+void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
+{
     ASSERT(def.block != nullptr);
     ASSERT(currentScope != nullptr);
 
     // Define function in global scope
-    auto fsymbol =
-        SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
+    auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
     currentScope->define(def.functionName, fsymbol);
 
     // Create scope for function body
@@ -71,10 +73,10 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition &def) {
     currentScope = currentScope->getEnclosingScope();
 }
 
-void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration &decl) {
-    auto kind = decl.scope == AST::VariableScope::Global
-                    ? SymbolDeclarationKind::GlobalVariableDeclaration
-                    : SymbolDeclarationKind::LocalVariableDeclaration;
+void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
+{
+    auto kind = decl.scope == AST::VariableScope::Global ? SymbolDeclarationKind::GlobalVariableDeclaration
+                                                         : SymbolDeclarationKind::LocalVariableDeclaration;
 
     auto symbol = SymbolDeclaration(kind, &decl);
 
@@ -85,14 +87,14 @@ void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration &decl) {
     currentScope->define(decl.identifier, symbol);
 }
 
-void BindingVisitor::visitIdentifierExpression(
-    AST::IdentifierExpression &expr) {
+void BindingVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
+{
     // TODO: Panics on NULL, better return optional
     currentScope->resolve(expr.identifier);
 }
 
-void BindingVisitor::visitAssignmentExpression(
-    AST::AssignmentExpression &expr) {
+void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
+{
     currentScope->resolve(expr.identifierLHS);
     visitChildren(expr);
 }

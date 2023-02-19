@@ -31,10 +31,10 @@ public:
     SourceSpan sourceSpan;
 
 public:
-    explicit Node(const SourceSpan &sourceSpan);
+    explicit Node(SourceSpan const& sourceSpan);
 
-    virtual void accept(AbstractASTVisitor &visitor) = 0;
-    virtual std::vector<Node *> getChildren() const = 0;
+    virtual void accept(AbstractASTVisitor& visitor) = 0;
+    virtual std::vector<Node*> getChildren() const = 0;
 
     virtual ~Node() = default;
 };

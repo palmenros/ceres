@@ -37,12 +37,11 @@ public:
     // -> fc783
     std::string str;
 
-    IntLiteralExpression(const SourceSpan &sourceSpan, IntLiteralBase base,
-                         Type *type, std::string str);
+    IntLiteralExpression(SourceSpan const& sourceSpan, IntLiteralBase base, Type* type, std::string str);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

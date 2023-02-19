@@ -44,15 +44,12 @@ public:
 
     SourceSpan opSourceSpan;
 
-    AssignmentExpression(const SourceSpan &sourceSpan,
-                         const std::optional<BinaryOp> &binaryOp,
-                         std::string identifierLhs,
-                         std::unique_ptr<Expression> &&expressionRhs,
-                         SourceSpan opSourceSpan);
+    AssignmentExpression(SourceSpan const& sourceSpan, std::optional<BinaryOp> const& binaryOp,
+        std::string identifierLhs, std::unique_ptr<Expression>&& expressionRhs, SourceSpan opSourceSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

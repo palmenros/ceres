@@ -3,19 +3,20 @@
 
 #pragma once
 
-#include <spdlog/details/circular_q.h>
 #include <spdlog/details/log_msg_buffer.h>
+#include <spdlog/details/circular_q.h>
 
 #include <atomic>
-#include <functional>
 #include <mutex>
+#include <functional>
 
 // Store log messages in circular buffer.
 // Useful for storing debug data in case of error/warning happens.
 
 namespace spdlog {
 namespace details {
-class SPDLOG_API backtracer {
+class SPDLOG_API backtracer
+{
     mutable std::mutex mutex_;
     std::atomic<bool> enabled_{false};
     circular_q<log_msg_buffer> messages_;
@@ -41,5 +42,5 @@ public:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "backtracer-inl.h"
+#    include "backtracer-inl.h"
 #endif

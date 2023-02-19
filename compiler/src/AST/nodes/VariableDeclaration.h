@@ -41,7 +41,7 @@ public:
     VariableConstness constness;
     VariableScope scope;
 
-    Type *type;
+    Type* type;
     std::string identifier;
 
     SourceSpan typeSourceSpan;
@@ -51,17 +51,13 @@ public:
     std::unique_ptr<Expression> initializerExpression;
 
 public:
-    VariableDeclaration(const Ceres::SourceSpan &sourceSpan,
-                        std::unique_ptr<Expression> &&initializerExpression,
-                        VariableVisibility visibility,
-                        VariableConstness constness, VariableScope scope,
-                        Type *type, std::string identifier,
-                        const SourceSpan &typeSourceSpan,
-                        const SourceSpan &identifierSourceSpan);
+    VariableDeclaration(Ceres::SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& initializerExpression,
+        VariableVisibility visibility, VariableConstness constness, VariableScope scope, Type* type,
+        std::string identifier, SourceSpan const& typeSourceSpan, SourceSpan const& identifierSourceSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 } // namespace Ceres::AST
 

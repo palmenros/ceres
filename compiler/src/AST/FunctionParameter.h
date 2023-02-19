@@ -26,16 +26,15 @@
 namespace Ceres::AST {
 
 struct FunctionParameter {
-    Type *type;
+    Type* type;
     std::string name;
     VariableConstness constness;
 
     SourceSpan typeSourceSpan;
     SourceSpan parameterNameSourceSpan;
 
-    FunctionParameter(Type *type, std::string name, VariableConstness constness,
-                      SourceSpan typeSourceSpan,
-                      SourceSpan parameterNameSourceSpan);
+    FunctionParameter(Type* type, std::string name, VariableConstness constness, SourceSpan typeSourceSpan,
+        SourceSpan parameterNameSourceSpan);
 };
 
 } // namespace Ceres::AST

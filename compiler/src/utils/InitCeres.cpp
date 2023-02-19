@@ -22,7 +22,8 @@
 namespace Ceres {
 InitCeres::InitCeres() { Log::setupLogging(); }
 
-InitCeres::~InitCeres() {
+InitCeres::~InitCeres()
+{
     // Add destruction here
 }
 } // namespace Ceres

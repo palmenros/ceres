@@ -33,12 +33,11 @@ public:
     std::unique_ptr<VariableDeclaration> variableDeclaration;
 
     VariableDeclarationStatement(
-        const SourceSpan &sourceSpan,
-        std::unique_ptr<VariableDeclaration> &&variableDeclaration);
+        SourceSpan const& sourceSpan, std::unique_ptr<VariableDeclaration>&& variableDeclaration);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

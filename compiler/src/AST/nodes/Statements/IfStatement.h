@@ -36,14 +36,12 @@ public:
     // IfStatement or a nullptr Note: maybeElseStatement can be a nullptr
     std::unique_ptr<Statement> maybeElseStatement;
 
-    IfStatement(const SourceSpan &sourceSpan,
-                std::unique_ptr<Expression> &&condition,
-                std::unique_ptr<BlockStatement> &&thenBlock,
-                std::unique_ptr<Statement> &&elseStatement);
+    IfStatement(SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition,
+        std::unique_ptr<BlockStatement>&& thenBlock, std::unique_ptr<Statement>&& elseStatement);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

@@ -24,7 +24,7 @@
 namespace Ceres::AST {
 class Statement : public Node {
 public:
-    explicit Statement(const SourceSpan &sourceSpan);
+    explicit Statement(SourceSpan const& sourceSpan);
 
     virtual ~Statement() = default;
 };

@@ -29,12 +29,12 @@ public:
     ~InitCeres();
 
     // Delete assignment operator
-    InitCeres &operator=(const InitCeres &) = delete;
-    InitCeres(const InitCeres &) = delete;
+    InitCeres& operator=(InitCeres const&) = delete;
+    InitCeres(InitCeres const&) = delete;
 
     // Delete move assignment operator
-    InitCeres(InitCeres &&) = delete;
-    InitCeres &operator=(InitCeres &&) = delete;
+    InitCeres(InitCeres&&) = delete;
+    InitCeres& operator=(InitCeres&&) = delete;
 };
 
 } // namespace Ceres

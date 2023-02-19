@@ -24,26 +24,28 @@
 #include <utility>
 
 namespace Ceres::AST {
-VariableDeclaration::VariableDeclaration(
-    const Ceres::SourceSpan &sourceSpan,
-    std::unique_ptr<Expression> &&initializerExpression,
-    VariableVisibility visibility, VariableConstness constness,
-    VariableScope scope, Type *type, std::string identifier,
-    const SourceSpan &typeSourceSpan, const SourceSpan &identifierSourceSpan)
-    : Statement(sourceSpan),
-      initializerExpression(std::move(initializerExpression)),
-      visibility(visibility), constness(constness), type(type),
-      identifier(std::move(std::move(identifier))),
-      typeSourceSpan(typeSourceSpan),
-      identifierSourceSpan(identifierSourceSpan), scope(scope) {}
-
-void VariableDeclaration::accept(AbstractASTVisitor &visitor) {
-    visitor.visitVariableDeclaration(*this);
+VariableDeclaration::VariableDeclaration(Ceres::SourceSpan const& sourceSpan,
+    std::unique_ptr<Expression>&& initializerExpression, VariableVisibility visibility, VariableConstness constness,
+    VariableScope scope, Type* type, std::string identifier, SourceSpan const& typeSourceSpan,
+    SourceSpan const& identifierSourceSpan)
+    : Statement(sourceSpan)
+    , initializerExpression(std::move(initializerExpression))
+    , visibility(visibility)
+    , constness(constness)
+    , type(type)
+    , identifier(std::move(std::move(identifier)))
+    , typeSourceSpan(typeSourceSpan)
+    , identifierSourceSpan(identifierSourceSpan)
+    , scope(scope)
+{
 }
 
-std::vector<Node *> VariableDeclaration::getChildren() const {
+void VariableDeclaration::accept(AbstractASTVisitor& visitor) { visitor.visitVariableDeclaration(*this); }
+
+std::vector<Node*> VariableDeclaration::getChildren() const
+{
     if (initializerExpression != nullptr) {
-        return {initializerExpression.get()};
+        return { initializerExpression.get() };
     }
     return {};
 }

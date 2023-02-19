@@ -31,7 +31,7 @@ public:
 
     // What the selected range should be replaced with
     std::string replacementString;
-    FixItSpan(const SourceSpan &sourceSpan, std::string replacementString);
+    FixItSpan(SourceSpan const& sourceSpan, std::string replacementString);
 };
 
 } // namespace Ceres

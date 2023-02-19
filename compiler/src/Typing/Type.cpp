@@ -25,20 +25,17 @@
 namespace Ceres {
 
 std::unique_ptr<UnitVoidType> UnitVoidType::instance = nullptr;
-std::unordered_map<std::string, std::unique_ptr<UnresolvedType>>
-    UnresolvedType::instances;
-std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>>
-    NotYetInferredType::instances;
-std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>>
-    PrimitiveScalarType::instances;
-std::unordered_map<std::pair<Type *, std::vector<Type *>>,
-                   std::unique_ptr<FunctionType>, FunctionSignatureHash>
+std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> UnresolvedType::instances;
+std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> NotYetInferredType::instances;
+std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>> PrimitiveScalarType::instances;
+std::unordered_map<std::pair<Type*, std::vector<Type*>>, std::unique_ptr<FunctionType>, FunctionSignatureHash>
     FunctionType::instances;
 std::unique_ptr<ErrorType> ErrorType::instance = nullptr;
 
 std::string UnitVoidType::toString() const { return "void"; }
 
-UnitVoidType *UnitVoidType::get() {
+UnitVoidType* UnitVoidType::get()
+{
     if (instance != nullptr) {
         return instance.get();
     }
@@ -47,15 +44,16 @@ UnitVoidType *UnitVoidType::get() {
     return instance.get();
 }
 
-void UnitVoidType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitUnitVoidType(this);
-}
+void UnitVoidType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnitVoidType(this); }
 
 PrimitiveScalarType::PrimitiveScalarType(PrimitiveKind kind)
-    : kind(kind), Type(TypeKind::PrimitiveScalarType) {}
+    : kind(kind)
+    , Type(TypeKind::PrimitiveScalarType)
+{
+}
 
-PrimitiveKind
-PrimitiveScalarType::primitiveKindFromString(std::string_view str) {
+PrimitiveKind PrimitiveScalarType::primitiveKindFromString(std::string_view str)
+{
     // TODO: Maybe change to a lookup into a static hashmap?
     if (str == "i8") {
         return PrimitiveKind::I8;
@@ -82,7 +80,8 @@ PrimitiveScalarType::primitiveKindFromString(std::string_view str) {
     }
 }
 
-std::string PrimitiveScalarType::toString() const {
+std::string PrimitiveScalarType::toString() const
+{
     switch (kind) {
     case PrimitiveKind::I8:
         return "i8";
@@ -109,23 +108,21 @@ std::string PrimitiveScalarType::toString() const {
     }
 }
 
-PrimitiveScalarType *PrimitiveScalarType::get(std::string_view str) {
-    return get(primitiveKindFromString(str));
-}
+PrimitiveScalarType* PrimitiveScalarType::get(std::string_view str) { return get(primitiveKindFromString(str)); }
 
-PrimitiveScalarType *PrimitiveScalarType::get(PrimitiveKind kind) {
-    auto &ptr = instances[kind];
+PrimitiveScalarType* PrimitiveScalarType::get(PrimitiveKind kind)
+{
+    auto& ptr = instances[kind];
     if (ptr == nullptr) {
         ptr.reset(new PrimitiveScalarType(kind));
     }
     return ptr.get();
 }
 
-void PrimitiveScalarType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitPrimitiveScalarType(this);
-}
+void PrimitiveScalarType::accept(Typing::TypeVisitor& visitor) { visitor.visitPrimitiveScalarType(this); }
 
-std::string NotYetInferredType::toString() const {
+std::string NotYetInferredType::toString() const
+{
     switch (kind) {
     case NotYetInferredKind::NumberLiteral:
         return "$UnresolvedNumberLiteral";
@@ -138,54 +135,56 @@ std::string NotYetInferredType::toString() const {
     }
 }
 
-NotYetInferredType *NotYetInferredType::get(NotYetInferredKind kind) {
-    auto &ptr = instances[kind];
+NotYetInferredType* NotYetInferredType::get(NotYetInferredKind kind)
+{
+    auto& ptr = instances[kind];
     if (ptr == nullptr) {
         ptr.reset(new NotYetInferredType(kind));
     }
     return ptr.get();
 }
 
-void NotYetInferredType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitNotYetInferredType(this);
-}
+void NotYetInferredType::accept(Typing::TypeVisitor& visitor) { visitor.visitNotYetInferredType(this); }
 
 UnresolvedType::UnresolvedType(std::string typeIdentifier)
-    : typeIdentifier(std::move(typeIdentifier)),
-      Type(TypeKind::UnresolvedType) {}
+    : typeIdentifier(std::move(typeIdentifier))
+    , Type(TypeKind::UnresolvedType)
+{
+}
 
 std::string UnresolvedType::toString() const { return typeIdentifier; }
 
-UnresolvedType *UnresolvedType::get(const std::string &str) {
-    auto &ptr = instances[str];
+UnresolvedType* UnresolvedType::get(std::string const& str)
+{
+    auto& ptr = instances[str];
     if (ptr == nullptr) {
         ptr.reset(new UnresolvedType(str));
     }
     return ptr.get();
 }
 
-void UnresolvedType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitUnresolvedType(this);
+void UnresolvedType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnresolvedType(this); }
+
+void FunctionType::accept(Typing::TypeVisitor& visitor) { visitor.visitFunctionType(this); }
+
+FunctionType::FunctionType(Type* returnType, std::vector<Type*> argumentTypes)
+    : returnType(returnType)
+    , argumentTypes(std::move(argumentTypes))
+    , Type(TypeKind::FunctionType)
+{
 }
 
-void FunctionType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitFunctionType(this);
-}
-
-FunctionType::FunctionType(Type *returnType, std::vector<Type *> argumentTypes)
-    : returnType(returnType), argumentTypes(std::move(argumentTypes)),
-      Type(TypeKind::FunctionType) {}
-
-FunctionType *FunctionType::get(Type *returnType,
-                                const std::vector<Type *> &argumentTypes) {
-    auto &ptr = instances[std::make_pair(returnType, argumentTypes)];
+FunctionType* FunctionType::get(Type* returnType, std::vector<Type*> const& argumentTypes)
+{
+    auto& ptr = instances[std::make_pair(returnType, argumentTypes)];
     if (ptr == nullptr) {
         ptr.reset(new FunctionType(returnType, argumentTypes));
     }
     return ptr.get();
 }
 
-std::string FunctionType::toString() const {
+std::string FunctionType::toString() const
+{
     std::string arguments;
     bool first = true;
     for (auto arg : argumentTypes) {
@@ -200,15 +199,16 @@ std::string FunctionType::toString() const {
     return fmt::format("fn ({}) {}", arguments, returnType->toString());
 }
 
-template <class T> inline void hash_combine(std::size_t &seed, const T &v) {
+template<class T> inline void hash_combine(std::size_t& seed, T const& v)
+{
     std::hash<T> hasher;
     seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
 
-size_t FunctionSignatureHash::operator()(
-    const std::pair<Type *, std::vector<Type *>> &p) const {
-    const auto &vec = p.second;
-    Type *t = p.first;
+size_t FunctionSignatureHash::operator()(std::pair<Type*, std::vector<Type*>> const& p) const
+{
+    auto const& vec = p.second;
+    Type* t = p.first;
 
     size_t seed = vec.size();
     hash_combine(seed, (uintptr_t)t);
@@ -222,11 +222,10 @@ size_t FunctionSignatureHash::operator()(
     return seed;
 }
 
-void ErrorType::accept(Typing::TypeVisitor &visitor) {
-    visitor.visitErrorType(this);
-}
+void ErrorType::accept(Typing::TypeVisitor& visitor) { visitor.visitErrorType(this); }
 
-ErrorType *ErrorType::get() {
+ErrorType* ErrorType::get()
+{
     if (instance != nullptr) {
         return instance.get();
     }
@@ -238,7 +237,8 @@ ErrorType *ErrorType::get() {
 std::string ErrorType::toString() const { return "<ErrorType>"; }
 
 // Return ErrorType if the coercion is not pssible
-Type *Type::getImplicitlyCoercedType(Type *a, Type *b) {
+Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
+{
     // If same coercion is obvious
     if (a == b) {
         return b;
@@ -257,10 +257,9 @@ Type *Type::getImplicitlyCoercedType(Type *a, Type *b) {
         Log::panic("Unresolved type when coercing");
     }
     case TypeKind::NotYetInferredType: {
-        auto *notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
+        auto* notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
         ASSERT(notYetInferredType != nullptr);
-        if (auto *primitiveScalarType =
-                llvm::dyn_cast<PrimitiveScalarType>(b)) {
+        if (auto* primitiveScalarType = llvm::dyn_cast<PrimitiveScalarType>(b)) {
             if (notYetInferredType->kind == NotYetInferredKind::NumberLiteral) {
                 return b;
             }

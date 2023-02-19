@@ -47,7 +47,8 @@ using namespace antlrgenerated;
 using namespace antlr4;
 using namespace Ceres;
 
-int main(int argc, const char *argv[]) {
+int main(int argc, char const* argv[])
+{
     // Performs initialization and destruction on scope end
     Ceres::InitCeres ceres;
     llvm::InitLLVM X(argc, argv);
@@ -58,32 +59,29 @@ int main(int argc, const char *argv[]) {
         return 1;
     }
 
-    auto &sourceManager = SourceManager::get();
+    auto& sourceManager = SourceManager::get();
     unsigned fileId = sourceManager.addSourceFileOrExit(argv[1]);
 
     try {
         auto memoryBuffer = sourceManager.getMemoryBuffer(fileId);
-        ANTLRInputStream input(memoryBuffer->getBufferStart(),
-                               memoryBuffer->getBufferSize());
+        ANTLRInputStream input(memoryBuffer->getBufferStart(), memoryBuffer->getBufferSize());
         CeresLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
 
         CeresParser parser(&tokens);
         parser.removeErrorListeners();
 
-        std::unique_ptr<ParserErrorListener> parserErrorListener =
-            std::make_unique<ParserErrorListener>(fileId);
+        std::unique_ptr<ParserErrorListener> parserErrorListener = std::make_unique<ParserErrorListener>(fileId);
         parser.addErrorListener(parserErrorListener.get());
 
-        tree::ParseTree *tree = parser.compilationUnit();
+        tree::ParseTree* tree = parser.compilationUnit();
 
         auto s = tree->toStringTree(&parser);
         //        Log::debug("Parse tree: {}", s);
 
-        AST::AntlrASTGeneratorVisitor visitor{fileId};
+        AST::AntlrASTGeneratorVisitor visitor { fileId };
 
-        auto res =
-            std::any_cast<AST::CompilationUnit *>(tree->accept(&visitor));
+        auto res = std::any_cast<AST::CompilationUnit*>(tree->accept(&visitor));
         ASSERT(res != nullptr);
 
         auto AST = std::unique_ptr<AST::CompilationUnit>(res);
@@ -123,7 +121,7 @@ int main(int argc, const char *argv[]) {
         // auto module = std::make_unique<llvm::Module>("Hello", llvmContext);
         //    std::cout << "LLVM says: " << module->getName().str() <<
         //    std::endl;
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
         Log::critical("Uncaught Exception: {}", e.what());
     }
     return 0;

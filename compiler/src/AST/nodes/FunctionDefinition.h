@@ -36,23 +36,19 @@ public:
     FunctionVisibility visibility;
     std::string functionName;
     std::vector<FunctionParameter> parameters;
-    Type *returnType;
+    Type* returnType;
     std::unique_ptr<BlockStatement> block;
 
     SourceSpan returnTypeSpan;
     SourceSpan functionNameSpan;
 
-    FunctionDefinition(const SourceSpan &sourceSpan,
-                       FunctionVisibility visibility, std::string functionName,
-                       std::vector<FunctionParameter> &&parameters,
-                       Type *returnType,
-                       std::unique_ptr<BlockStatement> &&block,
-                       const SourceSpan &returnTypeSpan,
-                       const SourceSpan &functionNameSpan);
+    FunctionDefinition(SourceSpan const& sourceSpan, FunctionVisibility visibility, std::string functionName,
+        std::vector<FunctionParameter>&& parameters, Type* returnType, std::unique_ptr<BlockStatement>&& block,
+        SourceSpan const& returnTypeSpan, SourceSpan const& functionNameSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

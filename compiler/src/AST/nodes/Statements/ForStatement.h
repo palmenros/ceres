@@ -42,16 +42,13 @@ public:
 
     std::unique_ptr<BlockStatement> body;
 
-    ForStatement(const SourceSpan &sourceSpan,
-                 std::unique_ptr<VariableDeclaration> &&maybeInitDeclaration,
-                 std::unique_ptr<Expression> &&maybeInitExpression,
-                 std::unique_ptr<Expression> &&conditionExpr,
-                 std::unique_ptr<Expression> &&updateExpr,
-                 std::unique_ptr<BlockStatement> &&body);
+    ForStatement(SourceSpan const& sourceSpan, std::unique_ptr<VariableDeclaration>&& maybeInitDeclaration,
+        std::unique_ptr<Expression>&& maybeInitExpression, std::unique_ptr<Expression>&& conditionExpr,
+        std::unique_ptr<Expression>&& updateExpr, std::unique_ptr<BlockStatement>&& body);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

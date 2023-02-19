@@ -40,8 +40,7 @@ public:
     // Does the span contain valid data? Maybe it doesn't
     bool isSpanValid;
 
-    SourceSpan(unsigned int fileId, size_t startCharacterIndex,
-               size_t endCharacterIndex);
+    SourceSpan(unsigned int fileId, size_t startCharacterIndex, size_t endCharacterIndex);
 
     static SourceSpan createInvalidSpan();
 };

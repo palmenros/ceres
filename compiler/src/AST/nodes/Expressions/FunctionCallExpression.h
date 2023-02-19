@@ -33,14 +33,12 @@ public:
 
     SourceSpan functionIdentifierSourceSpan;
 
-    FunctionCallExpression(const SourceSpan &sourceSpan,
-                           std::string functionIdentifier,
-                           std::vector<std::unique_ptr<Expression>> &&arguments,
-                           SourceSpan functionIdentifierSourceSpan);
+    FunctionCallExpression(SourceSpan const& sourceSpan, std::string functionIdentifier,
+        std::vector<std::unique_ptr<Expression>>&& arguments, SourceSpan functionIdentifierSourceSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

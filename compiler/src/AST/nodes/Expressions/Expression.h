@@ -25,11 +25,11 @@
 namespace Ceres::AST {
 class Expression : public Node {
 public:
-    Type *type;
+    Type* type;
 
-    explicit Expression(const SourceSpan &sourceSpan);
+    explicit Expression(SourceSpan const& sourceSpan);
 
-    explicit Expression(const SourceSpan &sourceSpan, Type *type);
+    explicit Expression(SourceSpan const& sourceSpan, Type* type);
 
     virtual ~Expression() = default;
 };

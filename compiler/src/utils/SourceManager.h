@@ -32,17 +32,17 @@ protected:
 public:
     llvm::SourceMgr sourceMgr;
 
-    SourceManager(SourceManager &other) = delete;
-    void operator=(const SourceManager &) = delete;
-    static SourceManager &get();
+    SourceManager(SourceManager& other) = delete;
+    void operator=(SourceManager const&) = delete;
+    static SourceManager& get();
 
     /// Add a new Source File to the source Manager or fail with an error
     /// \param fileName fileName to open
     /// \return unsigned integer representing the file inside SourceManager
-    unsigned addSourceFileOrExit(const std::string &fileName);
+    unsigned addSourceFileOrExit(std::string const& fileName);
 
-    const llvm::MemoryBuffer *getMemoryBuffer(unsigned fileId);
-    llvm::SourceMgr &getLLVMSourceMgr();
+    llvm::MemoryBuffer const* getMemoryBuffer(unsigned fileId);
+    llvm::SourceMgr& getLLVMSourceMgr();
 };
 } // namespace Ceres
 #endif // COMPILER_SOURCEMANAGER_H

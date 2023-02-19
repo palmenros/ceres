@@ -36,7 +36,7 @@ enum class Diag {
 
 class Diagnostics {
 protected:
-    static const char *getDiagnosticFormatString(Diag diagIdentifier);
+    static char const* getDiagnosticFormatString(Diag diagIdentifier);
     static llvm::SourceMgr::DiagKind getDiagnosticKind(Diag diagIdentifier);
 
     static unsigned numErrors;
@@ -44,43 +44,40 @@ protected:
     static unsigned numRemarks;
     static unsigned numNotes;
 
-    static llvm::SMLoc getSMLocFromSourceSpan(const SourceSpan &span);
-    static llvm::SMRange getSMRangeFromSourceSpan(const SourceSpan &span);
-    static llvm::SMFixIt getSMFixItFromFixIt(const FixItSpan &fixit);
+    static llvm::SMLoc getSMLocFromSourceSpan(SourceSpan const& span);
+    static llvm::SMRange getSMRangeFromSourceSpan(SourceSpan const& span);
+    static llvm::SMFixIt getSMFixItFromFixIt(FixItSpan const& fixit);
 
 public:
-    template <typename... Args>
-    static void report(const SourceSpan &range, Diag id, Args &&...args) {
+    template<typename... Args> static void report(SourceSpan const& range, Diag id, Args&&... args)
+    {
         report(range, id, {}, {}, std::forward<Args>(args)...);
     }
-    template <typename... Args>
-    static void report(const SourceSpan &range, Diag id,
-                       std::vector<SourceSpan> extraRanges, Args &&...args) {
+    template<typename... Args>
+    static void report(SourceSpan const& range, Diag id, std::vector<SourceSpan> extraRanges, Args&&... args)
+    {
         report(range, id, extraRanges, {}, std::forward<Args>(args)...);
     }
 
-    template <typename... Args>
-    static void report(const llvm::SMLoc &loc, Diag id, Args &&...args) {
-        std::string msg = fmt::format(getDiagnosticFormatString(id),
-                                      std::forward<Args>(args)...);
+    template<typename... Args> static void report(llvm::SMLoc const& loc, Diag id, Args&&... args)
+    {
+        std::string msg = fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
         auto kind = getDiagnosticKind(id);
-        auto &srcMgr = SourceManager::get().getLLVMSourceMgr();
+        auto& srcMgr = SourceManager::get().getLLVMSourceMgr();
 
         srcMgr.PrintMessage(loc, kind, msg);
     }
 
-    template <typename... Args>
-    static void report(const SourceSpan &range, Diag id,
-                       const std::vector<SourceSpan> &extraRanges,
-                       const std::vector<FixItSpan> &fixitRanges,
-                       Args &&...args) {
-        std::string msg = fmt::format(getDiagnosticFormatString(id),
-                                      std::forward<Args>(args)...);
+    template<typename... Args>
+    static void report(SourceSpan const& range, Diag id, std::vector<SourceSpan> const& extraRanges,
+        std::vector<FixItSpan> const& fixitRanges, Args&&... args)
+    {
+        std::string msg = fmt::format(getDiagnosticFormatString(id), std::forward<Args>(args)...);
         auto kind = getDiagnosticKind(id);
 
-        auto &srcMgr = SourceManager::get().getLLVMSourceMgr();
+        auto& srcMgr = SourceManager::get().getLLVMSourceMgr();
 
-        llvm::SMLoc loc{};
+        llvm::SMLoc loc {};
         if (range.isSpanValid) {
             loc = getSMLocFromSourceSpan(range);
         }
@@ -93,14 +90,14 @@ public:
             smRanges.push_back(mainRange);
         }
 
-        for (const auto &sourceSpan : extraRanges) {
+        for (auto const& sourceSpan : extraRanges) {
             smRanges.push_back(getSMRangeFromSourceSpan(sourceSpan));
         }
 
         std::vector<llvm::SMFixIt> smFixIt;
         smFixIt.reserve(fixitRanges.size());
 
-        for (const auto &fixIt : fixitRanges) {
+        for (auto const& fixIt : fixitRanges) {
             smFixIt.push_back(getSMFixItFromFixIt(fixIt));
         }
 

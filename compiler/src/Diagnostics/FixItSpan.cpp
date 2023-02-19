@@ -21,7 +21,9 @@
 #include <utility>
 
 namespace Ceres {
-FixItSpan::FixItSpan(const SourceSpan &sourceSpan,
-                     std::string replacementString)
-    : sourceSpan(sourceSpan), replacementString(std::move(replacementString)) {}
+FixItSpan::FixItSpan(SourceSpan const& sourceSpan, std::string replacementString)
+    : sourceSpan(sourceSpan)
+    , replacementString(std::move(replacementString))
+{
+}
 } // namespace Ceres

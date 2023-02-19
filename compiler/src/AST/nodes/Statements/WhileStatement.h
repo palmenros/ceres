@@ -31,13 +31,12 @@ public:
     std::unique_ptr<Expression> condition;
     std::unique_ptr<BlockStatement> body;
 
-    WhileStatement(const SourceSpan &sourceSpan,
-                   std::unique_ptr<Expression> &&condition,
-                   std::unique_ptr<BlockStatement> &&body);
+    WhileStatement(
+        SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition, std::unique_ptr<BlockStatement>&& body);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

@@ -28,15 +28,14 @@ namespace Ceres::Binding {
 // Abstract class representing a scope
 class Scope {
 protected:
-    Scope *enclosingScope;
-    explicit Scope(Scope *enclosingScope);
+    Scope* enclosingScope;
+    explicit Scope(Scope* enclosingScope);
 
 public:
-    Scope *getEnclosingScope();
+    Scope* getEnclosingScope();
 
-    virtual void define(const std::string &name,
-                        const SymbolDeclaration &symbol) = 0;
-    virtual SymbolDeclaration resolve(const std::string &name) = 0;
+    virtual void define(std::string const& name, SymbolDeclaration const& symbol) = 0;
+    virtual SymbolDeclaration resolve(std::string const& name) = 0;
 };
 
 class SymbolTableScope : public Scope {
@@ -44,12 +43,11 @@ private:
     std::unordered_map<std::string, SymbolDeclaration> map;
 
 public:
-    explicit SymbolTableScope(Scope *enclosingScope);
+    explicit SymbolTableScope(Scope* enclosingScope);
 
-    void define(const std::string &name,
-                const SymbolDeclaration &symbol) override;
+    void define(std::string const& name, SymbolDeclaration const& symbol) override;
 
-    SymbolDeclaration resolve(const std::string &name) override;
+    SymbolDeclaration resolve(std::string const& name) override;
 };
 } // namespace Ceres::Binding
 

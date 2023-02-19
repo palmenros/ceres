@@ -32,13 +32,12 @@ public:
 
     SourceSpan opSourceSpan;
 
-    PostfixExpression(const SourceSpan &sourceSpan, PostfixOp op,
-                      std::unique_ptr<Expression> &&expr,
-                      SourceSpan opSourceSpan);
+    PostfixExpression(
+        SourceSpan const& sourceSpan, PostfixOp op, std::unique_ptr<Expression>&& expr, SourceSpan opSourceSpan);
 
-    void accept(AbstractASTVisitor &visitor) override;
+    void accept(AbstractASTVisitor& visitor) override;
 
-    std::vector<Node *> getChildren() const override;
+    std::vector<Node*> getChildren() const override;
 };
 
 } // namespace Ceres::AST

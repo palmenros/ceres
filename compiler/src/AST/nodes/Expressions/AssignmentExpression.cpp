@@ -22,21 +22,22 @@
 #include <utility>
 
 namespace Ceres::AST {
-AssignmentExpression::AssignmentExpression(
-    const SourceSpan &sourceSpan, const std::optional<BinaryOp> &binaryOp,
-    std::string identifierLhs, std::unique_ptr<Expression> &&expressionRhs,
-    SourceSpan opSourceSpan)
-    : Expression(sourceSpan), binaryOp(binaryOp),
-      identifierLHS(std::move(identifierLhs)),
-      expressionRHS(std::move(expressionRhs)), opSourceSpan(opSourceSpan) {}
-
-void AssignmentExpression::accept(AbstractASTVisitor &visitor) {
-    visitor.visitAssignmentExpression(*this);
+AssignmentExpression::AssignmentExpression(SourceSpan const& sourceSpan, std::optional<BinaryOp> const& binaryOp,
+    std::string identifierLhs, std::unique_ptr<Expression>&& expressionRhs, SourceSpan opSourceSpan)
+    : Expression(sourceSpan)
+    , binaryOp(binaryOp)
+    , identifierLHS(std::move(identifierLhs))
+    , expressionRHS(std::move(expressionRhs))
+    , opSourceSpan(opSourceSpan)
+{
 }
 
-std::vector<Node *> AssignmentExpression::getChildren() const {
+void AssignmentExpression::accept(AbstractASTVisitor& visitor) { visitor.visitAssignmentExpression(*this); }
+
+std::vector<Node*> AssignmentExpression::getChildren() const
+{
     // TODO: We will need to update this when our assignment expression takes an
     // expression instead of identifier on the LHS
-    return {expressionRHS.get()};
+    return { expressionRHS.get() };
 }
 } // namespace Ceres::AST
