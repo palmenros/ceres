@@ -9,10 +9,12 @@ namespace Ceres {
 std::unique_ptr<UnitVoidType> UnitVoidType::instance = nullptr;
 std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> UnresolvedType::instances;
 std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> NotYetInferredType::instances;
-std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>> PrimitiveScalarType::instances;
+std::unordered_map<PrimitiveIntegerKind, std::unique_ptr<PrimitiveIntegerType>> PrimitiveIntegerType::instances;
+std::unordered_map<PrimitiveFloatKind, std::unique_ptr<PrimitiveFloatType>> PrimitiveFloatType::instances;
 std::unordered_map<std::pair<Type*, std::vector<Type*>>, std::unique_ptr<FunctionType>, FunctionSignatureHash>
     FunctionType::instances;
 std::unique_ptr<ErrorType> ErrorType::instance = nullptr;
+std::unique_ptr<BoolType> BoolType::instance = nullptr;
 
 std::string UnitVoidType::toString() const { return "void"; }
 
@@ -28,86 +30,83 @@ UnitVoidType* UnitVoidType::get()
 
 void UnitVoidType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnitVoidType(this); }
 
-PrimitiveScalarType::PrimitiveScalarType(PrimitiveKind kind)
+PrimitiveIntegerType::PrimitiveIntegerType(PrimitiveIntegerKind kind)
     : kind(kind)
-    , Type(TypeKind::PrimitiveScalarType)
+    , Type(TypeKind::PrimitiveIntegerType)
 {
 }
 
-PrimitiveKind PrimitiveScalarType::primitiveKindFromString(std::string_view str)
+PrimitiveIntegerKind PrimitiveIntegerType::primitiveIntegerKindFromString(std::string_view str)
 {
     // TODO: Maybe change to a lookup into a static hashmap?
     if (str == "i8") {
-        return PrimitiveKind::I8;
+        return PrimitiveIntegerKind::I8;
     } else if (str == "u8") {
-        return PrimitiveKind::U8;
+        return PrimitiveIntegerKind::U8;
     } else if (str == "i16") {
-        return PrimitiveKind::I16;
+        return PrimitiveIntegerKind::I16;
     } else if (str == "u16") {
-        return PrimitiveKind::U16;
+        return PrimitiveIntegerKind::U16;
     } else if (str == "i32") {
-        return PrimitiveKind::I32;
+        return PrimitiveIntegerKind::I32;
     } else if (str == "u32") {
-        return PrimitiveKind::U32;
+        return PrimitiveIntegerKind::U32;
     } else if (str == "i64") {
-        return PrimitiveKind::I64;
+        return PrimitiveIntegerKind::I64;
     } else if (str == "u64") {
-        return PrimitiveKind::U64;
-    } else if (str == "f32") {
-        return PrimitiveKind::F32;
-    } else if (str == "f64") {
-        return PrimitiveKind::F64;
+        return PrimitiveIntegerKind::U64;
     } else {
-        Log::panic("Unknown primitive type: {}", str);
+        Log::panic("Unknown primitive integer type: {}", str);
     }
 }
 
-std::string PrimitiveScalarType::toString() const
+std::string PrimitiveIntegerType::toString() const
 {
     switch (kind) {
-    case PrimitiveKind::I8:
+    case PrimitiveIntegerKind::I8:
         return "i8";
-    case PrimitiveKind::U8:
+    case PrimitiveIntegerKind::U8:
         return "u8";
-    case PrimitiveKind::I16:
+    case PrimitiveIntegerKind::I16:
         return "i16";
-    case PrimitiveKind::U16:
+    case PrimitiveIntegerKind::U16:
         return "u16";
-    case PrimitiveKind::I32:
+    case PrimitiveIntegerKind::I32:
         return "i32";
-    case PrimitiveKind::U32:
+    case PrimitiveIntegerKind::U32:
         return "u32";
-    case PrimitiveKind::I64:
+    case PrimitiveIntegerKind::I64:
         return "i64";
-    case PrimitiveKind::U64:
+    case PrimitiveIntegerKind::U64:
         return "u64";
-    case PrimitiveKind::F32:
-        return "f32";
-    case PrimitiveKind::F64:
-        return "f64";
     default:
         NOT_IMPLEMENTED();
     }
 }
 
-PrimitiveScalarType* PrimitiveScalarType::get(std::string_view str) { return get(primitiveKindFromString(str)); }
+PrimitiveIntegerType* PrimitiveIntegerType::get(std::string_view str)
+{
+    return get(primitiveIntegerKindFromString(str));
+}
 
-PrimitiveScalarType* PrimitiveScalarType::get(PrimitiveKind kind)
+PrimitiveIntegerType* PrimitiveIntegerType::get(PrimitiveIntegerKind kind)
 {
     auto& ptr = instances[kind];
     if (ptr == nullptr) {
-        ptr.reset(new PrimitiveScalarType(kind));
+        ptr.reset(new PrimitiveIntegerType(kind));
     }
     return ptr.get();
 }
 
-void PrimitiveScalarType::accept(Typing::TypeVisitor& visitor) { visitor.visitPrimitiveScalarType(this); }
+void PrimitiveIntegerType::accept(Typing::TypeVisitor& visitor) { visitor.visitPrimitiveIntegerType(this); }
 
 std::string NotYetInferredType::toString() const
 {
     switch (kind) {
-    case NotYetInferredKind::NumberLiteral:
-        return "$UnresolvedNumberLiteral";
+    case NotYetInferredKind::IntegerLiteral:
+        return "$UnresolvedIntegerLiteral";
+    case NotYetInferredKind::FloatLiteral:
+        return "$UnresolvedFloatLiteral";
     case NotYetInferredKind::VariableDeclaration:
         return "$UnresolvedVariableDeclaration";
     case NotYetInferredKind::Expression:
@@ -241,15 +240,22 @@ Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
     case TypeKind::NotYetInferredType: {
         auto* notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
         ASSERT(notYetInferredType != nullptr);
-        if (auto* primitiveScalarType = llvm::dyn_cast<PrimitiveScalarType>(b)) {
-            if (notYetInferredType->kind == NotYetInferredKind::NumberLiteral) {
+        if (auto* primitiveScalarType = llvm::dyn_cast<PrimitiveIntegerType>(b)) {
+            // TODO: Also handle FloatLiteral
+            if (notYetInferredType->kind == NotYetInferredKind::IntegerLiteral) {
                 return b;
             }
         }
         return ErrorType::get();
     }
-    case TypeKind::PrimitiveScalarType: {
+    case TypeKind::PrimitiveIntegerType: {
         // TODO: If we allow for implicit safe scalar type coercion u8 -> u32,
+        // this is
+        //          where to add it.
+        return ErrorType::get();
+    }
+    case TypeKind::PrimitiveFloatType: {
+        // TODO: If we allow for implicit safe scalar type coercion f32 -> f64,
         // this is
         //          where to add it.
         return ErrorType::get();
@@ -265,6 +271,68 @@ Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
     }
 
     NOT_IMPLEMENTED();
+}
+
+BoolType::BoolType()
+    : Type(TypeKind::Bool)
+{
+}
+
+std::string BoolType::toString() const { return "bool"; }
+
+BoolType* BoolType::get()
+{
+    if (instance != nullptr) {
+        return instance.get();
+    }
+
+    instance.reset(new BoolType);
+    return instance.get();
+}
+
+void BoolType::accept(Typing::TypeVisitor& visitor) { visitor.visitBoolType(this); }
+
+PrimitiveFloatType::PrimitiveFloatType(PrimitiveFloatKind kind)
+    : Type(TypeKind::PrimitiveFloatType)
+    , kind(kind)
+{
+}
+void PrimitiveFloatType::accept(Typing::TypeVisitor& visitor) { visitor.visitPrimitiveFloatType(this); }
+
+std::string PrimitiveFloatType::toString() const
+{
+    switch (kind) {
+    case PrimitiveFloatKind::F32:
+        return "f32";
+    case PrimitiveFloatKind::F64:
+        return "f64";
+    default:
+        NOT_IMPLEMENTED();
+    }
+}
+PrimitiveFloatType* PrimitiveFloatType::get(PrimitiveFloatKind kind)
+{
+    auto& ptr = instances[kind];
+    if (ptr == nullptr) {
+        ptr.reset(new PrimitiveFloatType(kind));
+    }
+    return ptr.get();
+}
+
+PrimitiveFloatType* PrimitiveFloatType::get(std::string_view str)
+{
+    return PrimitiveFloatType::get(primitiveFloatKindFromString(str));
+}
+
+PrimitiveFloatKind PrimitiveFloatType::primitiveFloatKindFromString(std::string_view str)
+{
+    if (str == "f32") {
+        return PrimitiveFloatKind::F32;
+    } else if (str == "f64") {
+        return PrimitiveFloatKind::F64;
+    } else {
+        Log::panic("Primitive Float Kind Not implemented");
+    }
 }
 
 } // namespace Ceres

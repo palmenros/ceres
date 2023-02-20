@@ -13,14 +13,14 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
     //     return ErrorType::get();
     // }
 
-    auto* type = dynamic_cast<PrimitiveScalarType*>(lhs);
+    auto* type = dynamic_cast<PrimitiveIntegerType*>(lhs);
     if (type != nullptr) {
         switch (op.kind) {
         case BinaryOperation::Mult:
         case BinaryOperation::Div:
         case BinaryOperation::Sum:
         case BinaryOperation::Subtraction: {
-            if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
+            if (llvm::isa<PrimitiveIntegerType>(type) || llvm::isa<PrimitiveFloatType>(type)) {
                 return type;
             }
             break;
@@ -31,7 +31,7 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
         case BinaryOperation::BitwiseXor:
         case BinaryOperation::BitshiftLeft:
         case BinaryOperation::BitshiftRight: {
-            if (PrimitiveScalarType::isInteger(type)) {
+            if (llvm::isa<PrimitiveIntegerType>(type)) {
                 return type;
             }
             break;
@@ -42,14 +42,14 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
         case BinaryOperation::LessThan:
         case BinaryOperation::Equals:
         case BinaryOperation::NotEquals: {
-            if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
-                return PrimitiveScalarType::get(PrimitiveKind::BOOL);
+            if (llvm::isa<PrimitiveIntegerType>(type) || llvm::isa<PrimitiveFloatType>(type)) {
+                return BoolType::get();
             }
             break;
         }
         case BinaryOperation::LogicalAnd:
         case BinaryOperation::LogicalOr: {
-            if (PrimitiveScalarType::isBool(type)) {
+            if (llvm::isa<BoolType>(type)) {
                 return type;
             }
             break;
@@ -58,7 +58,8 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
     }
     auto* type2 = dynamic_cast<NotYetInferredType*>(lhs);
     if (type2 != nullptr) {
-        if (type2 != NotYetInferredType::get(NotYetInferredKind::NumberLiteral)) {
+        // TODO: Handle other literals different from IntegerLiteral
+        if (type2 != NotYetInferredType::get(NotYetInferredKind::IntegerLiteral)) {
             Log::panic("Expected number literal, got something else");
         }
 

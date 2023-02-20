@@ -26,8 +26,10 @@ public:
         UnitVoidType = 0,
         UnresolvedType,
         NotYetInferredType,
-        PrimitiveScalarType,
+        PrimitiveIntegerType,
+        PrimitiveFloatType,
         FunctionType,
+        Bool,
 
         // TODO: Error Type must be the last tye
         ErrorType // This type represents an error type (for example, an invalid
@@ -116,8 +118,9 @@ public:
 //      Number literal without a specified type
 //      Variable declaration without a user-specified type
 enum class NotYetInferredKind {
-    NumberLiteral,       // Number literal without a specified type such as '2'
+    IntegerLiteral,      // Number literal without a specified type such as '2'
                          // instead of '2u32'
+    FloatLiteral,        // Number literal without a specified type such as 2.0
     VariableDeclaration, // Variable declaration without a specified type such
                          // as 'const i = 1u32';
     Expression,          //
@@ -144,7 +147,7 @@ public:
     [[nodiscard]] std::string toString() const override;
 };
 
-enum class PrimitiveKind {
+enum class PrimitiveIntegerKind {
     // signed
     I8,
     I16,
@@ -154,94 +157,51 @@ enum class PrimitiveKind {
     U8,
     U16,
     U32,
-    U64,
-    // float
-    F32,
-    F64,
-    // Bool
-    BOOL,
+    U64
 };
 
-class PrimitiveScalarType : public Type {
+class PrimitiveIntegerType : public Type {
 private:
-    static std::unordered_map<PrimitiveKind, std::unique_ptr<PrimitiveScalarType>> instances;
-    explicit PrimitiveScalarType(PrimitiveKind kind);
+    static std::unordered_map<PrimitiveIntegerKind, std::unique_ptr<PrimitiveIntegerType>> instances;
+    explicit PrimitiveIntegerType(PrimitiveIntegerKind kind);
 
 public:
     // Static function needed for fast LLVM RTTI
-    static bool classof(Type const* type) { return type->getKind() == TypeKind::PrimitiveScalarType; }
+    static bool classof(Type const* type) { return type->getKind() == TypeKind::PrimitiveIntegerType; }
     void accept(Typing::TypeVisitor& visitor) override;
 
     // Ours
-    PrimitiveKind kind;
+    PrimitiveIntegerKind kind;
 
-    static PrimitiveKind primitiveKindFromString(std::string_view str);
+    static PrimitiveIntegerKind primitiveIntegerKindFromString(std::string_view str);
 
-    static PrimitiveScalarType* get(PrimitiveKind kind);
-    static PrimitiveScalarType* get(std::string_view str);
+    static PrimitiveIntegerType* get(PrimitiveIntegerKind kind);
+    static PrimitiveIntegerType* get(std::string_view str);
 
-    static bool isBool(PrimitiveScalarType* const type)
-    {
-        switch (type->kind) {
-        case PrimitiveKind::I8:
-        case PrimitiveKind::I16:
-        case PrimitiveKind::I32:
-        case PrimitiveKind::I64:
-        case PrimitiveKind::U8:
-        case PrimitiveKind::U16:
-        case PrimitiveKind::U32:
-        case PrimitiveKind::U64:
-        case PrimitiveKind::F32:
-        case PrimitiveKind::F64:
-            return false;
-        case PrimitiveKind::BOOL:
-            return true;
-        default:
-            NOT_IMPLEMENTED();
-        }
-    }
+    [[nodiscard]] std::string toString() const override;
+};
 
-    static bool isInteger(PrimitiveScalarType* const type)
-    {
-        switch (type->kind) {
-        case PrimitiveKind::I8:
-        case PrimitiveKind::I16:
-        case PrimitiveKind::I32:
-        case PrimitiveKind::I64:
-        case PrimitiveKind::U8:
-        case PrimitiveKind::U16:
-        case PrimitiveKind::U32:
-        case PrimitiveKind::U64:
-            return true;
-        case PrimitiveKind::F32:
-        case PrimitiveKind::F64:
-        case PrimitiveKind::BOOL:
-            return false;
-        default:
-            NOT_IMPLEMENTED();
-        }
-    }
+enum class PrimitiveFloatKind {
+    F32,
+    F64,
+};
 
-    static bool isFloating(PrimitiveScalarType* const type)
-    {
-        switch (type->kind) {
-        case PrimitiveKind::I8:
-        case PrimitiveKind::I16:
-        case PrimitiveKind::I32:
-        case PrimitiveKind::I64:
-        case PrimitiveKind::U8:
-        case PrimitiveKind::U16:
-        case PrimitiveKind::U32:
-        case PrimitiveKind::U64:
-        case PrimitiveKind::BOOL:
-            return false;
-        case PrimitiveKind::F32:
-        case PrimitiveKind::F64:
-            return true;
-        default:
-            NOT_IMPLEMENTED();
-        }
-    }
+class PrimitiveFloatType : public Type {
+    static std::unordered_map<PrimitiveFloatKind, std::unique_ptr<PrimitiveFloatType>> instances;
+    explicit PrimitiveFloatType(PrimitiveFloatKind kind);
+
+public:
+    // Static function needed for fast LLVM RTTI
+    static bool classof(Type const* type) { return type->getKind() == TypeKind::PrimitiveFloatType; }
+    void accept(Typing::TypeVisitor& visitor) override;
+
+    // Ours
+    PrimitiveFloatKind kind;
+
+    static PrimitiveFloatKind primitiveFloatKindFromString(std::string_view str);
+
+    static PrimitiveFloatType* get(PrimitiveFloatKind kind);
+    static PrimitiveFloatType* get(std::string_view str);
 
     [[nodiscard]] std::string toString() const override;
 };
@@ -269,6 +229,23 @@ public:
     std::vector<Type*> argumentTypes;
 
     static FunctionType* get(Type* returnType, std::vector<Type*> const& argumentTypes);
+
+    [[nodiscard]] std::string toString() const override;
+};
+
+class BoolType : public Type {
+private:
+    static std::unique_ptr<BoolType> instance;
+
+    BoolType();
+
+public:
+    // Static function needed for fast LLVM RTTI
+    static bool classof(Type const* type) { return type->getKind() == TypeKind::Bool; }
+
+    void accept(Typing::TypeVisitor& visitor) override;
+
+    static BoolType* get();
 
     [[nodiscard]] std::string toString() const override;
 };

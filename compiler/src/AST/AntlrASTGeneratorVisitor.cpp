@@ -343,9 +343,9 @@ std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext* ctx)
     if (ctx->IDENTIFIER() != nullptr) {
         return static_cast<Type*>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
     } else if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
-        return static_cast<Type*>(PrimitiveScalarType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
+        return static_cast<Type*>(PrimitiveIntegerType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
     } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
-        return static_cast<Type*>(PrimitiveScalarType::get(ctx->FLOAT_LITERAL_SUFFIX()->toString()));
+        return static_cast<Type*>(PrimitiveFloatType::get(ctx->FLOAT_LITERAL_SUFFIX()->toString()));
     } else {
         NOT_IMPLEMENTED();
     }
@@ -789,9 +789,9 @@ std::any AntlrASTGeneratorVisitor::visitIntLiteral(CeresParser::IntLiteralContex
     Type* type;
     if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
         auto suffix = std::any_cast<std::string>(visit(ctx->INTEGER_LITERAL_SUFFIX()));
-        type = PrimitiveScalarType::get(suffix);
+        type = PrimitiveIntegerType::get(suffix);
     } else {
-        type = NotYetInferredType::get(NotYetInferredKind::NumberLiteral);
+        type = NotYetInferredType::get(NotYetInferredKind::IntegerLiteral);
     }
 
     IntLiteralBase base;
@@ -824,9 +824,9 @@ std::any AntlrASTGeneratorVisitor::visitFloatLiteral(CeresParser::FloatLiteralCo
     Type* type;
     if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
         auto suffix = std::any_cast<std::string>(visit(ctx->FLOAT_LITERAL_SUFFIX()));
-        type = PrimitiveScalarType::get(suffix);
+        type = PrimitiveFloatType::get(suffix);
     } else {
-        type = NotYetInferredType::get(NotYetInferredKind::NumberLiteral);
+        type = NotYetInferredType::get(NotYetInferredKind::FloatLiteral);
     }
 
     FloatLiteralBase base;

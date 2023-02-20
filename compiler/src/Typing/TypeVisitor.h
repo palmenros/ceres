@@ -16,8 +16,10 @@ public:
     virtual void visitUnitVoidType(UnitVoidType* type) = 0;
     virtual void visitUnresolvedType(UnresolvedType* type) = 0;
     virtual void visitNotYetInferredType(NotYetInferredType* type) = 0;
-    virtual void visitPrimitiveScalarType(PrimitiveScalarType* type) = 0;
+    virtual void visitPrimitiveIntegerType(PrimitiveIntegerType* type) = 0;
+    virtual void visitPrimitiveFloatType(PrimitiveFloatType* type) = 0;
     virtual void visitFunctionType(FunctionType* type) = 0;
+    virtual void visitBoolType(BoolType* type) = 0;
     virtual void visitErrorType(ErrorType* type) = 0;
 };
 
