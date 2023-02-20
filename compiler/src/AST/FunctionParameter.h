@@ -10,12 +10,12 @@ namespace Ceres::AST {
 struct FunctionParameter {
     Type* type;
     std::string name;
-    VariableConstness constness;
+    Typing::Constness constness;
 
     SourceSpan typeSourceSpan;
     SourceSpan parameterNameSourceSpan;
 
-    FunctionParameter(Type* type, std::string name, VariableConstness constness, SourceSpan typeSourceSpan,
+    FunctionParameter(Type* type, std::string name, Typing::Constness constness, SourceSpan typeSourceSpan,
         SourceSpan parameterNameSourceSpan);
 };
 

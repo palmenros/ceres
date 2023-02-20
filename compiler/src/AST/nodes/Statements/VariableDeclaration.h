@@ -1,26 +1,25 @@
 #ifndef COMPILER_VARIABLEDECLARATION_H
 #define COMPILER_VARIABLEDECLARATION_H
 
+#include "../../../Typing/Constness.h"
 #include "../../../Typing/Type.h"
+#include "../../../Typing/Visibility.h"
 #include "../Expressions/Expression.h"
 #include "Statement.h"
 #include <memory>
 #include <string>
 
 namespace Ceres::AST {
-enum class VariableVisibility { Public, Private };
 
 enum class VariableScope {
     Local, // Defined inside a function
     Global // Defined as a global variable, outside any function
 };
 
-enum class VariableConstness { Const, NonConst };
-
 class VariableDeclaration : public Statement {
 public:
-    VariableVisibility visibility;
-    VariableConstness constness;
+    Typing::VariableVisibility visibility;
+    Typing::Constness constness;
     VariableScope scope;
 
     Type* type;
@@ -34,7 +33,7 @@ public:
 
 public:
     VariableDeclaration(Ceres::SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& initializerExpression,
-        VariableVisibility visibility, VariableConstness constness, VariableScope scope, Type* type,
+        Typing::VariableVisibility visibility, Typing::Constness constness, VariableScope scope, Type* type,
         std::string identifier, SourceSpan const& typeSourceSpan, SourceSpan const& identifierSourceSpan);
 
     void accept(AbstractASTVisitor& visitor) override;

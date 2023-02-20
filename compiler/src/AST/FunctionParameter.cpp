@@ -3,7 +3,7 @@
 #include <utility>
 
 namespace Ceres::AST {
-FunctionParameter::FunctionParameter(Type* type, std::string name, VariableConstness constness,
+FunctionParameter::FunctionParameter(Type* type, std::string name, Typing::Constness constness,
     SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan)
     : type(type)
     , name(std::move(name))

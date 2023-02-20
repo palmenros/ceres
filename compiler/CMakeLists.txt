@@ -25,6 +25,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/AST/nodes/Expressions/FloatLiteralExpression.cpp src/AST/nodes/Expressions/FloatLiteralExpression.h src/AST/nodes/Expressions/BoolLiteralExpression.cpp
         src/AST/nodes/Expressions/BoolLiteralExpression.h src/AST/nodes/Expressions/IdentifierExpression.cpp src/AST/nodes/Expressions/IdentifierExpression.h
         src/AST/nodes/Expressions/BinaryOperationExpression.cpp src/AST/nodes/Expressions/BinaryOperationExpression.h
+        src/Typing/BinaryOperation.h src/Typing/BinaryOperation.cpp src/Typing/Constness.cpp src/Typing/Constness.h
         src/AST/nodes/Expressions/PostfixExpression.cpp src/AST/nodes/Expressions/PostfixExpression.h src/AST/nodes/Expressions/PrefixExpression.cpp
         src/AST/nodes/Expressions/PrefixExpression.h src/AST/nodes/Expressions/FunctionCallExpression.cpp src/AST/nodes/Expressions/FunctionCallExpression.h
         src/AST/nodes/Expressions/AssignmentExpression.cpp src/AST/nodes/Expressions/AssignmentExpression.h src/AST/FunctionParameter.cpp
@@ -40,7 +41,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
         src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
         src/Typing/TypeVisitor.h src/Binding/SymbolDeclaration.cpp src/Binding/SymbolDeclaration.h src/Binding/Scope.cpp src/Binding/Scope.h
-        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h)
+        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h)
 
 ##########################################
 #          END MISCELLANEOUS LIBRARIES

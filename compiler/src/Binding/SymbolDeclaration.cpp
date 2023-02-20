@@ -61,7 +61,7 @@ Type* SymbolDeclaration::getType()
     return getVarDecl(*this)->type;
 }
 
-AST::VariableConstness SymbolDeclaration::getConstness()
+Typing::Constness SymbolDeclaration::getConstness()
 {
     if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
         return getParam(*this)->constness;

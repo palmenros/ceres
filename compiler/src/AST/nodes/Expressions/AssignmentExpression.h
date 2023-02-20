@@ -1,6 +1,7 @@
 #ifndef COMPILER_ASSIGNMENTEXPRESSION_H
 #define COMPILER_ASSIGNMENTEXPRESSION_H
 
+#include "../../../Typing/BinaryOperation.h"
 #include "BinaryOperationExpression.h"
 #include "Expression.h"
 #include <optional>
@@ -14,7 +15,7 @@ public:
     // LHS (identifier) is the same, which can help us optimize the code better.
     // However, we may not have a binary op in the assignment, so it is an
     // optional type
-    std::optional<BinaryOp> binaryOp;
+    std::optional<Typing::BinaryOperation> binaryOp;
 
     // Identifier of the variable that is being assigned.  Not nullable.
     std::unique_ptr<Expression> expressionLHS;
@@ -25,7 +26,7 @@ public:
 
     SourceSpan opSourceSpan;
 
-    AssignmentExpression(SourceSpan const& sourceSpan, std::optional<BinaryOp> const& binaryOp,
+    AssignmentExpression(SourceSpan const& sourceSpan, std::optional<Typing::BinaryOperation> const& binaryOp,
         std::unique_ptr<Expression>&& expressionLhs, std::unique_ptr<Expression>&& expressionRhs,
         SourceSpan opSourceSpan);
 

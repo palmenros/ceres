@@ -1,5 +1,6 @@
 #include "AntlrASTGeneratorVisitor.h"
 #include "../Diagnostics/Diagnostics.h"
+#include "../Typing/BinaryOperation.h"
 #include "../Typing/Type.h"
 #include "../utils/log.hpp"
 #include "CeresLexer.h"
@@ -175,9 +176,9 @@ std::any AntlrASTGeneratorVisitor::visitGlobalVarDeclaration(CeresParser::Global
 
     if (ctx->PUB() != nullptr) {
         // Pub variable
-        varDeclaration->visibility = VariableVisibility::Public;
+        varDeclaration->visibility = Typing::VariableVisibility::Public;
     } else {
-        varDeclaration->visibility = VariableVisibility::Private;
+        varDeclaration->visibility = Typing::VariableVisibility::Private;
     }
 
     varDeclaration->scope = VariableScope::Global;
@@ -293,7 +294,7 @@ std::any AntlrASTGeneratorVisitor::visitParameter(CeresParser::ParameterContext*
     ASSERT(ctx != nullptr);
     checkException(*ctx);
 
-    VariableConstness constness = VariableConstness::Const;
+    Typing::Constness constness = Typing::Constness::Const;
 
     ASSERT(ctx->IDENTIFIER() != nullptr);
     ASSERT(ctx->type() != nullptr);
@@ -301,7 +302,7 @@ std::any AntlrASTGeneratorVisitor::visitParameter(CeresParser::ParameterContext*
     Type* type = std::any_cast<Type*>(visit(ctx->type()));
 
     if (ctx->VAR() != nullptr) {
-        constness = VariableConstness::NonConst;
+        constness = Typing::Constness::NonConst;
     }
 
     SourceSpan typeSourceSpan = getSourceSpan(*ctx->type());
@@ -362,11 +363,11 @@ std::any AntlrASTGeneratorVisitor::visitVarDeclaration(CeresParser::VarDeclarati
         initializer_expression.reset(std::any_cast<Expression*>(visit(ctx->expression())));
     }
 
-    VariableConstness constness;
+    Typing::Constness constness;
     if (ctx->VAR() != nullptr) {
-        constness = VariableConstness::NonConst;
+        constness = Typing::Constness::NonConst;
     } else if (ctx->CONSTANT() != nullptr) {
-        constness = VariableConstness::Const;
+        constness = Typing::Constness::Const;
     } else {
         NOT_IMPLEMENTED();
     }
@@ -382,8 +383,9 @@ std::any AntlrASTGeneratorVisitor::visitVarDeclaration(CeresParser::VarDeclarati
 
     auto var_name = std::any_cast<std::string>(visit(ctx->IDENTIFIER()));
 
-    return new VariableDeclaration(getSourceSpan(*ctx), std::move(initializer_expression), VariableVisibility::Private,
-        constness, VariableScope::Local, type, var_name, typeSourceSpan, getSourceSpan(*ctx->IDENTIFIER()));
+    return new VariableDeclaration(getSourceSpan(*ctx), std::move(initializer_expression),
+        Typing::VariableVisibility::Private, constness, VariableScope::Local, type, var_name, typeSourceSpan,
+        getSourceSpan(*ctx->IDENTIFIER()));
 }
 
 std::any AntlrASTGeneratorVisitor::visitReturnStatement(CeresParser::ReturnStatementContext* ctx)
@@ -479,41 +481,41 @@ std::any AntlrASTGeneratorVisitor::visitAssignment_expr(CeresParser::Assignment_
     auto LHS_expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression()[0])));
     auto RHS_expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->assignmentExpression()[1])));
 
-    std::optional<AST::BinaryOp> binaryOp {};
+    std::optional<Typing::BinaryOperation> binaryOp {};
     switch (binaryOpToken->getType()) {
     case CeresLexer::ASSIGN_OP:
         // No binaryOp
         binaryOp.reset();
         break;
     case CeresLexer::PLUS_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::Sum;
+        binaryOp = Typing::BinaryOperation::Sum;
         break;
     case CeresLexer::MINUS_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::Subtraction;
+        binaryOp = Typing::BinaryOperation::Subtraction;
         break;
     case CeresLexer::MULT_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::Mult;
+        binaryOp = Typing::BinaryOperation::Mult;
         break;
     case CeresLexer::DIV_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::Div;
+        binaryOp = Typing::BinaryOperation::Div;
         break;
     case CeresLexer::BITWISE_AND_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::BitwiseAnd;
+        binaryOp = Typing::BinaryOperation::BitwiseAnd;
         break;
     case CeresLexer::BITWISE_OR_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::BitwiseOr;
+        binaryOp = Typing::BinaryOperation::BitwiseOr;
         break;
     case CeresLexer::BITWISE_XOR_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::BitwiseXor;
+        binaryOp = Typing::BinaryOperation::BitwiseXor;
         break;
     case CeresLexer::BITWISE_RIGHT_SHIFT_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::BitshiftRight;
+        binaryOp = Typing::BinaryOperation::BitshiftRight;
         break;
     case CeresLexer::BITWISE_LEFT_SHIFT_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::BitshiftLeft;
+        binaryOp = Typing::BinaryOperation::BitshiftLeft;
         break;
     case CeresLexer::MOD_ASSIGN_OP:
-        binaryOp = AST::BinaryOp::Modulo;
+        binaryOp = Typing::BinaryOperation::Modulo;
         break;
     default:
         NOT_IMPLEMENTED();
@@ -608,70 +610,70 @@ std::any AntlrASTGeneratorVisitor::visitBinary_op_expr(CeresParser::Binary_op_ex
     ASSERT(ctx != nullptr);
     checkException(*ctx);
 
-    BinaryOp op;
+    Typing::BinaryOperation op;
     SourceSpan opSpan = SourceSpan::createInvalidSpan();
 
     if (ctx->LOWER_OP().size() > 1) {
         // << (Left bitshift)
         ASSERT(ctx->LOWER_OP().size() == 2);
-        op = BinaryOp::BitshiftLeft;
+        op = Typing::BinaryOperation::BitshiftLeft;
         opSpan = getSourceSpan(*ctx->LOWER_OP(0), *ctx->LOWER_OP(1));
     } else if (ctx->GREATER_OP().size() > 1) {
         // >> (Right bitshift)
         ASSERT(ctx->GREATER_OP().size() == 2);
-        op = BinaryOp::BitshiftRight;
+        op = Typing::BinaryOperation::BitshiftRight;
         opSpan = getSourceSpan(*ctx->GREATER_OP(0), *ctx->GREATER_OP(1));
     } else {
         ASSERT(ctx->binary_op != nullptr);
         opSpan = getSourceSpan(ctx->binary_op);
         switch (ctx->binary_op->getType()) {
         case CeresLexer::MULT_OP:
-            op = BinaryOp::Mult;
+            op = Typing::BinaryOperation::Mult;
             break;
         case CeresLexer::DIV_OP:
-            op = BinaryOp::Div;
+            op = Typing::BinaryOperation::Div;
             break;
         case CeresLexer::MOD_OP:
-            op = BinaryOp::Modulo;
+            op = Typing::BinaryOperation::Modulo;
             break;
         case CeresLexer::PLUS_OP:
-            op = BinaryOp::Sum;
+            op = Typing::BinaryOperation::Sum;
             break;
         case CeresLexer::MINUS_OP:
-            op = BinaryOp::Subtraction;
+            op = Typing::BinaryOperation::Subtraction;
             break;
         case CeresLexer::LOWER_OP:
-            op = BinaryOp::LessThan;
+            op = Typing::BinaryOperation::LessThan;
             break;
         case CeresLexer::GREATER_OP:
-            op = BinaryOp::GreaterThan;
+            op = Typing::BinaryOperation::GreaterThan;
             break;
         case CeresLexer::LOWER_EQUAL_OP:
-            op = BinaryOp::LessOrEqual;
+            op = Typing::BinaryOperation::LessOrEqual;
             break;
         case CeresLexer::GREATER_EQUAL_OP:
-            op = BinaryOp::GreaterOrEqual;
+            op = Typing::BinaryOperation::GreaterOrEqual;
             break;
         case CeresLexer::BITWISE_AND:
-            op = BinaryOp::BitwiseAnd;
+            op = Typing::BinaryOperation::BitwiseAnd;
             break;
         case CeresLexer::BITWISE_XOR:
-            op = BinaryOp::BitwiseXor;
+            op = Typing::BinaryOperation::BitwiseXor;
             break;
         case CeresLexer::BITWISE_OR:
-            op = BinaryOp::BitwiseOr;
+            op = Typing::BinaryOperation::BitwiseOr;
             break;
         case CeresLexer::EQUAL_OP:
-            op = BinaryOp::Equals;
+            op = Typing::BinaryOperation::Equals;
             break;
         case CeresLexer::NOT_EQUAL_OP:
-            op = BinaryOp::NotEquals;
+            op = Typing::BinaryOperation::NotEquals;
             break;
         case CeresLexer::LOGICAL_AND_OP:
-            op = BinaryOp::LogicalAnd;
+            op = Typing::BinaryOperation::LogicalAnd;
             break;
         case CeresLexer::LOGICAL_OR_OP:
-            op = BinaryOp::LogicalOr;
+            op = Typing::BinaryOperation::LogicalOr;
             break;
         default:
             NOT_IMPLEMENTED();

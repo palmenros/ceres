@@ -33,7 +33,7 @@ public:
     SymbolDeclarationKind getKind();
     AST::Node* getDeclarationNode();
     std::optional<size_t> getParamIdx();
-    AST::VariableConstness getConstness();
+    Typing::Constness getConstness();
     Type* getType();
 };
 

@@ -7,9 +7,9 @@
 
 namespace Ceres::AST {
 VariableDeclaration::VariableDeclaration(Ceres::SourceSpan const& sourceSpan,
-    std::unique_ptr<Expression>&& initializerExpression, VariableVisibility visibility, VariableConstness constness,
-    VariableScope scope, Type* type, std::string identifier, SourceSpan const& typeSourceSpan,
-    SourceSpan const& identifierSourceSpan)
+    std::unique_ptr<Expression>&& initializerExpression, Typing::VariableVisibility visibility,
+    Typing::Constness constness, VariableScope scope, Type* type, std::string identifier,
+    SourceSpan const& typeSourceSpan, SourceSpan const& identifierSourceSpan)
     : Statement(sourceSpan)
     , initializerExpression(std::move(initializerExpression))
     , visibility(visibility)

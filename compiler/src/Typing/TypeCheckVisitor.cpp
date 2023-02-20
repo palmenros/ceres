@@ -1,11 +1,12 @@
 #include "TypeCheckVisitor.h"
 #include "../Binding/Scope.h"
 #include "../Diagnostics/Diagnostics.h"
+#include "BinaryOperation.h"
 #include "Type.h"
 #include <optional>
 
 namespace Ceres::Typing {
-Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
+Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
 {
     // Should already be of the same type
     // if (lhs != rhs) {
@@ -14,40 +15,40 @@ Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
 
     auto* type = dynamic_cast<PrimitiveScalarType*>(lhs);
     if (type != nullptr) {
-        switch (op) {
-        case AST::BinaryOp::Mult:
-        case AST::BinaryOp::Div:
-        case AST::BinaryOp::Sum:
-        case AST::BinaryOp::Subtraction: {
+        switch (op.kind) {
+        case BinaryOperation::Mult:
+        case BinaryOperation::Div:
+        case BinaryOperation::Sum:
+        case BinaryOperation::Subtraction: {
             if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
                 return type;
             }
             break;
         }
-        case AST::BinaryOp::Modulo:
-        case AST::BinaryOp::BitwiseAnd:
-        case AST::BinaryOp::BitwiseOr:
-        case AST::BinaryOp::BitwiseXor:
-        case AST::BinaryOp::BitshiftLeft:
-        case AST::BinaryOp::BitshiftRight: {
+        case BinaryOperation::Modulo:
+        case BinaryOperation::BitwiseAnd:
+        case BinaryOperation::BitwiseOr:
+        case BinaryOperation::BitwiseXor:
+        case BinaryOperation::BitshiftLeft:
+        case BinaryOperation::BitshiftRight: {
             if (PrimitiveScalarType::isInteger(type)) {
                 return type;
             }
             break;
         }
-        case AST::BinaryOp::LessOrEqual:
-        case AST::BinaryOp::GreaterOrEqual:
-        case AST::BinaryOp::GreaterThan:
-        case AST::BinaryOp::LessThan:
-        case AST::BinaryOp::Equals:
-        case AST::BinaryOp::NotEquals: {
+        case BinaryOperation::LessOrEqual:
+        case BinaryOperation::GreaterOrEqual:
+        case BinaryOperation::GreaterThan:
+        case BinaryOperation::LessThan:
+        case BinaryOperation::Equals:
+        case BinaryOperation::NotEquals: {
             if (PrimitiveScalarType::isInteger(type) || PrimitiveScalarType::isFloating(type)) {
                 return PrimitiveScalarType::get(PrimitiveKind::BOOL);
             }
             break;
         }
-        case AST::BinaryOp::LogicalAnd:
-        case AST::BinaryOp::LogicalOr: {
+        case BinaryOperation::LogicalAnd:
+        case BinaryOperation::LogicalOr: {
             if (PrimitiveScalarType::isBool(type)) {
                 return type;
             }
@@ -62,34 +63,34 @@ Type* binOpResult(AST::BinaryOp op, Type* lhs, Type* rhs)
         }
 
         // TODO: divide number literal in integer literal, floating literal and bool literal
-        switch (op) {
-        case AST::BinaryOp::Mult:
-        case AST::BinaryOp::Div:
-        case AST::BinaryOp::Sum:
-        case AST::BinaryOp::Subtraction: {
+        switch (op.kind) {
+        case BinaryOperation::Mult:
+        case BinaryOperation::Div:
+        case BinaryOperation::Sum:
+        case BinaryOperation::Subtraction: {
             // TODO: if literal integer or float
             break;
         }
-        case AST::BinaryOp::Modulo:
-        case AST::BinaryOp::BitwiseAnd:
-        case AST::BinaryOp::BitwiseOr:
-        case AST::BinaryOp::BitwiseXor:
-        case AST::BinaryOp::BitshiftLeft:
-        case AST::BinaryOp::BitshiftRight: {
+        case BinaryOperation::Modulo:
+        case BinaryOperation::BitwiseAnd:
+        case BinaryOperation::BitwiseOr:
+        case BinaryOperation::BitwiseXor:
+        case BinaryOperation::BitshiftLeft:
+        case BinaryOperation::BitshiftRight: {
             // TODO: if literal integer
             break;
         }
-        case AST::BinaryOp::LessOrEqual:
-        case AST::BinaryOp::GreaterOrEqual:
-        case AST::BinaryOp::GreaterThan:
-        case AST::BinaryOp::LessThan:
-        case AST::BinaryOp::Equals:
-        case AST::BinaryOp::NotEquals: {
+        case BinaryOperation::LessOrEqual:
+        case BinaryOperation::GreaterOrEqual:
+        case BinaryOperation::GreaterThan:
+        case BinaryOperation::LessThan:
+        case BinaryOperation::Equals:
+        case BinaryOperation::NotEquals: {
             // TODO: if literal integer or float
             break;
         }
-        case AST::BinaryOp::LogicalAnd:
-        case AST::BinaryOp::LogicalOr: {
+        case BinaryOperation::LogicalAnd:
+        case BinaryOperation::LogicalOr: {
             // TODO: if literal bool
             break;
         }
@@ -177,7 +178,7 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 
     auto lhs = currentScope->resolve(identifier->identifier);
 
-    if (lhs.getConstness() != AST::VariableConstness::NonConst) {
+    if (lhs.getConstness().kind != Constness::NonConst) {
         Log::panic("Trying to assign to constant variable");
     }
 

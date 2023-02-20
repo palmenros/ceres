@@ -1,4 +1,5 @@
 #include "ASTStringifierVisitor.h"
+#include "../Typing/BinaryOperation.h"
 #include "../utils/log.hpp"
 #include "spdlog/fmt/fmt.h"
 #include <iterator>
@@ -11,35 +12,35 @@ std::string ASTStringifierVisitor::doVisitAssignmentExpression(AssignmentExpress
     if (!expr.binaryOp.has_value()) {
         opStr = "=";
     } else {
-        switch (expr.binaryOp.value()) {
-        case BinaryOp::Mult:
+        switch (expr.binaryOp.value().kind) {
+        case Typing::BinaryOperation::Mult:
             opStr = "*=";
             break;
-        case BinaryOp::Div:
+        case Typing::BinaryOperation::Div:
             opStr = "/=";
             break;
-        case BinaryOp::Modulo:
+        case Typing::BinaryOperation::Modulo:
             opStr = "%=";
             break;
-        case BinaryOp::Sum:
+        case Typing::BinaryOperation::Sum:
             opStr = "+=";
             break;
-        case BinaryOp::Subtraction:
+        case Typing::BinaryOperation::Subtraction:
             opStr = "-=";
             break;
-        case BinaryOp::BitshiftLeft:
+        case Typing::BinaryOperation::BitshiftLeft:
             opStr = "<<=";
             break;
-        case BinaryOp::BitshiftRight:
+        case Typing::BinaryOperation::BitshiftRight:
             opStr = ">>=";
             break;
-        case BinaryOp::BitwiseAnd:
+        case Typing::BinaryOperation::BitwiseAnd:
             opStr = "&=";
             break;
-        case BinaryOp::BitwiseOr:
+        case Typing::BinaryOperation::BitwiseOr:
             opStr = "|=";
             break;
-        case BinaryOp::BitwiseXor:
+        case Typing::BinaryOperation::BitwiseXor:
             opStr = "^=";
             break;
         default:
@@ -55,59 +56,59 @@ std::string ASTStringifierVisitor::doVisitBinaryOperationExpression(BinaryOperat
 {
     std::string opStr;
 
-    switch (expr.op) {
-    case BinaryOp::Mult:
+    switch (expr.op.kind) {
+    case Typing::BinaryOperation::Mult:
         opStr = "*";
         break;
-    case BinaryOp::Div:
+    case Typing::BinaryOperation::Div:
         opStr = "/";
         break;
-    case BinaryOp::Modulo:
+    case Typing::BinaryOperation::Modulo:
         opStr = "%";
         break;
-    case BinaryOp::Sum:
+    case Typing::BinaryOperation::Sum:
         opStr = "+";
         break;
-    case BinaryOp::Subtraction:
+    case Typing::BinaryOperation::Subtraction:
         opStr = "-";
         break;
-    case BinaryOp::BitshiftLeft:
+    case Typing::BinaryOperation::BitshiftLeft:
         opStr = "<<";
         break;
-    case BinaryOp::BitshiftRight:
+    case Typing::BinaryOperation::BitshiftRight:
         opStr = ">>";
         break;
-    case BinaryOp::LessOrEqual:
+    case Typing::BinaryOperation::LessOrEqual:
         opStr = "<=";
         break;
-    case BinaryOp::GreaterOrEqual:
+    case Typing::BinaryOperation::GreaterOrEqual:
         opStr = ">=";
         break;
-    case BinaryOp::GreaterThan:
+    case Typing::BinaryOperation::GreaterThan:
         opStr = ">";
         break;
-    case BinaryOp::LessThan:
+    case Typing::BinaryOperation::LessThan:
         opStr = "<";
         break;
-    case BinaryOp::BitwiseAnd:
+    case Typing::BinaryOperation::BitwiseAnd:
         opStr = "&";
         break;
-    case BinaryOp::BitwiseOr:
+    case Typing::BinaryOperation::BitwiseOr:
         opStr = "|";
         break;
-    case BinaryOp::BitwiseXor:
+    case Typing::BinaryOperation::BitwiseXor:
         opStr = "^";
         break;
-    case BinaryOp::Equals:
+    case Typing::BinaryOperation::Equals:
         opStr = "==";
         break;
-    case BinaryOp::NotEquals:
+    case Typing::BinaryOperation::NotEquals:
         opStr = "!=";
         break;
-    case BinaryOp::LogicalAnd:
+    case Typing::BinaryOperation::LogicalAnd:
         opStr = "&&";
         break;
-    case BinaryOp::LogicalOr:
+    case Typing::BinaryOperation::LogicalOr:
         opStr = "||";
         break;
     default:
@@ -245,7 +246,7 @@ std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition&
     bool first = true;
     for (auto const& param : def.parameters) {
         std::string paramString = fmt::format("{} {}: {}",
-            param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type->toString());
+            param.constness.kind == Typing::Constness::NonConst ? "var" : "const", param.name, param.type->toString());
         if (first) {
             first = false;
         } else {
@@ -264,7 +265,7 @@ std::string ASTStringifierVisitor::doVisitFunctionDeclaration(FunctionDeclaratio
     bool first = true;
     for (auto const& param : dec.parameters) {
         std::string paramString = fmt::format("{} {}: {}",
-            param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type->toString());
+            param.constness.kind == Typing::Constness::NonConst ? "var" : "const", param.name, param.type->toString());
         if (first) {
             first = false;
         } else {
@@ -368,9 +369,9 @@ std::string ASTStringifierVisitor::doVisitReturnStatement(ReturnStatement& stm)
 
 std::string ASTStringifierVisitor::doVisitVariableDeclaration(VariableDeclaration& decl)
 {
-    std::string vis = decl.visibility == VariableVisibility::Private ? "private" : "public";
+    std::string vis = decl.visibility.kind == Typing::VariableVisibility::Private ? "private" : "public";
     std::string scope = decl.scope == VariableScope::Local ? "local" : "global";
-    std::string constn = decl.constness == VariableConstness::Const ? "const" : "var";
+    std::string constn = decl.constness.kind == Typing::Constness::Const ? "const" : "var";
 
     if (decl.initializerExpression != nullptr) {
         return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' type='{}' "

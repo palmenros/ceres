@@ -1,11 +1,13 @@
 #include "AssignmentExpression.h"
+#include "../../../Typing/BinaryOperation.h"
 #include "../../../utils/log.hpp"
 #include "../../AbstractASTVisitor.h"
 #include <utility>
 
 namespace Ceres::AST {
-AssignmentExpression::AssignmentExpression(SourceSpan const& sourceSpan, std::optional<BinaryOp> const& binaryOp,
-    std::unique_ptr<Expression>&& expressionLhs, std::unique_ptr<Expression>&& expressionRhs, SourceSpan opSourceSpan)
+AssignmentExpression::AssignmentExpression(SourceSpan const& sourceSpan,
+    std::optional<Typing::BinaryOperation> const& binaryOp, std::unique_ptr<Expression>&& expressionLhs,
+    std::unique_ptr<Expression>&& expressionRhs, SourceSpan opSourceSpan)
     : Expression(sourceSpan)
     , binaryOp(binaryOp)
     , expressionLHS(std::move(expressionLhs))
