@@ -3,7 +3,7 @@
 
 #include "FunctionDefinition.h"
 #include "Node.h"
-#include "VariableDeclaration.h"
+#include "Statements/VariableDeclaration.h"
 #include <memory>
 #include <vector>
 

@@ -3,6 +3,7 @@
 
 #include "../utils/log.hpp"
 #include "AbstractASTVisitor.h"
+#include "nodes/Statements/BlockStatement.h"
 
 namespace Ceres::AST {
 
@@ -40,11 +41,9 @@ private:
     void visitPrefixExpression(PrefixExpression& expr) override { _result = doVisitPrefixExpression(expr); }
     void visitReturnStatement(ReturnStatement& stm) override { _result = doVisitReturnStatement(stm); }
     void visitVariableDeclaration(VariableDeclaration& decl) override { _result = doVisitVariableDeclaration(decl); }
-    void visitVariableDeclarationStatement(VariableDeclarationStatement& stm) override
-    {
-        _result = doVisitVariableDeclarationStatement(stm);
-    }
     void visitWhileStatement(WhileStatement& stm) override { _result = doVisitWhileStatement(stm); }
+
+    void visitFunctionDeclaration(FunctionDeclaration& dec) override { _result = doVisitFunctionDeclaration(dec); }
 
 public:
     T visit(Node& node)
@@ -92,8 +91,9 @@ public:
     virtual T doVisitPrefixExpression(PrefixExpression& expr) = 0;
     virtual T doVisitReturnStatement(ReturnStatement& stm) = 0;
     virtual T doVisitVariableDeclaration(VariableDeclaration& decl) = 0;
-    virtual T doVisitVariableDeclarationStatement(VariableDeclarationStatement& stm) = 0;
     virtual T doVisitWhileStatement(WhileStatement& stm) = 0;
+
+    virtual T doVisitFunctionDeclaration(FunctionDeclaration& def) = 0;
 };
 
 } // namespace Ceres::AST

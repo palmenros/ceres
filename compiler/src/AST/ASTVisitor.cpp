@@ -1,5 +1,6 @@
 #include "ASTVisitor.h"
 #include "../utils/log.hpp"
+#include "nodes/Statements/BlockStatement.h"
 
 namespace Ceres::AST {
 
@@ -44,7 +45,7 @@ void ASTVisitor::visitReturnStatement(ReturnStatement& stm) { visitChildren(stm)
 
 void ASTVisitor::visitVariableDeclaration(VariableDeclaration& decl) { visitChildren(decl); }
 
-void ASTVisitor::visitVariableDeclarationStatement(VariableDeclarationStatement& stm) { visitChildren(stm); }
-
 void ASTVisitor::visitWhileStatement(WhileStatement& stm) { visitChildren(stm); }
+
+void ASTVisitor::visitFunctionDeclaration(FunctionDeclaration& dec) { visitChildren(dec); }
 } // namespace Ceres::AST

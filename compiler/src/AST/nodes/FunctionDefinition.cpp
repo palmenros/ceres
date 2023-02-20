@@ -7,11 +7,11 @@ namespace Ceres::AST {
 FunctionDefinition::FunctionDefinition(SourceSpan const& sourceSpan, FunctionVisibility visibility,
     std::string functionName, std::vector<FunctionParameter>&& parameters, Type* returnType,
     std::unique_ptr<BlockStatement>&& block, SourceSpan const& returnTypeSpan, SourceSpan const& functionNameSpan)
-    : Node(sourceSpan)
+    : Statement(sourceSpan)
     , visibility(visibility)
     , functionName(std::move(functionName))
     , parameters(std::move(parameters))
-    , returnType(std::move(returnType))
+    , returnType(returnType)
     , block(std::move(block))
     , returnTypeSpan(returnTypeSpan)
     , functionNameSpan(functionNameSpan)

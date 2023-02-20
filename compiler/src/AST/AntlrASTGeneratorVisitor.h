@@ -31,6 +31,11 @@ public:
 
     std::any visitGlobalVarDeclaration(antlrgenerated::CeresParser::GlobalVarDeclarationContext* ctx) override;
 
+    std::any visitGlobalFunctionDefinition(
+        antlrgenerated::CeresParser::GlobalFunctionDefinitionContext* context) override;
+
+    std::any visitExternFunDeclaration(antlrgenerated::CeresParser::ExternFunDeclarationContext* context) override;
+
     std::any visitFunctionDefinition(antlrgenerated::CeresParser::FunctionDefinitionContext* ctx) override;
 
     std::any visitFormalParameters(antlrgenerated::CeresParser::FormalParametersContext* ctx) override;
@@ -86,6 +91,8 @@ public:
     std::any visitReturn_statement(antlrgenerated::CeresParser::Return_statementContext* context) override;
 
     std::any visitExpr_statement(antlrgenerated::CeresParser::Expr_statementContext* context) override;
+
+    std::any visitFn_def_statement(antlrgenerated::CeresParser::Fn_def_statementContext* context) override;
 
     std::any visitIf_statement(antlrgenerated::CeresParser::If_statementContext* context) override;
 

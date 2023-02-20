@@ -2,9 +2,9 @@
 #define COMPILER_FORSTATEMENT_H
 
 #include "../Expressions/Expression.h"
-#include "../VariableDeclaration.h"
 #include "BlockStatement.h"
 #include "Statement.h"
+#include "VariableDeclaration.h"
 #include <memory>
 
 namespace Ceres::AST {
@@ -22,11 +22,11 @@ public:
     std::unique_ptr<Expression> maybeConditionExpr;
     std::unique_ptr<Expression> maybeUpdateExpr;
 
-    std::unique_ptr<BlockStatement> body;
+    std::unique_ptr<Ceres::AST::BlockStatement> body;
 
     ForStatement(SourceSpan const& sourceSpan, std::unique_ptr<VariableDeclaration>&& maybeInitDeclaration,
         std::unique_ptr<Expression>&& maybeInitExpression, std::unique_ptr<Expression>&& conditionExpr,
-        std::unique_ptr<Expression>&& updateExpr, std::unique_ptr<BlockStatement>&& body);
+        std::unique_ptr<Expression>&& updateExpr, std::unique_ptr<Ceres::AST::BlockStatement>&& body);
 
     void accept(AbstractASTVisitor& visitor) override;
 

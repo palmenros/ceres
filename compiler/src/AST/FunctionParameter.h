@@ -2,7 +2,7 @@
 #define COMPILER_FUNCTIONPARAMETER_H
 
 #include "../Typing/Type.h"
-#include "nodes/VariableDeclaration.h"
+#include "nodes/Statements/VariableDeclaration.h"
 #include <memory>
 
 namespace Ceres::AST {

@@ -2,16 +2,25 @@ parser grammar CeresParser;
 options { tokenVocab=CeresLexer; }
 
 compilationUnit
-    : (functionDefinition
-    | globalVarDeclaration )* EOF
+    : (globalFunctionDefinition
+    | globalVarDeclaration
+    | externFunDeclaration )* EOF
     ;
 
 globalVarDeclaration
     : PUB? varDeclaration SEMICOLON
     ;
 
+globalFunctionDefinition
+    : PUB? functionDefinition
+    ;
+
+externFunDeclaration
+    : EXTERN FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? SEMICOLON
+    ;
+
 functionDefinition
-    : PUB? FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
+    : FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
     ;
 
 formalParameters
@@ -42,6 +51,7 @@ statement
     : varDeclaration SEMICOLON      # var_decl_statement
     | returnStatement SEMICOLON     # return_statement
     | expression SEMICOLON          # expr_statement
+    | functionDefinition            # fn_def_statement
     | ifStatement                   # if_statement
     | whileStatement                # while_statement
     | forStatement                  # for_statement
@@ -88,7 +98,7 @@ assignmentExpression
     | assignmentExpression binary_op=('==' | '!=') assignmentExpression                 # binary_op_expr
     | assignmentExpression binary_op='&&' assignmentExpression                          # binary_op_expr
     | assignmentExpression binary_op='||' assignmentExpression                          # binary_op_expr
-    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression # assignment_expr
+    | <assoc=right> assignmentExpression binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression # assignment_expr
  ;
 
 expression

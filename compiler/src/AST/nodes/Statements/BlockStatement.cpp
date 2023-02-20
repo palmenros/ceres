@@ -2,6 +2,7 @@
 #include "../../AbstractASTVisitor.h"
 
 namespace Ceres::AST {
+
 BlockStatement::BlockStatement(SourceSpan const& sourceSpan, std::vector<std::unique_ptr<Statement>>&& statements)
     : Statement(sourceSpan)
     , statements(std::move(statements))

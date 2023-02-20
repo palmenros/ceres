@@ -16,18 +16,18 @@ public:
     // optional type
     std::optional<BinaryOp> binaryOp;
 
-    // Identifier of the variable that is being assigned
-    std::string identifierLHS;
+    // Identifier of the variable that is being assigned.  Not nullable.
+    std::unique_ptr<Expression> expressionLHS;
 
     // Expression that is being assigned (possibly after performing a binary
-    // operation)
-    // TODO: nullable?
+    // operation). Not nullable.
     std::unique_ptr<Expression> expressionRHS;
 
     SourceSpan opSourceSpan;
 
     AssignmentExpression(SourceSpan const& sourceSpan, std::optional<BinaryOp> const& binaryOp,
-        std::string identifierLhs, std::unique_ptr<Expression>&& expressionRhs, SourceSpan opSourceSpan);
+        std::unique_ptr<Expression>&& expressionLhs, std::unique_ptr<Expression>&& expressionRhs,
+        SourceSpan opSourceSpan);
 
     void accept(AbstractASTVisitor& visitor) override;
 

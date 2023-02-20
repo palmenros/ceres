@@ -11,6 +11,7 @@ IF : 'if';
 ELSE : 'else';
 FOR : 'for';
 WHILE : 'while';
+EXTERN: 'extern';
 
 // Literals
 

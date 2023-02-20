@@ -47,8 +47,8 @@ std::string ASTStringifierVisitor::doVisitAssignmentExpression(AssignmentExpress
         }
     }
 
-    return fmt::format(
-        "(AssignmentExpression op='{}' lhs='{}' rhs={})", opStr, expr.identifierLHS, visit(*expr.expressionRHS));
+    return fmt::format("(AssignmentExpression op='{}' lhs='{}' rhs={})", opStr, visit(*expr.expressionLHS),
+        visit(*expr.expressionRHS));
 }
 
 std::string ASTStringifierVisitor::doVisitBinaryOperationExpression(BinaryOperationExpression& expr)
@@ -132,7 +132,7 @@ std::string ASTStringifierVisitor::doVisitBlockStatement(BlockStatement& block)
         res += visit(*stm);
     }
 
-    return fmt::format("(Block '{}')", res);
+    return fmt::format("(BlockStatement '{}')", res);
 }
 
 std::string ASTStringifierVisitor::doVisitBoolLiteral(BoolLiteralExpression& lit)
@@ -258,6 +258,24 @@ std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition&
         "(FunctionDefinition id='{}', params='{}' body='{}')", def.functionName, paramsString, visit(*def.block));
 }
 
+std::string ASTStringifierVisitor::doVisitFunctionDeclaration(FunctionDeclaration& dec)
+{
+    std::string paramsString;
+    bool first = true;
+    for (auto const& param : dec.parameters) {
+        std::string paramString = fmt::format("{} {}: {}",
+            param.constness == VariableConstness::NonConst ? "var" : "const", param.name, param.type->toString());
+        if (first) {
+            first = false;
+        } else {
+            paramsString += ", ";
+        }
+        paramsString += paramString;
+    }
+
+    return fmt::format("(FunctionDefinition id='{}', params='{}')", dec.functionName, paramsString);
+}
+
 std::string ASTStringifierVisitor::doVisitIdentifierExpression(IdentifierExpression& expr)
 {
     return fmt::format("(IdentifierExpression id='{}')", expr.identifier);
@@ -363,11 +381,6 @@ std::string ASTStringifierVisitor::doVisitVariableDeclaration(VariableDeclaratio
     return fmt::format("(VariableDeclaration vis='{}' scope='{}' const='{}' "
                        "type='{}' id='{}')",
         vis, scope, constn, decl.type->toString(), decl.identifier);
-}
-
-std::string ASTStringifierVisitor::doVisitVariableDeclarationStatement(VariableDeclarationStatement& stm)
-{
-    return fmt::format("(VariableDeclarationStatement '{}')", visit(*stm.variableDeclaration));
 }
 
 std::string ASTStringifierVisitor::doVisitWhileStatement(WhileStatement& stm)

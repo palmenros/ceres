@@ -11,13 +11,13 @@
 #include "nodes/Expressions/IntLiteralExpression.h"
 #include "nodes/Expressions/PostfixExpression.h"
 #include "nodes/Expressions/PrefixExpression.h"
+#include "nodes/FunctionDeclaration.h"
 #include "nodes/Node.h"
 #include "nodes/Statements/BlockStatement.h"
 #include "nodes/Statements/ExpressionStatement.h"
 #include "nodes/Statements/ForStatement.h"
 #include "nodes/Statements/IfStatement.h"
 #include "nodes/Statements/ReturnStatement.h"
-#include "nodes/Statements/VariableDeclarationStatement.h"
 #include "nodes/Statements/WhileStatement.h"
 
 namespace Ceres::AST {
@@ -30,7 +30,7 @@ public:
 
     virtual void visitAssignmentExpression(AssignmentExpression& expr) = 0;
     virtual void visitBinaryOperationExpression(BinaryOperationExpression& expr) = 0;
-    virtual void visitBlockStatement(BlockStatement& stm) = 0;
+    virtual void visitBlockStatement(Ceres::AST::BlockStatement& stm) = 0;
     virtual void visitBoolLiteral(BoolLiteralExpression& lit) = 0;
     virtual void visitCommaExpression(CommaExpression& expr) = 0;
     virtual void visitCompilationUnit(CompilationUnit& unit) = 0;
@@ -46,8 +46,8 @@ public:
     virtual void visitPrefixExpression(PrefixExpression& expr) = 0;
     virtual void visitReturnStatement(ReturnStatement& stm) = 0;
     virtual void visitVariableDeclaration(VariableDeclaration& decl) = 0;
-    virtual void visitVariableDeclarationStatement(VariableDeclarationStatement& stm) = 0;
     virtual void visitWhileStatement(WhileStatement& stm) = 0;
+    virtual void visitFunctionDeclaration(FunctionDeclaration& declaration) = 0;
 };
 
 } // namespace Ceres::AST

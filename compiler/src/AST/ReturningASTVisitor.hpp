@@ -3,6 +3,7 @@
 
 #include "../utils/log.hpp"
 #include "AbstractReturningASTVisitor.hpp"
+#include "Block.h"
 
 namespace Ceres::AST {
 
@@ -13,7 +14,7 @@ public:
 
     virtual T doVisitAssignmentExpression(AssignmentExpression& expr) override;
     virtual T doVisitBinaryOperationExpression(BinaryOperationExpression& expr) override;
-    virtual T doVisitBlockStatement(BlockStatement& stm) override;
+    virtual T doVisitBlockStatement(Ceres::AST::Statement::Block& stm) override;
     virtual T doVisitBoolLiteral(BoolLiteralExpression& lit) override;
     virtual T doVisitCommaExpression(CommaExpression& expr) override;
     virtual T doVisitCompilationUnit(CompilationUnit& unit) override;
@@ -22,6 +23,7 @@ public:
     virtual T doVisitForStatement(ForStatement& stm) override;
     virtual T doVisitFunctionCallExpression(FunctionCallExpression& expr) override;
     virtual T doVisitFunctionDefinition(FunctionDefinition& def) override;
+    virtual T doVisitFunctionDeclaration(FunctionDeclaration& dec) override;
     virtual T doVisitIdentifierExpression(IdentifierExpression& expr) override;
     virtual T doVisitIfStatement(IfStatement& stm) override;
     virtual T doVisitIntLiteralExpression(IntLiteralExpression& expr) override;
@@ -45,7 +47,7 @@ template<class T> T ReturningASTVisitor<T>::doVisitBinaryOperationExpression(Bin
     return this->visitChildren(expr);
 }
 
-template<class T> T ReturningASTVisitor<T>::doVisitBlockStatement(BlockStatement& stm)
+template<class T> T ReturningASTVisitor<T>::doVisitBlockStatement(Ceres::AST::Statement::Block& stm)
 {
     return this->visitChildren(stm);
 }
@@ -127,6 +129,11 @@ template<class T> T ReturningASTVisitor<T>::doVisitVariableDeclarationStatement(
 template<class T> T ReturningASTVisitor<T>::doVisitWhileStatement(WhileStatement& stm)
 {
     return this->visitChildren(stm);
+}
+
+template<class T> T ReturningASTVisitor<T>::doVisitFunctionDeclaration(FunctionDeclaration& def)
+{
+    return this->visitChildren(def);
 }
 
 } // namespace Ceres::AST

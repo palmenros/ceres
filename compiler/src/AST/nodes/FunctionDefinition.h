@@ -3,7 +3,7 @@
 
 #include "../../Typing/Type.h"
 #include "../FunctionParameter.h"
-#include "Node.h"
+#include "Expressions/Expression.h"
 #include "Statements/BlockStatement.h"
 #include <memory>
 #include <string>
@@ -11,9 +11,9 @@
 
 namespace Ceres::AST {
 
-enum class FunctionVisibility { Public, Private };
+enum class FunctionVisibility { Public, Private, Extern };
 
-class FunctionDefinition : public Node {
+class FunctionDefinition : public Statement {
 public:
     FunctionVisibility visibility;
     std::string functionName;

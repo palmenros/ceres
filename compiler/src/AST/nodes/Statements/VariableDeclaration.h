@@ -1,9 +1,9 @@
 #ifndef COMPILER_VARIABLEDECLARATION_H
 #define COMPILER_VARIABLEDECLARATION_H
 
-#include "../../Typing/Type.h"
-#include "Expressions/Expression.h"
-#include "Statements/Statement.h"
+#include "../../../Typing/Type.h"
+#include "../Expressions/Expression.h"
+#include "Statement.h"
 #include <memory>
 #include <string>
 

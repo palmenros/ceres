@@ -77,7 +77,12 @@ void BindingVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
 
 void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
 {
-    currentScope->resolve(expr.identifierLHS);
+    auto* identifierExpr = dynamic_cast<AST::IdentifierExpression*>(expr.expressionLHS.get());
+    if (identifierExpr == nullptr) {
+        Log::panic("LHS of expression is not an identifier");
+    }
+
+    currentScope->resolve(identifierExpr->identifier);
     visitChildren(expr);
 }
 } // namespace Ceres::Binding

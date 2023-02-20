@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "../AbstractASTVisitor.h"
+#include "../../AbstractASTVisitor.h"
 #include <utility>
 
 namespace Ceres::AST {

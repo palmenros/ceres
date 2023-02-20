@@ -1,5 +1,6 @@
 #include "ForStatement.h"
 #include "../../AbstractASTVisitor.h"
+#include "BlockStatement.h"
 
 namespace Ceres::AST {
 ForStatement::ForStatement(SourceSpan const& sourceSpan, std::unique_ptr<VariableDeclaration>&& maybeInitDeclaration,

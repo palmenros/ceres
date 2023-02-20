@@ -1,5 +1,6 @@
 #include "WhileStatement.h"
 #include "../../AbstractASTVisitor.h"
+#include "BlockStatement.h"
 
 namespace Ceres::AST {
 WhileStatement::WhileStatement(

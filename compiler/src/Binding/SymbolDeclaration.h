@@ -2,7 +2,7 @@
 #define COMPILER_SYMBOLDECLARATION_H
 
 #include "../AST/nodes/Node.h"
-#include "../AST/nodes/VariableDeclaration.h"
+#include "../AST/nodes/Statements/VariableDeclaration.h"
 #include "../Typing/Type.h"
 #include <cstddef>
 #include <optional>

@@ -1,5 +1,6 @@
 #include "IfStatement.h"
 #include "../../AbstractASTVisitor.h"
+#include "BlockStatement.h"
 
 namespace Ceres::AST {
 IfStatement::IfStatement(SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition,

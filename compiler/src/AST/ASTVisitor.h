@@ -2,6 +2,7 @@
 #define COMPILER_ASTVISITOR_H
 
 #include "AbstractASTVisitor.h"
+#include "nodes/Statements/BlockStatement.h"
 
 namespace Ceres::AST {
 
@@ -19,6 +20,7 @@ public:
     virtual void visitPostfixExpression(PostfixExpression& expr) override;
     virtual void visitPrefixExpression(PrefixExpression& expr) override;
     virtual void visitBoolLiteral(BoolLiteralExpression& lit) override;
+    virtual void visitFunctionDeclaration(FunctionDeclaration& dec) override;
 
     // Statements
     virtual void visitExpressionStatement(ExpressionStatement& stm) override;
@@ -28,7 +30,6 @@ public:
     virtual void visitForStatement(ForStatement& stm) override;
     virtual void visitIfStatement(IfStatement& stm) override;
     virtual void visitReturnStatement(ReturnStatement& stm) override;
-    virtual void visitVariableDeclarationStatement(VariableDeclarationStatement& stm) override;
     virtual void visitWhileStatement(WhileStatement& stm) override;
     virtual void visitFunctionDefinition(FunctionDefinition& def) override;
 };

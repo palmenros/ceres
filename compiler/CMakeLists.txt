@@ -19,7 +19,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/main.cpp src/utils/log.hpp src/AST/AntlrASTGeneratorVisitor.cpp src/AST/AntlrASTGeneratorVisitor.h
         src/AST/nodes/Node.cpp src/AST/nodes/Node.h src/utils/SourceSpan.cpp src/utils/SourceSpan.h
         src/AST/nodes/CompilationUnit.cpp src/AST/nodes/CompilationUnit.h src/AST/nodes/FunctionDefinition.cpp
-        src/AST/nodes/FunctionDefinition.h src/AST/nodes/VariableDeclaration.cpp src/AST/nodes/VariableDeclaration.h
+        src/AST/nodes/FunctionDefinition.h src/AST/nodes/Statements/VariableDeclaration.cpp src/AST/nodes/Statements/VariableDeclaration.h
         src/AST/nodes/Expressions/Expression.cpp src/AST/nodes/Expressions/Expression.h src/AST/nodes/Expressions/CommaExpression.cpp
         src/AST/nodes/Expressions/CommaExpression.h src/AST/nodes/Expressions/IntLiteralExpression.cpp src/AST/nodes/Expressions/IntLiteralExpression.h
         src/AST/nodes/Expressions/FloatLiteralExpression.cpp src/AST/nodes/Expressions/FloatLiteralExpression.h src/AST/nodes/Expressions/BoolLiteralExpression.cpp
@@ -29,8 +29,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/AST/nodes/Expressions/PrefixExpression.h src/AST/nodes/Expressions/FunctionCallExpression.cpp src/AST/nodes/Expressions/FunctionCallExpression.h
         src/AST/nodes/Expressions/AssignmentExpression.cpp src/AST/nodes/Expressions/AssignmentExpression.h src/AST/FunctionParameter.cpp
         src/AST/FunctionParameter.h src/AST/nodes/Statements/Statement.cpp src/AST/nodes/Statements/Statement.h src/AST/nodes/Statements/BlockStatement.cpp
-        src/AST/nodes/Statements/BlockStatement.h src/AST/nodes/Statements/VariableDeclarationStatement.cpp
-        src/AST/nodes/Statements/VariableDeclarationStatement.h src/AST/nodes/Statements/ExpressionStatement.cpp
+        src/AST/nodes/Statements/BlockStatement.h src/AST/nodes/Statements/ExpressionStatement.cpp
         src/AST/nodes/Statements/ExpressionStatement.h src/AST/nodes/Statements/ReturnStatement.cpp src/AST/nodes/Statements/ReturnStatement.h
         src/AST/nodes/Statements/IfStatement.cpp src/AST/nodes/Statements/IfStatement.h src/AST/nodes/Statements/WhileStatement.cpp
         src/AST/nodes/Statements/WhileStatement.h src/AST/nodes/Statements/ForStatement.cpp src/AST/nodes/Statements/ForStatement.h
@@ -41,7 +40,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
         src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
         src/Typing/TypeVisitor.h src/Binding/SymbolDeclaration.cpp src/Binding/SymbolDeclaration.h src/Binding/Scope.cpp src/Binding/Scope.h
-        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h)
+        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h)
 
 ##########################################
 #          END MISCELLANEOUS LIBRARIES

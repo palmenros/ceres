@@ -168,12 +168,14 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 
 void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
 {
-    // Cant happen
-    if (expr.expressionRHS == nullptr) {
-        Log::panic("Assignment with no body");
+    ASSERT(expr.expressionRHS != nullptr);
+
+    auto* identifier = dynamic_cast<AST::IdentifierExpression*>(expr.expressionLHS.get());
+    if (identifier == nullptr) {
+        Log::panic("LHS of an expression is not an identifier");
     }
 
-    auto lhs = currentScope->resolve(expr.identifierLHS);
+    auto lhs = currentScope->resolve(identifier->identifier);
 
     if (lhs.getConstness() != AST::VariableConstness::NonConst) {
         Log::panic("Trying to assign to constant variable");

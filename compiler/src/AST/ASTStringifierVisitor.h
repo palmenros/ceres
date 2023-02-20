@@ -19,6 +19,9 @@ class ASTStringifierVisitor : public AbstractReturningASTVisitor<std::string> {
     std::string doVisitForStatement(ForStatement& stm) override;
     std::string doVisitFunctionCallExpression(FunctionCallExpression& expr) override;
     std::string doVisitFunctionDefinition(FunctionDefinition& def) override;
+    std::string doVisitFunctionDeclaration(FunctionDeclaration& def) override;
+
+private:
     std::string doVisitIdentifierExpression(IdentifierExpression& expr) override;
     std::string doVisitIfStatement(IfStatement& stm) override;
     std::string doVisitIntLiteralExpression(IntLiteralExpression& expr) override;
@@ -26,7 +29,6 @@ class ASTStringifierVisitor : public AbstractReturningASTVisitor<std::string> {
     std::string doVisitPrefixExpression(PrefixExpression& expr) override;
     std::string doVisitReturnStatement(ReturnStatement& stm) override;
     std::string doVisitVariableDeclaration(VariableDeclaration& decl) override;
-    std::string doVisitVariableDeclarationStatement(VariableDeclarationStatement& stm) override;
     std::string doVisitWhileStatement(WhileStatement& stm) override;
 };
 

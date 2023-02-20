@@ -11,10 +11,10 @@ namespace Ceres::AST {
 class WhileStatement : public Statement {
 public:
     std::unique_ptr<Expression> condition;
-    std::unique_ptr<BlockStatement> body;
+    std::unique_ptr<Ceres::AST::BlockStatement> body;
 
-    WhileStatement(
-        SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition, std::unique_ptr<BlockStatement>&& body);
+    WhileStatement(SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition,
+        std::unique_ptr<Ceres::AST::BlockStatement>&& body);
 
     void accept(AbstractASTVisitor& visitor) override;
 

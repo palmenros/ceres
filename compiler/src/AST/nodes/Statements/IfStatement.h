@@ -12,14 +12,14 @@ class IfStatement : public Statement {
 public:
     std::unique_ptr<Expression> condition;
 
-    std::unique_ptr<BlockStatement> thenBlock;
+    std::unique_ptr<Ceres::AST::BlockStatement> thenBlock;
 
     // Currently: the else statement can only be a BlockStatement, another
     // IfStatement or a nullptr Note: maybeElseStatement can be a nullptr
     std::unique_ptr<Statement> maybeElseStatement;
 
     IfStatement(SourceSpan const& sourceSpan, std::unique_ptr<Expression>&& condition,
-        std::unique_ptr<BlockStatement>&& thenBlock, std::unique_ptr<Statement>&& elseStatement);
+        std::unique_ptr<Ceres::AST::BlockStatement>&& thenBlock, std::unique_ptr<Statement>&& elseStatement);
 
     void accept(AbstractASTVisitor& visitor) override;
 
