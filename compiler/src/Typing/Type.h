@@ -214,6 +214,8 @@ public:
             return false;
         case PrimitiveKind::BOOL:
             return true;
+        default:
+            NOT_IMPLEMENTED();
         }
     }
 
@@ -233,6 +235,8 @@ public:
         case PrimitiveKind::F64:
         case PrimitiveKind::BOOL:
             return false;
+        default:
+            NOT_IMPLEMENTED();
         }
     }
 
@@ -252,6 +256,8 @@ public:
         case PrimitiveKind::F32:
         case PrimitiveKind::F64:
             return true;
+        default:
+            NOT_IMPLEMENTED();
         }
     }
 

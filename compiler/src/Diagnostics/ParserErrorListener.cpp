@@ -25,7 +25,7 @@ void ParserErrorListener::syntaxError(antlr4::Recognizer* recognizer, antlr4::To
     size_t charPositionInLine, std::string const& msg, std::exception_ptr e)
 {
     auto loc = SourceManager::get().getLLVMSourceMgr().FindLocForLineAndColumn(
-        fileId, line, (unsigned int)charPositionInLine);
+        fileId, (unsigned int)line, (unsigned int)charPositionInLine);
     Diagnostics::report(loc, Diag::parse_error, msg);
 }
 
