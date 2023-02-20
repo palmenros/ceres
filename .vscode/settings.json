@@ -1,0 +1,8 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}/compiler",
+    "clangd.arguments": [
+        "--background-index",
+        "-header-insertion=iwyu",
+        "--compile-commands-dir=${workspaceFolder}/build"
+    ]
+}

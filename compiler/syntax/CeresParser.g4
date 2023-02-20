@@ -1,35 +1,26 @@
-/*
- * Copyright (C) 2023 Daniel Martin Gomez, Pedro Palacios Almendros
- * 
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
-
 parser grammar CeresParser;
 options { tokenVocab=CeresLexer; }
 
 compilationUnit
-    : (functionDefinition
-    | globalVarDeclaration )* EOF
+    : (globalFunctionDefinition
+    | globalVarDeclaration
+    | externFunDeclaration )* EOF
     ;
 
 globalVarDeclaration
     : PUB? varDeclaration SEMICOLON
     ;
 
+globalFunctionDefinition
+    : PUB? functionDefinition
+    ;
+
+externFunDeclaration
+    : EXTERN FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? SEMICOLON
+    ;
+
 functionDefinition
-    : PUB? FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
+    : FN IDENTIFIER OPEN_PARENS formalParameters? CLOSE_PARENS type? block
     ;
 
 formalParameters
@@ -60,6 +51,7 @@ statement
     : varDeclaration SEMICOLON      # var_decl_statement
     | returnStatement SEMICOLON     # return_statement
     | expression SEMICOLON          # expr_statement
+    | functionDefinition            # fn_def_statement
     | ifStatement                   # if_statement
     | whileStatement                # while_statement
     | forStatement                  # for_statement
@@ -106,7 +98,7 @@ assignmentExpression
     | assignmentExpression binary_op=('==' | '!=') assignmentExpression                 # binary_op_expr
     | assignmentExpression binary_op='&&' assignmentExpression                          # binary_op_expr
     | assignmentExpression binary_op='||' assignmentExpression                          # binary_op_expr
-    | <assoc=right> IDENTIFIER binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression # assignment_expr
+    | <assoc=right> assignmentExpression binary_op=('=' | '+=' | '-=' | '*=' | '/=' | '&=' | '|=' | '^=' | '>>=' | '<<=' | '%=') assignmentExpression # assignment_expr
  ;
 
 expression

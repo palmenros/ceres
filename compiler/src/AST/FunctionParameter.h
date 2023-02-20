@@ -1,41 +1,24 @@
-/*
- * Copyright (C) 2023 Pedro Palacios Almendros
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
- */
-
 #ifndef COMPILER_FUNCTIONPARAMETER_H
 #define COMPILER_FUNCTIONPARAMETER_H
 
-#include "Type.h"
-#include "nodes/VariableDeclaration.h"
+#include "../Typing/Type.h"
+#include "nodes/Statements/VariableDeclaration.h"
+#include <memory>
 
 namespace Ceres::AST {
 
-    struct FunctionParameter {
-        Type type;
-        std::string name;
-        VariableConstness constness;
+struct FunctionParameter {
+    Type* type;
+    std::string name;
+    Typing::Constness constness;
 
-        SourceSpan typeSourceSpan;
-        SourceSpan parameterNameSourceSpan;
+    SourceSpan typeSourceSpan;
+    SourceSpan parameterNameSourceSpan;
 
-        FunctionParameter(Type type, std::string name, VariableConstness constness,
-                          SourceSpan typeSourceSpan, SourceSpan parameterNameSourceSpan);
-    };
+    FunctionParameter(Type* type, std::string name, Typing::Constness constness, SourceSpan typeSourceSpan,
+        SourceSpan parameterNameSourceSpan);
+};
 
-}// namespace Ceres::AST
+} // namespace Ceres::AST
 
-#endif//COMPILER_FUNCTIONPARAMETER_H
+#endif // COMPILER_FUNCTIONPARAMETER_H
