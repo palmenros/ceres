@@ -1,8 +1,10 @@
 #ifndef COMPILER_FUNCTIONCALLEXPRESSION_H
 #define COMPILER_FUNCTIONCALLEXPRESSION_H
 
+#include "../../../Binding/SymbolDeclaration.h"
 #include "Expression.h"
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -10,8 +12,10 @@ namespace Ceres::AST {
 
 class FunctionCallExpression : public Expression {
 public:
+    // TODO: maybe it can be something else
     std::string functionIdentifier;
     std::vector<std::unique_ptr<Expression>> arguments;
+    std::optional<Binding::SymbolDeclaration> decl;
 
     SourceSpan functionIdentifierSourceSpan;
 

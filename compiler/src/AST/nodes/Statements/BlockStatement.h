@@ -12,8 +12,6 @@ namespace Ceres::AST {
 class BlockStatement : public Statement {
 
 public:
-    // TODO: Convert to std::optional<Binding::SymbolTableScope>
-    std::optional<Binding::SymbolTableScope> scope;
     std::vector<std::unique_ptr<Statement>> statements;
 
     BlockStatement(SourceSpan const& sourceSpan, std::vector<std::unique_ptr<Statement>>&& statements);

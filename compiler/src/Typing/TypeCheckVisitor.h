@@ -8,14 +8,6 @@ namespace Ceres::Typing {
 
 class TypeCheckVisitor : public AST::ASTVisitor {
 public:
-    Binding::Scope* currentScope = nullptr;
-    AST::FunctionDefinition* currentFunction = nullptr;
-
-    // Reconstruct scopes
-    void visitCompilationUnit(AST::CompilationUnit& unit) override;
-    void visitBlockStatement(AST::BlockStatement& stm) override;
-    void visitFunctionDefinition(AST::FunctionDefinition& def) override;
-
     // Type check
     void visitVariableDeclaration(AST::VariableDeclaration& decl) override;
     void visitAssignmentExpression(AST::AssignmentExpression& expr) override;

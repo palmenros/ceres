@@ -1,6 +1,7 @@
 #ifndef COMPILER_IDENTIFIEREXPRESSION_H
 #define COMPILER_IDENTIFIEREXPRESSION_H
 
+#include "../../../Binding/SymbolDeclaration.h"
 #include "Expression.h"
 #include <string>
 
@@ -9,6 +10,7 @@ namespace Ceres::AST {
 class IdentifierExpression : public Expression {
 public:
     std::string identifier;
+    std::optional<Binding::SymbolDeclaration> decl;
 
     IdentifierExpression(SourceSpan const& sourceSpan, std::string identifier);
 

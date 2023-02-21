@@ -6,14 +6,9 @@
 
 namespace Ceres::Binding {
 
-// TODO: The binding visitor is only the first pass of the binding. It should
-// embed all the
-//          the declarations in the necessary scopes so the second pass (that I
-//          think can and should be combined with type-inference and
-//          type-checking) can reference the scopes for the needed symbols.
-
 class BindingVisitor : public AST::ASTVisitor {
 public:
+    std::vector<AST::IdentifierExpression*> unresolvedScope;
     Scope* currentScope = nullptr;
 
     // Since we don't resolve anything in this pass we just have to add the

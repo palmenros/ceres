@@ -3,6 +3,7 @@
 #include "../Diagnostics/Diagnostics.h"
 #include "BinaryOperation.h"
 #include "Type.h"
+#include <cstddef>
 #include <optional>
 
 namespace Ceres::Typing {
@@ -113,35 +114,6 @@ void expandCoercion(Type* coerced, AST::Expression& lhs)
     }
 }
 
-// Reconstruct scopes
-void TypeCheckVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
-{
-    ASSERT(unit.scope.has_value());
-    currentScope = &unit.scope.value();
-    visitChildren(unit);
-}
-
-void TypeCheckVisitor::visitBlockStatement(AST::BlockStatement& stm)
-{
-    ASSERT(stm.scope.has_value());
-    currentScope = &stm.scope.value();
-    visitChildren(stm);
-    currentScope = currentScope->getEnclosingScope();
-}
-
-void TypeCheckVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
-{
-    auto* scope = &def.block->scope;
-    ASSERT(scope->has_value());
-    currentScope = &scope->value();
-    currentFunction = &def;
-    visitChildren(*def.block);
-    currentScope = currentScope->getEnclosingScope();
-    currentFunction = nullptr;
-}
-
-// Type check
-
 void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 {
     // TODO: Dont infer types yet
@@ -177,7 +149,10 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
         Log::panic("LHS of an expression is not an identifier");
     }
 
-    auto lhs = currentScope->resolve(identifier->identifier);
+    auto maybe_lhs = identifier->decl;
+    ASSERT(maybe_lhs.has_value());
+
+    auto lhs = maybe_lhs.value();
 
     if (lhs.getConstness().kind != Constness::NonConst) {
         Log::panic("Trying to assign to constant variable");
@@ -223,15 +198,21 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
 
 void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& expr)
 {
-    auto rhs = currentScope->resolve(expr.functionIdentifier);
+    auto maybe_rhs =expr.functionIdentifier;
+    ASSERT(maybe_rhs.has_value());
+
+    auto rhs = maybe_rhs.value();
+
     expr.type = rhs.getType();
     auto* decl = dynamic_cast<AST::FunctionDefinition*>(rhs.getDeclarationNode());
+    ASSERT(decl != nullptr);
 
     for (auto i = 0; i < expr.arguments.size(); ++i) {
         visit(*expr.arguments[i]);
         auto* ty = decl->parameters[i].type;
 
         auto* coerced = Type::getImplicitlyCoercedType(ty, expr.arguments[i]->type);
+        ASSERT(coerced != nullptr);
 
         if (coerced != ErrorType::get()) {
             expandCoercion(coerced, *expr.arguments[i]);
@@ -245,7 +226,11 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
 
 void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
 {
-    auto rhs = currentScope->resolve(expr.identifier);
+    auto maybe_rhs = currentScope->resolve(expr.identifier);
+    ASSERT(maybe_rhs.has_value());
+
+    auto rhs = maybe_rhs.value();
+
     expr.type = rhs.getType();
 }
 

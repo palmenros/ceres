@@ -18,7 +18,7 @@ void SymbolTableScope::define(std::string const& name, SymbolDeclaration const& 
     }
 };
 
-SymbolDeclaration SymbolTableScope::resolve(std::string const& name)
+std::optional<SymbolDeclaration> SymbolTableScope::resolve(std::string const& name)
 {
     auto it = map.find(name);
     if (it != map.end()) {
@@ -26,7 +26,7 @@ SymbolDeclaration SymbolTableScope::resolve(std::string const& name)
     }
 
     if (getEnclosingScope() == nullptr) {
-        Log::panic("undefined symbol");
+        return {};
     }
 
     return getEnclosingScope()->resolve(name);

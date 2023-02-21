@@ -10,9 +10,10 @@ class AbstractASTVisitor;
 
 class Node {
 public:
+    // Members
     SourceSpan sourceSpan;
 
-public:
+    // Methods
     explicit Node(SourceSpan const& sourceSpan);
 
     virtual void accept(AbstractASTVisitor& visitor) = 0;

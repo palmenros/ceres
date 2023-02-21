@@ -6,23 +6,30 @@
 namespace Ceres::Binding {
 void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
 {
-    // TODO: fix when we have multiple translation units
+    // TODO: fix when we have multiple translation units, we need to add unresolved symbols to translation unit
     ASSERT(currentScope == nullptr);
 
     unit.scope = SymbolTableScope(nullptr);
     currentScope = &unit.scope.value();
+    auto unresolved = SymbolTableScope(nullptr);
 
     ASSERT(currentScope != nullptr);
 
     visitChildren(unit);
+
+    for (auto* const n : unresolvedScope) {
+        auto resolved = currentScope->resolve(n->identifier);
+
+        if (!resolved.has_value()) {
+            Log::panic("Unresolved identifier access");
+        }
+    }
 }
 
 void BindingVisitor::visitBlockStatement(AST::BlockStatement& stm)
 {
-    stm.scope = SymbolTableScope(currentScope);
-
-    ASSERT(stm.scope.has_value());
-    currentScope = &stm.scope.value();
+    auto s = SymbolTableScope(currentScope);
+    currentScope = &s;
 
     ASSERT(currentScope != nullptr);
 
@@ -41,8 +48,8 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     currentScope->define(def.functionName, fsymbol);
 
     // Create scope for function body
-    def.block->scope = SymbolTableScope(currentScope);
-    currentScope = &def.block->scope.value();
+    auto s = SymbolTableScope(currentScope);
+    currentScope = &s;
 
     // Add all parameters
     for (auto param_idx = 0; param_idx < def.parameters.size(); ++param_idx) {
@@ -71,18 +78,33 @@ void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 
 void BindingVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
 {
-    // TODO: Panics on NULL, better return optional
-    currentScope->resolve(expr.identifier);
+
+    auto resolved = currentScope->resolve(expr.identifier);
+
+    if (!resolved.has_value()) {
+        // TODO: can be global variable or function call
+        unresolvedScope.push_back(&expr);
+    } else {
+        expr.decl = resolved;
+    }
 }
 
 void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
 {
+    // TODO: check is LHS
     auto* identifierExpr = dynamic_cast<AST::IdentifierExpression*>(expr.expressionLHS.get());
     if (identifierExpr == nullptr) {
         Log::panic("LHS of expression is not an identifier");
     }
 
-    currentScope->resolve(identifierExpr->identifier);
+    auto resolved = currentScope->resolve(identifierExpr->identifier);
+
+    if (!resolved.has_value()) {
+        unresolvedScope.push_back(identifierExpr);
+    } else {
+        identifierExpr->decl = resolved;
+    }
+
     visitChildren(expr);
 }
 } // namespace Ceres::Binding
