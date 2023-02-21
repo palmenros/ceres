@@ -1,0 +1,4 @@
+fn test() i32 {
+    var a : i32;
+    return a;
+}

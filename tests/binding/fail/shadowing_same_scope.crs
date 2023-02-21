@@ -1,0 +1,4 @@
+fn test() {
+    var a : i16 = 2;
+    const a : i16 = 3;
+}

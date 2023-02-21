@@ -1,0 +1,4 @@
+fn test() {
+}
+
+var test: i32;

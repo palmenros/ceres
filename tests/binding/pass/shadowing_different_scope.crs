@@ -1,0 +1,5 @@
+var a : i32 = 2;
+
+fn main() {
+    var a : i32 = 3;
+}
