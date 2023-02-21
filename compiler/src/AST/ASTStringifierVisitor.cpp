@@ -237,7 +237,7 @@ std::string ASTStringifierVisitor::doVisitFunctionCallExpression(FunctionCallExp
         args += visit(*arg);
     }
 
-    return fmt::format("(FunctionCallExpression id='{}' args='{}')", expr.functionIdentifier, args);
+    return fmt::format("(FunctionCallExpression id='{}' args='{}')", expr.identifier->identifier, args);
 }
 
 std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition& def)

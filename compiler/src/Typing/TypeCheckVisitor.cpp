@@ -198,7 +198,7 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
 
 void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& expr)
 {
-    auto maybe_rhs =expr.functionIdentifier;
+    auto maybe_rhs = expr.identifier->decl;
     ASSERT(maybe_rhs.has_value());
 
     auto rhs = maybe_rhs.value();
@@ -226,7 +226,7 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
 
 void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
 {
-    auto maybe_rhs = currentScope->resolve(expr.identifier);
+    auto maybe_rhs = expr.decl;
     ASSERT(maybe_rhs.has_value());
 
     auto rhs = maybe_rhs.value();
@@ -236,7 +236,8 @@ void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr
 
 void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 {
-    auto* retType = currentFunction->returnType;
+    ASSERT(stm.decl.has_value());
+    auto* retType = stm.decl->getType();
     visit(*stm.expr);
 
     auto* coerced = Type::getImplicitlyCoercedType(retType, stm.expr->type);

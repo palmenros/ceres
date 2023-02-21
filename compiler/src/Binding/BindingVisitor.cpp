@@ -2,6 +2,7 @@
 #include "Scope.h"
 #include "SymbolDeclaration.h"
 #include <optional>
+#include <spdlog/fmt/bundled/core.h>
 
 namespace Ceres::Binding {
 void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
@@ -23,6 +24,8 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
         if (!resolved.has_value()) {
             Log::panic("Unresolved identifier access");
         }
+
+        n->decl = resolved;
     }
 }
 
@@ -46,6 +49,7 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     // Define function in global scope
     auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
     currentScope->define(def.functionName, fsymbol);
+    currentFunction = &def;
 
     // Create scope for function body
     auto s = SymbolTableScope(currentScope);
@@ -71,9 +75,9 @@ void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 
     ASSERT(currentScope != nullptr);
 
-    visitChildren(decl);
-
     currentScope->define(decl.identifier, symbol);
+
+    visitChildren(decl);
 }
 
 void BindingVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
@@ -87,6 +91,8 @@ void BindingVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
     } else {
         expr.decl = resolved;
     }
+
+    visitChildren(expr);
 }
 
 void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
@@ -107,4 +113,13 @@ void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
 
     visitChildren(expr);
 }
+
+void BindingVisitor::visitReturnStatement(AST::ReturnStatement& stm)
+{
+    auto resolved = currentScope->resolve(currentFunction->functionName);
+    ASSERT(resolved.has_value());
+    stm.decl = resolved;
+    visitChildren(stm);
+}
+
 } // namespace Ceres::Binding

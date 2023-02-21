@@ -1,15 +1,15 @@
 #include "FunctionCallExpression.h"
 
 #include "../../AbstractASTVisitor.h"
+#include "IdentifierExpression.h"
 #include <utility>
 
 namespace Ceres::AST {
 FunctionCallExpression::FunctionCallExpression(SourceSpan const& sourceSpan, std::string functionIdentifier,
     std::vector<std::unique_ptr<Expression>>&& arguments, SourceSpan functionIdentifierSourceSpan)
     : Expression(sourceSpan)
-    , functionIdentifier(std::move(functionIdentifier))
+    , identifier(new IdentifierExpression(functionIdentifierSourceSpan, std::move(functionIdentifier)))
     , arguments(std::move(arguments))
-    , functionIdentifierSourceSpan(functionIdentifierSourceSpan)
 {
 }
 
@@ -21,7 +21,8 @@ std::vector<Node*> FunctionCallExpression::getChildren() const
     // we need to add the expression
     //          resolving to the function pointer to the children
     std::vector<Node*> v;
-    v.reserve(arguments.size());
+    v.reserve(arguments.size() + 1);
+    v.push_back(identifier.get());
     for (auto& a : arguments) {
         v.push_back(a.get());
     }
