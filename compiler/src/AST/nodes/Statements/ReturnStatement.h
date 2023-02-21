@@ -11,6 +11,7 @@ namespace Ceres::AST {
 
 class ReturnStatement : public Statement {
 public:
+    // May be null if no expression has been provided
     std::unique_ptr<Expression> expr;
     std::optional<Binding::SymbolDeclaration> decl;
 

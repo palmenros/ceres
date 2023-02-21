@@ -10,5 +10,9 @@ ReturnStatement::ReturnStatement(SourceSpan const& sourceSpan, std::unique_ptr<E
 
 void ReturnStatement::accept(AbstractASTVisitor& visitor) { visitor.visitReturnStatement(*this); }
 
-std::vector<Node*> ReturnStatement::getChildren() const { return { expr.get() }; }
+std::vector<Node*> ReturnStatement::getChildren() const {
+    if (expr == nullptr) {
+        return {};
+    }
+    return { expr.get() }; }
 } // namespace Ceres::AST

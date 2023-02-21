@@ -60,7 +60,7 @@ statement
     ;
 
 returnStatement
-    : RETURN expression
+    : RETURN (expression?)
     ;
 
 ifStatement

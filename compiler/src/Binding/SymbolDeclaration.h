@@ -15,6 +15,8 @@ enum class SymbolDeclarationKind {
     LocalVariableDeclaration,
     GlobalVariableDeclaration,
     FunctionParamDeclaration,
+
+    Invalid // For example there has been an error on binding.
 };
 
 class SymbolDeclaration {

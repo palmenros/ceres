@@ -364,7 +364,12 @@ std::string ASTStringifierVisitor::doVisitPrefixExpression(PrefixExpression& exp
 
 std::string ASTStringifierVisitor::doVisitReturnStatement(ReturnStatement& stm)
 {
-    return fmt::format("(ReturnStatement expr='{}')", visit(*stm.expr));
+    std::string expr;
+    if (stm.expr != nullptr) {
+        expr = visit(*stm.expr);
+    }
+
+    return fmt::format("(ReturnStatement expr='{}')", expr);
 }
 
 std::string ASTStringifierVisitor::doVisitVariableDeclaration(VariableDeclaration& decl)

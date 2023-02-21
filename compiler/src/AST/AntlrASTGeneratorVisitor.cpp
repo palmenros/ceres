@@ -393,7 +393,10 @@ std::any AntlrASTGeneratorVisitor::visitReturnStatement(CeresParser::ReturnState
     ASSERT(ctx != nullptr);
     checkException(*ctx);
 
-    auto* expr = std::any_cast<Expression*>(visit(ctx->expression()));
+    Expression* expr = nullptr;
+    if (ctx->expression() != nullptr) {
+        expr = std::any_cast<Expression*>(visit(ctx->expression()));
+    }
     return static_cast<Statement*>(new ReturnStatement(getSourceSpan(*ctx), std::unique_ptr<Expression>(expr)));
 }
 
