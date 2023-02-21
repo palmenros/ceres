@@ -1,10 +1,10 @@
 #ifndef COMPILER_FUNCTIONDEFINITION_H
 #define COMPILER_FUNCTIONDEFINITION_H
 
-#include "../../Typing/Type.h"
-#include "../FunctionParameter.h"
-#include "Expressions/Expression.h"
-#include "Statements/BlockStatement.h"
+#include "../../../Typing/Type.h"
+#include "../../FunctionParameter.h"
+#include "../Expressions/Expression.h"
+#include "BlockStatement.h"
 #include <memory>
 #include <string>
 #include <vector>

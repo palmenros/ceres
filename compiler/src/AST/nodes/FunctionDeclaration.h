@@ -1,8 +1,8 @@
 #ifndef COMPILER_FUNCTIONDECLARATION_H
 #define COMPILER_FUNCTIONDECLARATION_H
 
-#include "FunctionDefinition.h"
 #include "Node.h"
+#include "Statements/FunctionDefinition.h"
 #include <string>
 
 namespace Ceres::AST {

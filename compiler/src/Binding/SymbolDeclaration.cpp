@@ -1,5 +1,5 @@
 #include "SymbolDeclaration.h"
-#include "../AST/nodes/FunctionDefinition.h"
+#include "../AST/nodes/Statements/FunctionDefinition.h"
 
 namespace Ceres::Binding {
 AST::FunctionParameter* getParam(SymbolDeclaration& symbol)

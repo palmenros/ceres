@@ -1,8 +1,8 @@
 #ifndef COMPILER_COMPILATIONUNIT_H
 #define COMPILER_COMPILATIONUNIT_H
 
-#include "FunctionDefinition.h"
 #include "Node.h"
+#include "Statements/FunctionDefinition.h"
 #include "Statements/VariableDeclaration.h"
 #include <memory>
 #include <vector>
