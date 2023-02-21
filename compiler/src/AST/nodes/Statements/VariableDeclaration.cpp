@@ -15,7 +15,7 @@ VariableDeclaration::VariableDeclaration(Ceres::SourceSpan const& sourceSpan,
     , visibility(visibility)
     , constness(constness)
     , type(type)
-    , identifier(std::move(std::move(identifier)))
+    , id(std::move(std::move(identifier)))
     , typeSourceSpan(typeSourceSpan)
     , identifierSourceSpan(identifierSourceSpan)
     , scope(scope)

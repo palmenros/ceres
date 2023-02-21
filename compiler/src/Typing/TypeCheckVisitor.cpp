@@ -4,7 +4,9 @@
 #include "BinaryOperation.h"
 #include "Type.h"
 #include <cstddef>
+#include <llvm/Support/Casting.h>
 #include <optional>
+#include <spdlog/fmt/bundled/core.h>
 
 namespace Ceres::Typing {
 Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
@@ -14,28 +16,20 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
     //     return ErrorType::get();
     // }
 
-    auto* type = dynamic_cast<PrimitiveIntegerType*>(lhs);
-    if (type != nullptr) {
+    auto* typeInt = dynamic_cast<PrimitiveIntegerType*>(lhs);
+    if (typeInt != nullptr) {
         switch (op.kind) {
         case BinaryOperation::Mult:
         case BinaryOperation::Div:
         case BinaryOperation::Sum:
-        case BinaryOperation::Subtraction: {
-            if (llvm::isa<PrimitiveIntegerType>(type) || llvm::isa<PrimitiveFloatType>(type)) {
-                return type;
-            }
-            break;
-        }
+        case BinaryOperation::Subtraction:
         case BinaryOperation::Modulo:
         case BinaryOperation::BitwiseAnd:
         case BinaryOperation::BitwiseOr:
         case BinaryOperation::BitwiseXor:
         case BinaryOperation::BitshiftLeft:
         case BinaryOperation::BitshiftRight: {
-            if (llvm::isa<PrimitiveIntegerType>(type)) {
-                return type;
-            }
-            break;
+            return typeInt;
         }
         case BinaryOperation::LessOrEqual:
         case BinaryOperation::GreaterOrEqual:
@@ -43,59 +37,50 @@ Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
         case BinaryOperation::LessThan:
         case BinaryOperation::Equals:
         case BinaryOperation::NotEquals: {
-            if (llvm::isa<PrimitiveIntegerType>(type) || llvm::isa<PrimitiveFloatType>(type)) {
-                return BoolType::get();
-            }
-            break;
+            return BoolType::get();
         }
-        case BinaryOperation::LogicalAnd:
-        case BinaryOperation::LogicalOr: {
-            if (llvm::isa<BoolType>(type)) {
-                return type;
-            }
+        default:
+            // TODO: print pretty error
             break;
-        }
         }
     }
-    auto* type2 = dynamic_cast<NotYetInferredType*>(lhs);
-    if (type2 != nullptr) {
-        // TODO: Handle other literals different from IntegerLiteral
-        if (type2 != NotYetInferredType::get(NotYetInferredKind::IntegerLiteral)) {
-            Log::panic("Expected number literal, got something else");
-        }
 
-        // TODO: divide number literal in integer literal, floating literal and bool literal
+    auto* typeB = dynamic_cast<BoolType*>(lhs);
+    if (typeB != nullptr) {
+        switch (op.kind) {
+        case BinaryOperation::Equals:
+        case BinaryOperation::NotEquals:
+        case BinaryOperation::LogicalAnd:
+        case BinaryOperation::LogicalOr: {
+            return BoolType::get();
+        }
+        default:
+            // TODO: print pretty error
+            break;
+        }
+    }
+
+    auto* typeF = dynamic_cast<NotYetInferredType*>(lhs);
+    if (typeF != nullptr) {
         switch (op.kind) {
         case BinaryOperation::Mult:
         case BinaryOperation::Div:
         case BinaryOperation::Sum:
         case BinaryOperation::Subtraction: {
-            // TODO: if literal integer or float
-            break;
+            return typeF;
         }
-        case BinaryOperation::Modulo:
-        case BinaryOperation::BitwiseAnd:
-        case BinaryOperation::BitwiseOr:
-        case BinaryOperation::BitwiseXor:
-        case BinaryOperation::BitshiftLeft:
-        case BinaryOperation::BitshiftRight: {
-            // TODO: if literal integer
-            break;
-        }
+        // TODO: are floats actually comparable?
         case BinaryOperation::LessOrEqual:
         case BinaryOperation::GreaterOrEqual:
         case BinaryOperation::GreaterThan:
         case BinaryOperation::LessThan:
         case BinaryOperation::Equals:
         case BinaryOperation::NotEquals: {
-            // TODO: if literal integer or float
-            break;
+            return BoolType::get();
         }
-        case BinaryOperation::LogicalAnd:
-        case BinaryOperation::LogicalOr: {
-            // TODO: if literal bool
+        default:
+            // TODO: print pretty error
             break;
-        }
         }
     }
 
@@ -155,7 +140,7 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
     auto lhs = maybe_lhs.value();
 
     if (lhs.getConstness().kind != Constness::NonConst) {
-        Log::panic("Trying to assign to constant variable");
+        Diagnostics::report(expr.sourceSpan, Diag::assign_to_const, lhs.getId());
     }
 
     visit(*expr.expressionRHS);
@@ -177,6 +162,7 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpression& expr)
 {
     if (expr.right != nullptr) {
+
         visit(*expr.right);
         visit(*expr.left);
 

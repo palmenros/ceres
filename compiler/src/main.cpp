@@ -45,7 +45,7 @@ int main(int argc, char const* argv[])
     unsigned fileId = sourceManager.addSourceFileOrExit(argv[1]);
 
     try {
-        auto memoryBuffer = sourceManager.getMemoryBuffer(fileId);
+        auto const* memoryBuffer = sourceManager.getMemoryBuffer(fileId);
         ANTLRInputStream input(memoryBuffer->getBufferStart(), memoryBuffer->getBufferSize());
         CeresLexer lexer(&input);
         CommonTokenStream tokens(&lexer);
@@ -63,14 +63,14 @@ int main(int argc, char const* argv[])
 
         AST::AntlrASTGeneratorVisitor visitor { fileId };
 
-        auto res = std::any_cast<AST::CompilationUnit*>(tree->accept(&visitor));
+        auto* res = std::any_cast<AST::CompilationUnit*>(tree->accept(&visitor));
         ASSERT(res != nullptr);
 
         auto AST = std::unique_ptr<AST::CompilationUnit>(res);
 
-        AST::ASTStringifierVisitor stringifierVisitor;
-        auto str = stringifierVisitor.visit(*AST);
-        Log::info("AST: {}", str);
+        // AST::ASTStringifierVisitor stringifierVisitor;
+        // auto str = stringifierVisitor.visit(*AST);
+        // Log::info("AST: {}", str);
 
         Binding::BindingVisitor bindingVisitor;
         bindingVisitor.visit(*AST);

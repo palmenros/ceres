@@ -48,7 +48,7 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
 
     // Define function in global scope
     auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
-    currentScope->define(def.functionName, fsymbol);
+    currentScope->define(def.id, fsymbol);
     currentFunction = &def;
 
     // Create scope for function body
@@ -58,7 +58,7 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     // Add all parameters
     for (auto param_idx = 0; param_idx < def.parameters.size(); ++param_idx) {
         SymbolDeclaration symbol = SymbolDeclaration(param_idx, &def);
-        currentScope->define(def.parameters[param_idx].name, symbol);
+        currentScope->define(def.parameters[param_idx].id, symbol);
     }
 
     visitChildren(*def.block);
@@ -75,7 +75,7 @@ void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 
     ASSERT(currentScope != nullptr);
 
-    currentScope->define(decl.identifier, symbol);
+    currentScope->define(decl.id, symbol);
 
     visitChildren(decl);
 }
@@ -116,7 +116,7 @@ void BindingVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr)
 
 void BindingVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 {
-    auto resolved = currentScope->resolve(currentFunction->functionName);
+    auto resolved = currentScope->resolve(currentFunction->id);
     ASSERT(resolved.has_value());
     stm.decl = resolved;
     visitChildren(stm);

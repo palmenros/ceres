@@ -37,6 +37,8 @@ public:
     std::optional<size_t> getParamIdx();
     Typing::Constness getConstness();
     Type* getType();
+    // TODO: string view
+    std::string getId();
 };
 
 } // namespace Ceres::Binding

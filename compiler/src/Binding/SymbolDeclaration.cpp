@@ -74,4 +74,17 @@ Typing::Constness SymbolDeclaration::getConstness()
     return getVarDecl(*this)->constness;
 }
 
+std::string SymbolDeclaration::getId()
+{
+    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+        return getParam(*this)->id;
+    }
+
+    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
+        return getFunDecl(*this)->id;
+    }
+
+    return getVarDecl(*this)->id;
+}
+
 } // namespace Ceres::Binding

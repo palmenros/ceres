@@ -9,7 +9,7 @@ FunctionDefinition::FunctionDefinition(SourceSpan const& sourceSpan, FunctionVis
     std::unique_ptr<BlockStatement>&& block, SourceSpan const& returnTypeSpan, SourceSpan const& functionNameSpan)
     : Statement(sourceSpan)
     , visibility(visibility)
-    , functionName(std::move(functionName))
+    , id(std::move(functionName))
     , parameters(std::move(parameters))
     , returnType(returnType)
     , block(std::move(block))

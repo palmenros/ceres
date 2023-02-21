@@ -9,7 +9,7 @@ namespace Ceres::AST {
 
 struct FunctionParameter {
     Type* type;
-    std::string name;
+    std::string id;
     Typing::Constness constness;
 
     SourceSpan typeSourceSpan;

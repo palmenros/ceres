@@ -23,7 +23,7 @@ public:
     VariableScope scope;
 
     Type* type;
-    std::string identifier;
+    std::string id;
 
     SourceSpan typeSourceSpan;
     SourceSpan identifierSourceSpan;

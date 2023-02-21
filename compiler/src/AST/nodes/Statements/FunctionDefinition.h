@@ -16,7 +16,7 @@ enum class FunctionVisibility { Public, Private, Extern };
 class FunctionDefinition : public Statement {
 public:
     FunctionVisibility visibility;
-    std::string functionName;
+    std::string id;
     std::vector<FunctionParameter> parameters;
     Type* returnType;
     std::unique_ptr<BlockStatement> block;
