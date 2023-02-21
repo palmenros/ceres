@@ -2,6 +2,8 @@
 #define COMPILER_BINARYOPERATION_H
 
 #include "Type.h"
+#include <memory>
+#include <string>
 
 namespace Ceres::Typing {
 
@@ -33,11 +35,11 @@ public:
     Kind kind;
     BinaryOperation(Kind kind);
     BinaryOperation();
+    std::string toString() const;
 
-    Type* resTy(Type* lhs, Type* rhs);
+    Type* resTy(Type* lhs) const;
 };
 
 }
-#include "../AST/nodes/Expressions/Expression.h"
-#include <memory>
+
 #endif // COMPILER_BINARYOPERATION_H

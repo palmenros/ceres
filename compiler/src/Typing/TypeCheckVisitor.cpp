@@ -101,7 +101,14 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
             Log::panic("Useless panic");
         }
 
-        auto* result = expr.op.resTy(expr.left->type, expr.right->type);
+        auto* result = expr.op.resTy(expr.left->type);
+
+        if (llvm::isa<ErrorType>(result)) {
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_bin_op, expr.op.toString(),
+                expr.left->type->toString(), expr.right->type->toString());
+            Log::panic("Useless panic");
+        }
+
         expr.type = result;
     }
 }

@@ -1,5 +1,7 @@
 #include "BinaryOperation.h"
+#include "Type.h"
 #include <llvm/Support/Casting.h>
+#include <spdlog/fmt/bundled/core.h>
 
 namespace Ceres::Typing {
 
@@ -13,12 +15,69 @@ BinaryOperation::BinaryOperation()
 {
 }
 
-Type* BinaryOperation::resTy(Type* lhs, Type* rhs)
+std::string BinaryOperation::toString() const
 {
-    // Should already be of the same type
-    // if (lhs != rhs) {
-    //     return ErrorType::get();
-    // }
+    switch (kind) {
+    case Mult:
+        return "*";
+    case Div:
+        return "/";
+    case Modulo:
+        return "%";
+    case Sum:
+        return "+";
+    case Subtraction:
+        return "-";
+    case BitshiftLeft:
+        return "<<";
+    case BitshiftRight:
+        return ">>";
+    case LessOrEqual:
+        return "<=";
+    case GreaterOrEqual:
+        return ">=";
+    case GreaterThan:
+        return ">";
+    case LessThan:
+        return "<";
+    case BitwiseAnd:
+        return "&";
+    case BitwiseOr:
+        return "|";
+    case BitwiseXor:
+        return "^";
+    case Equals:
+        return "==";
+    case NotEquals:
+        return "!=";
+    case LogicalAnd:
+        return "&&";
+    case LogicalOr:
+        return "||";
+    case Invalid:
+        return "Invalid";
+    }
+}
+
+Type* BinaryOperation::resTy(Type* lhs) const
+{
+    auto* typeUnknown = llvm::dyn_cast<NotYetInferredType>(lhs);
+    if (typeUnknown != nullptr) {
+        switch (typeUnknown->kind) {
+        case NotYetInferredKind::IntegerLiteral:
+            // kind doesnt matter
+            lhs = PrimitiveIntegerType::get(PrimitiveIntegerKind::I32);
+            break;
+        case NotYetInferredKind::FloatLiteral:
+            // kind doesnt matter
+            lhs = PrimitiveFloatType::get(PrimitiveFloatKind::F32);
+            break;
+        case NotYetInferredKind::VariableDeclaration:
+        case NotYetInferredKind::Expression:
+            Log::panic("Unreachable");
+            break;
+        }
+    }
 
     auto* typeInt = llvm::dyn_cast<PrimitiveIntegerType>(lhs);
     if (typeInt != nullptr) {
@@ -44,13 +103,12 @@ Type* BinaryOperation::resTy(Type* lhs, Type* rhs)
             return BoolType::get();
         }
         default:
-            // TODO: print pretty error
-            break;
+            return ErrorType::get();
         }
     }
 
-    auto* typeB = llvm::dyn_cast<BoolType>(lhs);
-    if (typeB != nullptr) {
+    auto* typeBool = llvm::dyn_cast<BoolType>(lhs);
+    if (typeBool != nullptr) {
         switch (this->kind) {
         case BinaryOperation::Equals:
         case BinaryOperation::NotEquals:
@@ -59,19 +117,18 @@ Type* BinaryOperation::resTy(Type* lhs, Type* rhs)
             return BoolType::get();
         }
         default:
-            // TODO: print pretty error
-            break;
+            return ErrorType::get();
         }
     }
 
-    auto* typeF = llvm::dyn_cast<NotYetInferredType>(lhs);
-    if (typeF != nullptr) {
+    auto* typeFloat = llvm::dyn_cast<PrimitiveFloatType>(lhs);
+    if (typeFloat != nullptr) {
         switch (this->kind) {
         case BinaryOperation::Mult:
         case BinaryOperation::Div:
         case BinaryOperation::Sum:
         case BinaryOperation::Subtraction: {
-            return typeF;
+            return typeFloat;
         }
         // TODO: are floats actually comparable?
         case BinaryOperation::LessOrEqual:
@@ -83,12 +140,11 @@ Type* BinaryOperation::resTy(Type* lhs, Type* rhs)
             return BoolType::get();
         }
         default:
-            // TODO: print pretty error
-            break;
+            return ErrorType::get();
         }
     }
 
-    Log::panic("Could not resolve binary expr type");
+    return ErrorType::get();
 }
 
 }
