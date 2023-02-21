@@ -16,10 +16,13 @@ public:
     // void visitCommaExpression(CommaExpression &expr) override;
     void visitFunctionCallExpression(AST::FunctionCallExpression& expr) override;
     void visitIdentifierExpression(AST::IdentifierExpression& expr) override;
-    void visitReturnStatement(AST::ReturnStatement& stm) override;
     // TODO:
     // void visitPostfixExpression(PostfixExpression &expr) override;
     // void visitPrefixExpression(PrefixExpression &expr) override;
+
+    // Statements
+    void visitReturnStatement(AST::ReturnStatement& stm) override;
+    void visitIfStatement(AST::IfStatement& stm) override;
 };
 } // namespace Ceres::Typing
 

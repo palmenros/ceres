@@ -104,9 +104,9 @@ std::string NotYetInferredType::toString() const
 {
     switch (kind) {
     case NotYetInferredKind::IntegerLiteral:
-        return "$UnresolvedIntegerLiteral";
+        return "integer literal";
     case NotYetInferredKind::FloatLiteral:
-        return "$UnresolvedFloatLiteral";
+        return "float literal";
     case NotYetInferredKind::VariableDeclaration:
         return "$UnresolvedVariableDeclaration";
     case NotYetInferredKind::Expression:

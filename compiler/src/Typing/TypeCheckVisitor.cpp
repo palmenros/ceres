@@ -9,84 +9,8 @@
 #include <spdlog/fmt/bundled/core.h>
 
 namespace Ceres::Typing {
-Type* binOpResult(BinaryOperation op, Type* lhs, Type* rhs)
-{
-    // Should already be of the same type
-    // if (lhs != rhs) {
-    //     return ErrorType::get();
-    // }
 
-    auto* typeInt = dynamic_cast<PrimitiveIntegerType*>(lhs);
-    if (typeInt != nullptr) {
-        switch (op.kind) {
-        case BinaryOperation::Mult:
-        case BinaryOperation::Div:
-        case BinaryOperation::Sum:
-        case BinaryOperation::Subtraction:
-        case BinaryOperation::Modulo:
-        case BinaryOperation::BitwiseAnd:
-        case BinaryOperation::BitwiseOr:
-        case BinaryOperation::BitwiseXor:
-        case BinaryOperation::BitshiftLeft:
-        case BinaryOperation::BitshiftRight: {
-            return typeInt;
-        }
-        case BinaryOperation::LessOrEqual:
-        case BinaryOperation::GreaterOrEqual:
-        case BinaryOperation::GreaterThan:
-        case BinaryOperation::LessThan:
-        case BinaryOperation::Equals:
-        case BinaryOperation::NotEquals: {
-            return BoolType::get();
-        }
-        default:
-            // TODO: print pretty error
-            break;
-        }
-    }
-
-    auto* typeB = dynamic_cast<BoolType*>(lhs);
-    if (typeB != nullptr) {
-        switch (op.kind) {
-        case BinaryOperation::Equals:
-        case BinaryOperation::NotEquals:
-        case BinaryOperation::LogicalAnd:
-        case BinaryOperation::LogicalOr: {
-            return BoolType::get();
-        }
-        default:
-            // TODO: print pretty error
-            break;
-        }
-    }
-
-    auto* typeF = dynamic_cast<NotYetInferredType*>(lhs);
-    if (typeF != nullptr) {
-        switch (op.kind) {
-        case BinaryOperation::Mult:
-        case BinaryOperation::Div:
-        case BinaryOperation::Sum:
-        case BinaryOperation::Subtraction: {
-            return typeF;
-        }
-        // TODO: are floats actually comparable?
-        case BinaryOperation::LessOrEqual:
-        case BinaryOperation::GreaterOrEqual:
-        case BinaryOperation::GreaterThan:
-        case BinaryOperation::LessThan:
-        case BinaryOperation::Equals:
-        case BinaryOperation::NotEquals: {
-            return BoolType::get();
-        }
-        default:
-            // TODO: print pretty error
-            break;
-        }
-    }
-
-    Log::panic("Could not resolve binary expr type");
-}
-
+// TODO: do this right, when we implement inference
 void expandCoercion(Type* coerced, AST::Expression& lhs)
 {
     // Assign variable type to all members of expression
@@ -177,7 +101,7 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
             Log::panic("Useless panic");
         }
 
-        auto* result = binOpResult(expr.op, expr.left->type, expr.right->type);
+        auto* result = expr.op.resTy(expr.left->type, expr.right->type);
         expr.type = result;
     }
 }
@@ -237,4 +161,14 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
         Log::panic("Useless panic");
     }
 }
+
+void TypeCheckVisitor::visitIfStatement(AST::IfStatement& stm)
+{
+    visitChildren(stm);
+
+    if (!llvm::isa<BoolType>(stm.condition->type)) {
+        Log::panic("if statements only accept boolean conditions, got '{}'", stm.condition->type->toString());
+    }
+}
+
 } // namespace Ceres::Typing

@@ -1,6 +1,8 @@
 #ifndef COMPILER_BINARYOPERATION_H
 #define COMPILER_BINARYOPERATION_H
 
+#include "Type.h"
+
 namespace Ceres::Typing {
 
 class BinaryOperation {
@@ -31,6 +33,8 @@ public:
     Kind kind;
     BinaryOperation(Kind kind);
     BinaryOperation();
+
+    Type* resTy(Type* lhs, Type* rhs);
 };
 
 }
