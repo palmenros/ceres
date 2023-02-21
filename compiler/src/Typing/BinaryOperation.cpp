@@ -57,6 +57,7 @@ std::string BinaryOperation::toString() const
     case Invalid:
         return "Invalid";
     }
+    NOT_IMPLEMENTED();
 }
 
 Type* BinaryOperation::resTy(Type* lhs) const
