@@ -6,7 +6,7 @@
 
 namespace Ceres {
 
-std::unique_ptr<UnitVoidType> UnitVoidType::instance = nullptr;
+std::unique_ptr<VoidType> VoidType::instance = nullptr;
 std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> UnresolvedType::instances;
 std::unordered_map<NotYetInferredKind, std::unique_ptr<NotYetInferredType>> NotYetInferredType::instances;
 std::unordered_map<PrimitiveIntegerKind, std::unique_ptr<PrimitiveIntegerType>> PrimitiveIntegerType::instances;
@@ -16,19 +16,19 @@ std::unordered_map<std::pair<Type*, std::vector<Type*>>, std::unique_ptr<Functio
 std::unique_ptr<ErrorType> ErrorType::instance = nullptr;
 std::unique_ptr<BoolType> BoolType::instance = nullptr;
 
-std::string UnitVoidType::toString() const { return "void"; }
+std::string VoidType::toString() const { return "void"; }
 
-UnitVoidType* UnitVoidType::get()
+VoidType* VoidType::get()
 {
     if (instance != nullptr) {
         return instance.get();
     }
 
-    instance.reset(new UnitVoidType);
+    instance.reset(new VoidType);
     return instance.get();
 }
 
-void UnitVoidType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnitVoidType(this); }
+void VoidType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnitVoidType(this); }
 
 PrimitiveIntegerType::PrimitiveIntegerType(PrimitiveIntegerKind kind)
     : kind(kind)

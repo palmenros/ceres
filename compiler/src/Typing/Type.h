@@ -53,10 +53,10 @@ public:
     static Type* getImplicitlyCoercedType(Type* a, Type* b);
 };
 
-class UnitVoidType : public Type {
+class VoidType : public Type {
 private:
-    static std::unique_ptr<UnitVoidType> instance;
-    UnitVoidType()
+    static std::unique_ptr<VoidType> instance;
+    VoidType()
         : Type(TypeKind::UnitVoidType)
     {
     }
@@ -67,7 +67,7 @@ public:
     void accept(Typing::TypeVisitor& visitor) override;
 
     // Ours
-    static UnitVoidType* get();
+    static VoidType* get();
     [[nodiscard]] std::string toString() const override;
 };
 

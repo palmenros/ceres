@@ -220,7 +220,7 @@ std::any AntlrASTGeneratorVisitor::visitFunctionDefinition(CeresParser::Function
         returnType = std::any_cast<Type*>(visit(ctx->type()));
         returnTypeSourceSpan = getSourceSpan(*ctx->type());
     } else {
-        returnType = UnitVoidType::get();
+        returnType = VoidType::get();
     }
 
     std::vector<FunctionParameter> parameters;
@@ -256,7 +256,7 @@ std::any AntlrASTGeneratorVisitor::visitExternFunDeclaration(CeresParser::Extern
         returnType = std::any_cast<Type*>(visit(ctx->type()));
         returnTypeSourceSpan = getSourceSpan(*ctx->type());
     } else {
-        returnType = UnitVoidType::get();
+        returnType = VoidType::get();
     }
 
     std::vector<FunctionParameter> parameters;

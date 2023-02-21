@@ -155,6 +155,15 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 {
     ASSERT(stm.decl.has_value());
     auto* retType = stm.decl->getType();
+
+    if (stm.expr == nullptr) {
+        if (!llvm::isa<VoidType>(retType)) {
+            Log::panic("Empty return in non void function");
+        }
+
+        return;
+    }
+
     visit(*stm.expr);
 
     auto* coerced = Type::getImplicitlyCoercedType(retType, stm.expr->type);

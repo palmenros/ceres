@@ -13,7 +13,7 @@ public:
     //  unique nature of types. A type is uniquely represented by its
     //  pointer value, due to caching.
 
-    virtual void visitUnitVoidType(UnitVoidType* type) = 0;
+    virtual void visitUnitVoidType(VoidType* type) = 0;
     virtual void visitUnresolvedType(UnresolvedType* type) = 0;
     virtual void visitNotYetInferredType(NotYetInferredType* type) = 0;
     virtual void visitPrimitiveIntegerType(PrimitiveIntegerType* type) = 0;

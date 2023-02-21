@@ -1,0 +1,5 @@
+fn main() {
+    const a: i32 = 4 + 5;
+
+    return;
+}
