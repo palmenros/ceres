@@ -13,6 +13,10 @@ FOR : 'for';
 WHILE : 'while';
 EXTERN: 'extern';
 
+// Type keywords
+
+BOOL: 'bool';
+
 // Literals
 
 INTEGER_LITERAL_SUFFIX: 'u8'

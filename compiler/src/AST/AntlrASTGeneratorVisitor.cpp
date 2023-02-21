@@ -346,6 +346,8 @@ std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext* ctx)
         return static_cast<Type*>(PrimitiveIntegerType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
     } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
         return static_cast<Type*>(PrimitiveFloatType::get(ctx->FLOAT_LITERAL_SUFFIX()->toString()));
+    } else if (ctx->BOOL() != nullptr) {
+        return static_cast<Type*>(BoolType::get());
     } else {
         NOT_IMPLEMENTED();
     }

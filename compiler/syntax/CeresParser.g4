@@ -35,12 +35,11 @@ block
     : OPEN_BRACES (statement)* CLOSE_BRACES
     ;
 
-// Note: We don't have special parsing for primitive types, they will be handled in code via
-//       the type symbol table.
 type
     : IDENTIFIER
     | INTEGER_LITERAL_SUFFIX
     | FLOAT_LITERAL_SUFFIX
+    | BOOL
     ;
 
 varDeclaration
