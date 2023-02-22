@@ -16,6 +16,9 @@ DIAG(duplicate_symbol_note, Note, "Previous definition of symbol '{}' here")
 // Type check
 
 DIAG(empty_return_non_void_function, Error, "empty return in non void function")
+DIAG(calling_a_non_function_type, Error, "expected function, found '{}'")
+
+DIAG(assign_to_function, Error, "cannot assign to a function")
 
 DIAG(mismatched_type_on_bin_op, Error, "mismatched types on binary operation: operator '{}' cannot be applied to '{}' and '{}'")
 DIAG(mismatched_type_on_if_expr, Error, "if statements expect boolean conditions, got '{}'")

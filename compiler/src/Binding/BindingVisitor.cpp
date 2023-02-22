@@ -29,6 +29,29 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
             n->decl = resolved;
         }
     }
+
+    // Now we set the types of the function definitions and declarations
+    for (auto& funDec : unit.functionDeclarations) {
+        std::vector<Type*> parameterTypes;
+        parameterTypes.reserve(funDec->parameters.size());
+
+        for(const auto& param : funDec->parameters) {
+            parameterTypes.push_back(param.type);
+        }
+
+        funDec->functionType = FunctionType::get(funDec->returnType, parameterTypes);
+    }
+
+    for (auto& funDef : unit.functionDefinitions) {
+        std::vector<Type*> parameterTypes;
+        parameterTypes.reserve(funDef->parameters.size());
+
+        for(const auto& param : funDef->parameters) {
+            parameterTypes.push_back(param.type);
+        }
+
+        funDef->functionType = FunctionType::get(funDef->returnType, parameterTypes);
+    }
 }
 
 void BindingVisitor::visitBlockStatement(AST::BlockStatement& stm)
@@ -48,8 +71,8 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     ASSERT(def.block != nullptr);
     ASSERT(currentScope != nullptr);
 
-    // Define function in global scope
-    auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &def);
+    // Define function
+    auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDefinition, &def);
     currentScope->define(def.id, fsymbol);
     currentFunction = &def;
 
@@ -59,13 +82,22 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
 
     // Add all parameters
     for (auto param_idx = 0; param_idx < def.parameters.size(); ++param_idx) {
-        SymbolDeclaration symbol = SymbolDeclaration(param_idx, &def);
+        SymbolDeclaration symbol = SymbolDeclaration(SymbolDeclarationKind::FunctionParamDeclaration, param_idx, &def);
         currentScope->define(def.parameters[param_idx].id, symbol);
     }
 
     visitChildren(*def.block);
 
     currentScope = currentScope->getEnclosingScope();
+}
+
+void BindingVisitor::visitFunctionDeclaration(AST::FunctionDeclaration& dec)
+{
+    ASSERT(currentScope != nullptr);
+
+    // Define function
+    auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDeclaration, &dec);
+    currentScope->define(dec.functionName, fsymbol);
 }
 
 void BindingVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
@@ -122,6 +154,11 @@ void BindingVisitor::visitReturnStatement(AST::ReturnStatement& stm)
     ASSERT(resolved.has_value());
     stm.decl = resolved;
     visitChildren(stm);
+}
+
+void BindingVisitor::visitForStatement(AST::ForStatement& stm)
+{
+    NOT_IMPLEMENTED();
 }
 
 } // namespace Ceres::Binding

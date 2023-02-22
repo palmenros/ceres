@@ -274,7 +274,7 @@ std::string ASTStringifierVisitor::doVisitFunctionDeclaration(FunctionDeclaratio
         paramsString += paramString;
     }
 
-    return fmt::format("(FunctionDefinition id='{}', params='{}')", dec.functionName, paramsString);
+    return fmt::format("(FunctionDeclaration id='{}', params='{}')", dec.functionName, paramsString);
 }
 
 std::string ASTStringifierVisitor::doVisitIdentifierExpression(IdentifierExpression& expr)

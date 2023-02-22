@@ -11,6 +11,7 @@
 namespace Ceres::Binding {
 
 enum class SymbolDeclarationKind {
+    FunctionDefinition,
     FunctionDeclaration,
     LocalVariableDeclaration,
     GlobalVariableDeclaration,
@@ -29,7 +30,7 @@ public:
     // TODO: sadly this is not rust so we cant create a constructor for a
     // variant, just pray no one uses this incorrectly
     SymbolDeclaration(SymbolDeclarationKind kind, AST::Node* declarationNode);
-    SymbolDeclaration(size_t param_idx, AST::Node* declarationNode);
+    SymbolDeclaration(SymbolDeclarationKind kind, size_t param_idx, AST::Node* declarationNode);
 
     // Methods
     SymbolDeclarationKind getKind() const;

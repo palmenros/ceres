@@ -70,6 +70,24 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 
     auto lhs = maybe_lhs.value();
 
+    // TODO: Here in the future we will have to check if is LHS
+    switch(lhs.getKind()) {
+    case Binding::SymbolDeclarationKind::FunctionDefinition:
+    case Binding::SymbolDeclarationKind::FunctionDeclaration:
+        Diagnostics::report(identifier->sourceSpan, Diag::assign_to_function);
+        expr.type = ErrorType::get();
+        return;
+    case Binding::SymbolDeclarationKind::LocalVariableDeclaration:
+    case Binding::SymbolDeclarationKind::GlobalVariableDeclaration:
+    case Binding::SymbolDeclarationKind::FunctionParamDeclaration:
+        /* We can continue */
+        break;
+    case Binding::SymbolDeclarationKind::Invalid:
+        ASSERT_NOT_REACHED();
+    default:
+        NOT_IMPLEMENTED();
+    }
+
     if (lhs.getConstness().kind != Constness::NonConst) {
         Diagnostics::report(expr.sourceSpan, Diag::assign_to_const, lhs.getId());
     }
@@ -133,23 +151,24 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
 
 void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& expr)
 {
-    auto maybe_rhs = expr.identifier->decl;
+    ASSERT(expr.identifier != nullptr);
+    visit(*expr.identifier);
 
-    if (!maybe_rhs.has_value()) {
-        // Error on binding function identifier
+    // Check that the type of the callee is a function
+    FunctionType* funType = llvm::dyn_cast<FunctionType>(expr.identifier->type);
+    if(funType == nullptr) {
+        if (!llvm::isa<ErrorType>(expr.identifier->type)) {
+            Diagnostics::report(expr.sourceSpan, Diag::calling_a_non_function_type, expr.identifier->type->toString());
+        }
         expr.type = ErrorType::get();
         return;
     }
 
-    auto rhs = maybe_rhs.value();
-
-    expr.type = rhs.getType();
-    auto* decl = dynamic_cast<AST::FunctionDefinition*>(rhs.getDeclarationNode());
-    ASSERT(decl != nullptr);
+    expr.type = funType->returnType;
 
     for (auto i = 0; i < expr.arguments.size(); ++i) {
         visit(*expr.arguments[i]);
-        auto* ty = decl->parameters[i].type;
+        auto* ty = funType->argumentTypes[i];
 
         if (llvm::isa<ErrorType>(ty)) {
             continue;
@@ -178,14 +197,22 @@ void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr
     }
 
     auto rhs = maybe_rhs.value();
-
     expr.type = rhs.getType();
+    ASSERT(expr.type != nullptr);
 }
 
 void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 {
     ASSERT(stm.decl.has_value());
-    auto* retType = stm.decl->getType();
+
+    Type* retType;
+
+    if(auto* funType = llvm::dyn_cast<FunctionType>(stm.decl->getType())) {
+        retType = funType->returnType;
+    } else {
+        // Return should always point to a function
+        ASSERT_NOT_REACHED();
+    }
 
     if (stm.expr == nullptr) {
         if (!llvm::isa<VoidType>(retType)) {

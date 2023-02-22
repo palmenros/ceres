@@ -21,9 +21,8 @@ public:
     void visitIdentifierExpression(AST::IdentifierExpression& expr) override;
     void visitAssignmentExpression(AST::AssignmentExpression& expr) override;
     void visitReturnStatement(AST::ReturnStatement& stm) override;
-
-    // TODO: think about this
-    // void visitForStatement(ForStatement &stm) override;
+    void visitFunctionDeclaration(AST::FunctionDeclaration& dec) override;
+    void visitForStatement(AST::ForStatement& stm) override;
 };
 } // namespace Ceres::Binding
 

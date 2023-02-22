@@ -131,6 +131,7 @@ std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::Compilation
     }
 
     std::vector<std::unique_ptr<FunctionDefinition>> functionDefinitions;
+    std::vector<std::unique_ptr<FunctionDeclaration>> functionDeclarations;
     std::vector<std::unique_ptr<VariableDeclaration>> variableDeclarations;
 
     functionDefinitions.reserve(ctx->globalFunctionDefinition().size());
@@ -143,6 +144,21 @@ std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::Compilation
             ASSERT(funDef != nullptr);
 
             functionDefinitions.push_back(std::move(funDef));
+        } catch (ParseException&) {
+            // Log::debug("Parse exception in function definition caught");
+        }
+    }
+
+    functionDeclarations.reserve(ctx->externFunDeclaration().size());
+
+    for (auto* funDeclarationCtxPtr : ctx->externFunDeclaration()) {
+        try {
+            auto res = visit(funDeclarationCtxPtr);
+            auto funDec = std::unique_ptr<FunctionDeclaration>(std::any_cast<FunctionDeclaration*>(res));
+
+            ASSERT(funDec != nullptr);
+
+            functionDeclarations.push_back(std::move(funDec));
         } catch (ParseException&) {
             // Log::debug("Parse exception in function definition caught");
         }
@@ -163,7 +179,7 @@ std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::Compilation
         }
     }
 
-    return new CompilationUnit(getSourceSpan(*ctx), std::move(functionDefinitions), std::move(variableDeclarations));
+    return new CompilationUnit(getSourceSpan(*ctx), std::move(functionDefinitions), std::move(functionDeclarations), std::move(variableDeclarations));
 }
 
 std::any AntlrASTGeneratorVisitor::visitGlobalVarDeclaration(CeresParser::GlobalVarDeclarationContext* ctx)
@@ -341,7 +357,9 @@ std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext* ctx)
     checkException(*ctx);
 
     if (ctx->IDENTIFIER() != nullptr) {
-        return static_cast<Type*>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
+        Diagnostics::report(getSourceSpan(*ctx), Diag::unknown_type, ctx->IDENTIFIER()->toString());
+        return static_cast<Type*>(ErrorType::get());
+        //return static_cast<Type*>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
     } else if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
         return static_cast<Type*>(PrimitiveIntegerType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
     } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {

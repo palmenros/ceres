@@ -1,0 +1,9 @@
+fn main() {
+    test = other;
+}
+
+fn test() {
+}
+
+fn other() {
+}

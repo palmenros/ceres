@@ -13,6 +13,8 @@ public:
     std::vector<FunctionParameter> parameters;
     Type* returnType;
 
+    Type* functionType = nullptr;
+
     SourceSpan returnTypeSpan;
     SourceSpan functionNameSpan;
 

@@ -1,5 +1,6 @@
 #include "SymbolDeclaration.h"
 #include "../AST/nodes/Statements/FunctionDefinition.h"
+#include "../AST/nodes/FunctionDeclaration.h"
 
 namespace Ceres::Binding {
 AST::FunctionParameter* getParam(const SymbolDeclaration& symbol)
@@ -23,9 +24,17 @@ AST::VariableDeclaration* getVarDecl(const SymbolDeclaration& symbol)
     return node;
 }
 
-AST::FunctionDefinition* getFunDecl(const SymbolDeclaration& symbol)
+AST::FunctionDefinition* getFunDef(const SymbolDeclaration& symbol)
 {
     auto* node = dynamic_cast<AST::FunctionDefinition*>(symbol.getDeclarationNode());
+    ASSERT(node != nullptr);
+
+    return node;
+}
+
+AST::FunctionDeclaration* getFunDec(const SymbolDeclaration& symbol)
+{
+    auto* node = dynamic_cast<AST::FunctionDeclaration*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
 
     return node;
@@ -36,8 +45,8 @@ SymbolDeclaration::SymbolDeclaration(SymbolDeclarationKind kind, AST::Node* decl
     : kind(kind)
     , declarationNode(declarationNode) {};
 
-SymbolDeclaration::SymbolDeclaration(size_t param_idx, AST::Node* declarationNode)
-    : kind(SymbolDeclarationKind::FunctionParamDeclaration)
+SymbolDeclaration::SymbolDeclaration(SymbolDeclarationKind kind, size_t param_idx, AST::Node* declarationNode)
+    : kind(kind)
     , declarationNode(declarationNode)
     , paramIdx(param_idx) {};
 
@@ -50,41 +59,62 @@ std::optional<size_t> SymbolDeclaration::getParamIdx() const { return paramIdx; 
 
 Type* SymbolDeclaration::getType() const
 {
-    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+    switch(kind) {
+
+    case SymbolDeclarationKind::FunctionDefinition:
+        return getFunDef(*this)->functionType;
+    case SymbolDeclarationKind::FunctionDeclaration:
+        return getFunDec(*this)->functionType;
+    case SymbolDeclarationKind::LocalVariableDeclaration:
+    case SymbolDeclarationKind::GlobalVariableDeclaration:
+        return getVarDecl(*this)->type;
+    case SymbolDeclarationKind::FunctionParamDeclaration:
         return getParam(*this)->type;
+    case SymbolDeclarationKind::Invalid:
+        ASSERT_NOT_REACHED();
+    default:
+        NOT_IMPLEMENTED();
     }
-
-    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
-        return getFunDecl(*this)->returnType;
-    }
-
-    return getVarDecl(*this)->type;
 }
 
 Typing::Constness SymbolDeclaration::getConstness() const
 {
-    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
-        return getParam(*this)->constness;
-    }
+    switch(kind) {
 
-    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
+    case SymbolDeclarationKind::FunctionDefinition:
+    case SymbolDeclarationKind::FunctionDeclaration:
         Log::panic("Trying to check constness of function");
+    case SymbolDeclarationKind::LocalVariableDeclaration:
+    case SymbolDeclarationKind::GlobalVariableDeclaration:
+        return getVarDecl(*this)->constness;
+    case SymbolDeclarationKind::FunctionParamDeclaration:
+        return getParam(*this)->constness;
+    case SymbolDeclarationKind::Invalid:
+        ASSERT_NOT_REACHED();
+    default:
+        NOT_IMPLEMENTED();
     }
-
-    return getVarDecl(*this)->constness;
 }
 
 std::string SymbolDeclaration::getId()
 {
-    if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
+    switch (kind) {
+
+    case SymbolDeclarationKind::FunctionDefinition:
+        return getFunDef(*this)->id;
+    case SymbolDeclarationKind::FunctionDeclaration:
+        return getFunDec(*this)->functionName;
+    case SymbolDeclarationKind::LocalVariableDeclaration:
+    case SymbolDeclarationKind::GlobalVariableDeclaration:
+        return getVarDecl(*this)->id;
+    case SymbolDeclarationKind::FunctionParamDeclaration:
         return getParam(*this)->id;
+    case SymbolDeclarationKind::Invalid:
+        ASSERT_NOT_REACHED();
+    default:
+        NOT_IMPLEMENTED();
     }
-
-    if (kind == SymbolDeclarationKind::FunctionDeclaration) {
-        return getFunDecl(*this)->id;
-    }
-
-    return getVarDecl(*this)->id;
 }
+
 
 } // namespace Ceres::Binding

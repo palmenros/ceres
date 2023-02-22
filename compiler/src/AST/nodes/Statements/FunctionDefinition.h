@@ -21,6 +21,8 @@ public:
     Type* returnType;
     std::unique_ptr<BlockStatement> block;
 
+    Type* functionType = nullptr;
+
     SourceSpan returnTypeSpan;
     SourceSpan functionNameSpan;
 
