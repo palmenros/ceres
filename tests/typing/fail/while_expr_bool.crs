@@ -1,0 +1,6 @@
+fn test() {
+    var a : i32 = 2;
+    while a {
+
+    }
+}

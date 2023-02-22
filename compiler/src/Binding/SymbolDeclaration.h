@@ -32,11 +32,11 @@ public:
     SymbolDeclaration(size_t param_idx, AST::Node* declarationNode);
 
     // Methods
-    SymbolDeclarationKind getKind();
-    AST::Node* getDeclarationNode();
-    std::optional<size_t> getParamIdx();
-    Typing::Constness getConstness();
-    Type* getType();
+    SymbolDeclarationKind getKind() const;
+    AST::Node* getDeclarationNode() const;
+    std::optional<size_t> getParamIdx() const;
+    Typing::Constness getConstness() const;
+    Type* getType() const;
     // TODO: string view
     std::string getId();
 };

@@ -1,4 +1,5 @@
 #include "BindingVisitor.h"
+#include "../Diagnostics/Diagnostics.h"
 #include "Scope.h"
 #include "SymbolDeclaration.h"
 #include <optional>
@@ -22,7 +23,8 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
         auto resolved = currentScope->resolve(n->identifier);
 
         if (!resolved.has_value()) {
-            Log::panic("Unresolved identifier access");
+            Diagnostics::report(n->sourceSpan, Diag::unresolved_identifier, n->identifier);
+            Log::panic("Useless panic");
         }
 
         n->decl = resolved;

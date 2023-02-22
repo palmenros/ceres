@@ -73,7 +73,6 @@ whileStatement
 
 forStatement
     : FOR (varDeclaration | decl_expr=expression)? SEMICOLON (cond_expr=expression)? SEMICOLON (update_expr=expression)? block
-    | FOR OPEN_PARENS (varDeclaration | decl_expr=expression)? SEMICOLON (cond_expr=expression)? SEMICOLON (update_expr=expression)? CLOSE_PARENS block // Allow parenthesis
     ;
 
 // Implicit rule precedence (the first that matches)

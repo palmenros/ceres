@@ -1,0 +1,7 @@
+fn main() {
+    var a : bool;
+    ++a;
+
+    var b : f64;
+    ~b;
+}

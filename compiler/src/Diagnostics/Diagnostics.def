@@ -9,10 +9,20 @@ DIAG(unknown_type, Error, "unknown type '{}'")
 
 // Binding
 DIAG(assign_to_const, Error, "assignment to constant variable: '{}'")
+DIAG(unresolved_identifier, Error, "unresolved identifier access: '{}'")
+DIAG(duplicate_symbol, Error, "The name '{}' is defined multiple times")
+DIAG(duplicate_symbol_note, Note, "Previous definition of symbol '{}' here")
 
 // Type check
 
+DIAG(empty_return_non_void_function, Error, "empty return in non void function")
+
 DIAG(mismatched_type_on_bin_op, Error, "mismatched types on binary operation: operator '{}' cannot be applied to '{}' and '{}'")
+DIAG(mismatched_type_on_if_expr, Error, "if statements expect boolean conditions, got '{}'")
+DIAG(mismatched_type_on_while_expr, Error, "while statements expect boolean conditions, got '{}'")
+DIAG(mismatched_type_on_for_expr, Error, "for statements expect boolean conditions, got '{}'")
+DIAG(mismatched_type_on_prefix_operator, Error, "prefix operator '{}' expected {}, got '{}'")
+DIAG(mismatched_type_on_postfix_operator, Error, "postfix operator '{}' expected {}, got '{}'")
 
 DIAG(mismatched_type_on_function_call, Error, "mismatched types on function call: expected '{}' and got '{}'")
 DIAG(mismatched_type_on_var_decl, Error, "mismatched types on variable declaration: expected '{}' and got '{}'")

@@ -23,6 +23,11 @@ public:
     // Statements
     void visitReturnStatement(AST::ReturnStatement& stm) override;
     void visitIfStatement(AST::IfStatement& stm) override;
+    void visitCommaExpression(AST::CommaExpression& expr) override;
+    void visitForStatement(AST::ForStatement& stm) override;
+    void visitWhileStatement(AST::WhileStatement& stm) override;
+    void visitPostfixExpression(AST::PostfixExpression& expr) override;
+    void visitPrefixExpression(AST::PrefixExpression& expr) override;
 };
 } // namespace Ceres::Typing
 

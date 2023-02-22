@@ -75,8 +75,7 @@ Type* BinaryOperation::resTy(Type* lhs) const
             break;
         case NotYetInferredKind::VariableDeclaration:
         case NotYetInferredKind::Expression:
-            Log::panic("Unreachable");
-            break;
+            ASSERT_NOT_REACHED();
         }
     }
 

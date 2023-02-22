@@ -8,6 +8,8 @@ namespace Ceres::AST {
 
 enum class PrefixOp { PrefixIncrement, PrefixDecrement, UnaryPlus, UnaryMinus, UnaryLogicalNot, UnaryBitwiseNot };
 
+std::string prefixOpToString(PrefixOp op);
+
 class PrefixExpression : public Expression {
 public:
     PrefixOp op;

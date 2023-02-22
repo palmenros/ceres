@@ -158,7 +158,8 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 
     if (stm.expr == nullptr) {
         if (!llvm::isa<VoidType>(retType)) {
-            Log::panic("Empty return in non void function");
+            Diagnostics::report(stm.sourceSpan, Diag::empty_return_non_void_function);
+            Log::panic("Useless panic");
         }
 
         return;
@@ -183,7 +184,96 @@ void TypeCheckVisitor::visitIfStatement(AST::IfStatement& stm)
     visitChildren(stm);
 
     if (!llvm::isa<BoolType>(stm.condition->type)) {
-        Log::panic("if statements only accept boolean conditions, got '{}'", stm.condition->type->toString());
+        Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_if_expr, stm.condition->type->toString());
+        Log::panic("Useless panic");
+    }
+}
+
+void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm) {
+    visitChildren(stm);
+
+    if(stm.maybeConditionExpr == nullptr) {
+        return;
+    }
+
+    if (!llvm::isa<BoolType>(stm.maybeConditionExpr->type)) {
+        Diagnostics::report(stm.maybeConditionExpr->sourceSpan, Diag::mismatched_type_on_for_expr, stm.maybeConditionExpr->type->toString());
+        Log::panic("Useless panic");
+    }
+}
+
+void TypeCheckVisitor::visitWhileStatement(AST::WhileStatement& stm) {
+    visitChildren(stm);
+
+    if (!llvm::isa<BoolType>(stm.condition->type)) {
+        Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_while_expr, stm.condition->type->toString());
+        Log::panic("Useless panic");
+    }
+}
+
+void TypeCheckVisitor::visitCommaExpression(AST::CommaExpression& expr) {
+    visitChildren(expr);
+
+    expr.type = expr.expressions.back()->type;
+}
+
+void TypeCheckVisitor::visitPostfixExpression(AST::PostfixExpression& expr)
+{
+    visitChildren(expr);
+
+    switch(expr.op) {
+    case AST::PostfixOp::PostfixIncrement:
+    case AST::PostfixOp::PostfixDecrement: {
+        if (llvm::isa<PrimitiveIntegerType>(expr.expr->type) || llvm::isa<PrimitiveFloatType>(expr.expr->type)) {
+            expr.type = expr.expr->type;
+        } else {
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_postfix_operator, postfixOpToString(expr.op), "integer or float", expr.expr->type->toString());
+            Log::panic("Useless panic");
+        }
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
+{
+    visitChildren(expr);
+
+    switch(expr.op) {
+    case AST::PrefixOp::PrefixIncrement:
+    case AST::PrefixOp::PrefixDecrement:
+    case AST::PrefixOp::UnaryPlus:
+    case AST::PrefixOp::UnaryMinus: {
+        if (llvm::isa<PrimitiveIntegerType>(expr.expr->type) || llvm::isa<PrimitiveFloatType>(expr.expr->type)) {
+            expr.type = expr.expr->type;
+        } else {
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer or float", expr.expr->type->toString());
+            Log::panic("Useless panic");
+        }
+        break;
+    }
+    case AST::PrefixOp::UnaryLogicalNot: {
+        if (llvm::isa<BoolType>(expr.expr->type)) {
+            expr.type = expr.expr->type;
+        } else {
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "bool",  expr.expr->type->toString());
+            Log::panic("Useless panic");
+        }
+        break;
+    }
+    case AST::PrefixOp::UnaryBitwiseNot: {
+        if (llvm::isa<PrimitiveIntegerType>(expr.expr->type)) {
+            expr.type = expr.expr->type;
+        } else {
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer", expr.expr->type->toString());
+            Log::panic("Useless panic");
+        }
+        break;
+    }
+    default:
+        ASSERT_NOT_REACHED();
     }
 }
 

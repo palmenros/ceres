@@ -15,4 +15,33 @@ PrefixExpression::PrefixExpression(
 void PrefixExpression::accept(AbstractASTVisitor& visitor) { visitor.visitPrefixExpression(*this); }
 
 std::vector<Node*> PrefixExpression::getChildren() const { return { expr.get() }; }
+
+std::string prefixOpToString(PrefixOp op) {
+    std::string opStr;
+    switch (op) {
+    case PrefixOp::PrefixIncrement:
+        opStr = "++";
+        break;
+    case PrefixOp::PrefixDecrement:
+        opStr = "--";
+        break;
+    case PrefixOp::UnaryPlus:
+        opStr = "+";
+        break;
+    case PrefixOp::UnaryMinus:
+        opStr = "-";
+        break;
+    case PrefixOp::UnaryLogicalNot:
+        opStr = "!";
+        break;
+    case PrefixOp::UnaryBitwiseNot:
+        opStr = "~";
+        break;
+    default:
+        NOT_IMPLEMENTED();
+    }
+
+    return opStr;
+}
+
 } // namespace Ceres::AST

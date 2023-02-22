@@ -1,4 +1,5 @@
 #include "Scope.h"
+#include "../Diagnostics/Diagnostics.h"
 
 namespace Ceres::Binding {
 Scope::Scope(Scope* enclosingScope)
@@ -14,7 +15,9 @@ void SymbolTableScope::define(std::string const& name, SymbolDeclaration const& 
     auto [it, inserted_new] = map.insert(std::make_pair(name, symbol));
     if (!inserted_new) {
         // An element with that scopeName already existed
-        Log::panic("duplicate symbol");
+        Diagnostics::report(symbol.getDeclarationNode()->sourceSpan, Diag::duplicate_symbol, name);
+        Diagnostics::report(it->second.getDeclarationNode()->sourceSpan, Diag::duplicate_symbol_note, name);
+        Log::panic("Useless panic");
     }
 };
 

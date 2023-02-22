@@ -7,6 +7,8 @@
 namespace Ceres::AST {
 enum class PostfixOp { PostfixIncrement, PostfixDecrement };
 
+std::string postfixOpToString(PostfixOp op);
+
 class PostfixExpression : public Expression {
 public:
     PostfixOp op;

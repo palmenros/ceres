@@ -320,45 +320,13 @@ std::string ASTStringifierVisitor::doVisitIntLiteralExpression(IntLiteralExpress
 
 std::string ASTStringifierVisitor::doVisitPostfixExpression(PostfixExpression& expr)
 {
-    std::string opStr;
-
-    switch (expr.op) {
-    case PostfixOp::PostfixIncrement:
-        opStr = "++";
-        break;
-    case PostfixOp::PostfixDecrement:
-        opStr = "--";
-        break;
-    }
-
+    std::string opStr = postfixOpToString(expr.op);
     return fmt::format("(PostfixExpression op='{}' expr='{}')", opStr, visit(*expr.expr));
 }
 
 std::string ASTStringifierVisitor::doVisitPrefixExpression(PrefixExpression& expr)
 {
-    std::string opStr;
-
-    switch (expr.op) {
-    case PrefixOp::PrefixIncrement:
-        opStr = "++";
-        break;
-    case PrefixOp::PrefixDecrement:
-        opStr = "--";
-        break;
-    case PrefixOp::UnaryPlus:
-        opStr = "+";
-        break;
-    case PrefixOp::UnaryMinus:
-        opStr = "-";
-        break;
-    case PrefixOp::UnaryLogicalNot:
-        opStr = "!";
-        break;
-    case PrefixOp::UnaryBitwiseNot:
-        opStr = "~";
-        break;
-    }
-
+    std::string opStr = prefixOpToString(expr.op);
     return fmt::format("(PrefixExpression op='{}' expr='{}')", opStr, visit(*expr.expr));
 }
 

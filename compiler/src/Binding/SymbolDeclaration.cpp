@@ -2,7 +2,7 @@
 #include "../AST/nodes/Statements/FunctionDefinition.h"
 
 namespace Ceres::Binding {
-AST::FunctionParameter* getParam(SymbolDeclaration& symbol)
+AST::FunctionParameter* getParam(const SymbolDeclaration& symbol)
 {
     ASSERT(symbol.getParamIdx().has_value());
 
@@ -15,7 +15,7 @@ AST::FunctionParameter* getParam(SymbolDeclaration& symbol)
     return param;
 }
 
-AST::VariableDeclaration* getVarDecl(SymbolDeclaration& symbol)
+AST::VariableDeclaration* getVarDecl(const SymbolDeclaration& symbol)
 {
     auto* node = dynamic_cast<AST::VariableDeclaration*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
@@ -23,7 +23,7 @@ AST::VariableDeclaration* getVarDecl(SymbolDeclaration& symbol)
     return node;
 }
 
-AST::FunctionDefinition* getFunDecl(SymbolDeclaration& symbol)
+AST::FunctionDefinition* getFunDecl(const SymbolDeclaration& symbol)
 {
     auto* node = dynamic_cast<AST::FunctionDefinition*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
@@ -42,13 +42,13 @@ SymbolDeclaration::SymbolDeclaration(size_t param_idx, AST::Node* declarationNod
     , paramIdx(param_idx) {};
 
 // Methods
-SymbolDeclarationKind SymbolDeclaration::getKind() { return kind; }
+SymbolDeclarationKind SymbolDeclaration::getKind() const { return kind; }
 
-AST::Node* SymbolDeclaration::getDeclarationNode() { return declarationNode; }
+AST::Node* SymbolDeclaration::getDeclarationNode() const { return declarationNode; }
 
-std::optional<size_t> SymbolDeclaration::getParamIdx() { return paramIdx; }
+std::optional<size_t> SymbolDeclaration::getParamIdx() const { return paramIdx; }
 
-Type* SymbolDeclaration::getType()
+Type* SymbolDeclaration::getType() const
 {
     if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
         return getParam(*this)->type;
@@ -61,7 +61,7 @@ Type* SymbolDeclaration::getType()
     return getVarDecl(*this)->type;
 }
 
-Typing::Constness SymbolDeclaration::getConstness()
+Typing::Constness SymbolDeclaration::getConstness() const
 {
     if (kind == SymbolDeclarationKind::FunctionParamDeclaration) {
         return getParam(*this)->constness;
