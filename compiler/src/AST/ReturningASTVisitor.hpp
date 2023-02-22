@@ -14,7 +14,7 @@ public:
 
     virtual T doVisitAssignmentExpression(AssignmentExpression& expr) override;
     virtual T doVisitBinaryOperationExpression(BinaryOperationExpression& expr) override;
-    virtual T doVisitBlockStatement(Ceres::AST::Statement::Block& stm) override;
+    virtual T doVisitBlockStatement(BlockStatement& stm) override;
     virtual T doVisitBoolLiteral(BoolLiteralExpression& lit) override;
     virtual T doVisitCommaExpression(CommaExpression& expr) override;
     virtual T doVisitCompilationUnit(CompilationUnit& unit) override;
@@ -31,8 +31,8 @@ public:
     virtual T doVisitPrefixExpression(PrefixExpression& expr) override;
     virtual T doVisitReturnStatement(ReturnStatement& stm) override;
     virtual T doVisitVariableDeclaration(VariableDeclaration& decl) override;
-    virtual T doVisitVariableDeclarationStatement(VariableDeclarationStatement& stm) override;
     virtual T doVisitWhileStatement(WhileStatement& stm) override;
+    T doVisitCastExpression(CastExpression& expr) override;
 };
 
 // Visit all children by default
@@ -47,7 +47,7 @@ template<class T> T ReturningASTVisitor<T>::doVisitBinaryOperationExpression(Bin
     return this->visitChildren(expr);
 }
 
-template<class T> T ReturningASTVisitor<T>::doVisitBlockStatement(Ceres::AST::Statement::Block& stm)
+template<class T> T ReturningASTVisitor<T>::doVisitBlockStatement(BlockStatement& stm)
 {
     return this->visitChildren(stm);
 }
@@ -121,19 +121,19 @@ template<class T> T ReturningASTVisitor<T>::doVisitVariableDeclaration(VariableD
     return this->visitChildren(decl);
 }
 
-template<class T> T ReturningASTVisitor<T>::doVisitVariableDeclarationStatement(VariableDeclarationStatement& stm)
-{
-    return this->visitChildren(stm);
-}
-
 template<class T> T ReturningASTVisitor<T>::doVisitWhileStatement(WhileStatement& stm)
 {
     return this->visitChildren(stm);
 }
 
-template<class T> T ReturningASTVisitor<T>::doVisitFunctionDeclaration(FunctionDeclaration& def)
+template<class T> T ReturningASTVisitor<T>::doVisitFunctionDeclaration(FunctionDeclaration& dec)
 {
-    return this->visitChildren(def);
+    return this->visitChildren(dec);
+}
+
+template<class T> T ReturningASTVisitor<T>::doVisitCastExpression(CastExpression& expr)
+{
+    return this->visitChildren(expr);
 }
 
 } // namespace Ceres::AST

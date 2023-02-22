@@ -21,6 +21,7 @@ public:
     virtual void visitPrefixExpression(PrefixExpression& expr) override;
     virtual void visitBoolLiteral(BoolLiteralExpression& lit) override;
     virtual void visitFunctionDeclaration(FunctionDeclaration& dec) override;
+    virtual void visitCastExpression(CastExpression& expr) override;
 
     // Statements
     virtual void visitExpressionStatement(ExpressionStatement& stm) override;

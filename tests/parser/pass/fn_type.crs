@@ -1,0 +1,7 @@
+fn main() {
+    var a : fn(i32, u16) i32;
+    var b : fn(i32, u16);
+    var c : fn();
+    var d : fn() f32;
+    var e : fn(i32) fn(i64);
+}

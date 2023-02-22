@@ -41,7 +41,7 @@ add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
         src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
         src/Typing/TypeVisitor.h src/Binding/SymbolDeclaration.cpp src/Binding/SymbolDeclaration.h src/Binding/Scope.cpp src/Binding/Scope.h
-        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h)
+        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h src/AST/nodes/Expressions/CastExpression.cpp src/AST/nodes/Expressions/CastExpression.h)
 
 ##########################################
 #          END MISCELLANEOUS LIBRARIES

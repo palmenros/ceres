@@ -40,6 +40,8 @@ type
     | INTEGER_LITERAL_SUFFIX
     | FLOAT_LITERAL_SUFFIX
     | BOOL
+    | VOID
+    | FN OPEN_PARENS ( type (COMMA type)* )? CLOSE_PARENS return_type=type?
     ;
 
 varDeclaration
@@ -82,6 +84,7 @@ forStatement
 // This is required to avoid ambiguities in function calls
 assignmentExpression
     : primaryExpression                                                                 # primary_expr
+    | CAST '<' type '>' OPEN_PARENS expression CLOSE_PARENS                             # cast_expr
     | functionCall                                                                      # function_call_expr
     | assignmentExpression postfix=('++' | '--')                                        # postfix_expr
     | prefix=('+' | '-' |'++'|'--') assignmentExpression                                # prefix_expr

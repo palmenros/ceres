@@ -43,6 +43,8 @@ private:
     void visitVariableDeclaration(VariableDeclaration& decl) override { _result = doVisitVariableDeclaration(decl); }
     void visitWhileStatement(WhileStatement& stm) override { _result = doVisitWhileStatement(stm); }
 
+    void visitCastExpression(CastExpression& expr) override { _result = doVisitCastExpression(expr); }
+
     void visitFunctionDeclaration(FunctionDeclaration& dec) override { _result = doVisitFunctionDeclaration(dec); }
 
 public:
@@ -77,6 +79,7 @@ public:
     virtual T doVisitBinaryOperationExpression(BinaryOperationExpression& expr) = 0;
     virtual T doVisitBlockStatement(BlockStatement& stm) = 0;
     virtual T doVisitBoolLiteral(BoolLiteralExpression& lit) = 0;
+    virtual T doVisitCastExpression(CastExpression& expr) = 0;
     virtual T doVisitCommaExpression(CommaExpression& expr) = 0;
     virtual T doVisitCompilationUnit(CompilationUnit& unit) = 0;
     virtual T doVisitExpressionStatement(ExpressionStatement& stm) = 0;

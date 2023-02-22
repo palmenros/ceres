@@ -104,6 +104,8 @@ public:
 
     std::any visitEmpty_statement(antlrgenerated::CeresParser::Empty_statementContext* context) override;
 
+    std::any visitCast_expr(antlrgenerated::CeresParser::Cast_exprContext* context) override;
+
     SourceSpan getSourceSpan(antlr4::Token const* token) const;
 
     SourceSpan getSourceSpan(antlr4::Token const* first, antlr4::Token const* second) const;

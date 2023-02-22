@@ -21,6 +21,9 @@ class ASTStringifierVisitor : public AbstractReturningASTVisitor<std::string> {
     std::string doVisitFunctionDefinition(FunctionDefinition& def) override;
     std::string doVisitFunctionDeclaration(FunctionDeclaration& def) override;
 
+public:
+    std::string doVisitCastExpression(CastExpression& expr) override;
+
 private:
     std::string doVisitIdentifierExpression(IdentifierExpression& expr) override;
     std::string doVisitIfStatement(IfStatement& stm) override;

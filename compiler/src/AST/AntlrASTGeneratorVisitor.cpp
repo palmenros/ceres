@@ -9,6 +9,7 @@
 #include "nodes/Expressions/AssignmentExpression.h"
 #include "nodes/Expressions/BinaryOperationExpression.h"
 #include "nodes/Expressions/BoolLiteralExpression.h"
+#include "nodes/Expressions/CastExpression.h"
 #include "nodes/Expressions/CommaExpression.h"
 #include "nodes/Expressions/FloatLiteralExpression.h"
 #include "nodes/Expressions/FunctionCallExpression.h"
@@ -179,7 +180,8 @@ std::any AntlrASTGeneratorVisitor::visitCompilationUnit(CeresParser::Compilation
         }
     }
 
-    return new CompilationUnit(getSourceSpan(*ctx), std::move(functionDefinitions), std::move(functionDeclarations), std::move(variableDeclarations));
+    return new CompilationUnit(getSourceSpan(*ctx), std::move(functionDefinitions), std::move(functionDeclarations),
+        std::move(variableDeclarations));
 }
 
 std::any AntlrASTGeneratorVisitor::visitGlobalVarDeclaration(CeresParser::GlobalVarDeclarationContext* ctx)
@@ -359,13 +361,40 @@ std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext* ctx)
     if (ctx->IDENTIFIER() != nullptr) {
         Diagnostics::report(getSourceSpan(*ctx), Diag::unknown_type, ctx->IDENTIFIER()->toString());
         return static_cast<Type*>(ErrorType::get());
-        //return static_cast<Type*>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
+        // return static_cast<Type*>(UnresolvedType::get(ctx->IDENTIFIER()->toString()));
     } else if (ctx->INTEGER_LITERAL_SUFFIX() != nullptr) {
         return static_cast<Type*>(PrimitiveIntegerType::get(ctx->INTEGER_LITERAL_SUFFIX()->toString()));
     } else if (ctx->FLOAT_LITERAL_SUFFIX() != nullptr) {
         return static_cast<Type*>(PrimitiveFloatType::get(ctx->FLOAT_LITERAL_SUFFIX()->toString()));
     } else if (ctx->BOOL() != nullptr) {
         return static_cast<Type*>(BoolType::get());
+// On some platforms, VOID is defined as a preprocessor macro that we need to undefine
+#undef VOID
+    } else if (ctx->VOID() != nullptr) {
+        // How do we handle VOID in variable definitions? And in parameters? How do we instantiate the void unit type?
+        NOT_IMPLEMENTED();
+        return static_cast<Type*>(VoidType::get());
+    } else if (ctx->FN() != nullptr) {
+
+        Type* returnType = nullptr;
+        size_t num_arguments;
+
+        if (ctx->return_type != nullptr) {
+            returnType = std::any_cast<Type*>(visit(ctx->return_type));
+            num_arguments = ctx->type().size() - 1;
+        } else {
+            returnType = VoidType::get();
+            num_arguments = ctx->type().size();
+        }
+
+        std::vector<Type*> argumentTypes;
+        argumentTypes.reserve(num_arguments);
+
+        for (size_t i = 0; i < num_arguments; ++i) {
+            argumentTypes.push_back(std::any_cast<Type*>(visit(ctx->type()[i])));
+        }
+
+        return static_cast<Type*>(FunctionType::get(returnType, argumentTypes));
     } else {
         NOT_IMPLEMENTED();
     }
@@ -962,6 +991,17 @@ std::any AntlrASTGeneratorVisitor::visitEmpty_statement(CeresParser::Empty_state
     checkException(*ctx);
 
     return static_cast<Statement*>(nullptr);
+}
+
+std::any AntlrASTGeneratorVisitor::visitCast_expr(CeresParser::Cast_exprContext* ctx)
+{
+    ASSERT(ctx != nullptr);
+    checkException(*ctx);
+
+    Type* destinationType = std::any_cast<Type*>(visit(ctx->type()));
+    auto expr = std::unique_ptr<Expression>(std::any_cast<Expression*>(visit(ctx->expression())));
+
+    return static_cast<Expression*>(new CastExpression(getSourceSpan(*ctx), std::move(expr), destinationType));
 }
 
 // TODO: When adding a new AST node, don't forget to call checkExceptions

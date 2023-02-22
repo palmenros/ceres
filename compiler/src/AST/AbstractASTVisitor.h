@@ -4,6 +4,7 @@
 #include "nodes/CompilationUnit.h"
 #include "nodes/Expressions/AssignmentExpression.h"
 #include "nodes/Expressions/BoolLiteralExpression.h"
+#include "nodes/Expressions/CastExpression.h"
 #include "nodes/Expressions/CommaExpression.h"
 #include "nodes/Expressions/FloatLiteralExpression.h"
 #include "nodes/Expressions/FunctionCallExpression.h"
@@ -32,6 +33,7 @@ public:
     virtual void visitBinaryOperationExpression(BinaryOperationExpression& expr) = 0;
     virtual void visitBlockStatement(Ceres::AST::BlockStatement& stm) = 0;
     virtual void visitBoolLiteral(BoolLiteralExpression& lit) = 0;
+    virtual void visitCastExpression(CastExpression& expr) = 0;
     virtual void visitCommaExpression(CommaExpression& expr) = 0;
     virtual void visitCompilationUnit(CompilationUnit& unit) = 0;
     virtual void visitExpressionStatement(ExpressionStatement& stm) = 0;

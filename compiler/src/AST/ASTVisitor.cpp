@@ -48,4 +48,5 @@ void ASTVisitor::visitVariableDeclaration(VariableDeclaration& decl) { visitChil
 void ASTVisitor::visitWhileStatement(WhileStatement& stm) { visitChildren(stm); }
 
 void ASTVisitor::visitFunctionDeclaration(FunctionDeclaration& dec) { visitChildren(dec); }
+void ASTVisitor::visitCastExpression(CastExpression& expr) { visitChildren(expr); }
 } // namespace Ceres::AST

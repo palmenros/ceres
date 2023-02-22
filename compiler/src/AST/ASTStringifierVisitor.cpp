@@ -255,8 +255,7 @@ std::string ASTStringifierVisitor::doVisitFunctionDefinition(FunctionDefinition&
         paramsString += paramString;
     }
 
-    return fmt::format(
-        "(FunctionDefinition id='{}', params='{}' body='{}')", def.id, paramsString, visit(*def.block));
+    return fmt::format("(FunctionDefinition id='{}', params='{}' body='{}')", def.id, paramsString, visit(*def.block));
 }
 
 std::string ASTStringifierVisitor::doVisitFunctionDeclaration(FunctionDeclaration& dec)
@@ -361,4 +360,10 @@ std::string ASTStringifierVisitor::doVisitWhileStatement(WhileStatement& stm)
 {
     return fmt::format("(WhileStatement cond='{}' body='{}')", visit(*stm.condition), visit(*stm.body));
 }
+
+std::string ASTStringifierVisitor::doVisitCastExpression(CastExpression& expr)
+{
+    return fmt::format("(CastExpression destType='{}' expr='{}')", expr.destinationType->toString(), visit(*expr.expr));
+}
+
 } // namespace Ceres::AST

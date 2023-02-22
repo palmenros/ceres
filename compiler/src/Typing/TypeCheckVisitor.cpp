@@ -379,4 +379,10 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
     }
 }
 
+void TypeCheckVisitor::visitCastExpression(AST::CastExpression& expr) {
+    visitChildren(expr);
+
+    NOT_IMPLEMENTED();
+}
+
 } // namespace Ceres::Typing

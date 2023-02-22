@@ -12,10 +12,12 @@ ELSE : 'else';
 FOR : 'for';
 WHILE : 'while';
 EXTERN: 'extern';
+CAST: 'cast';
 
 // Type keywords
 
 BOOL: 'bool';
+VOIOD: 'void';
 
 // Literals
 
