@@ -94,6 +94,7 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 {
     ASSERT(expr.expressionRHS != nullptr);
 
+    // TODO: Here in the future we will have to check if is LHS
     auto* identifier = dynamic_cast<AST::IdentifierExpression*>(expr.expressionLHS.get());
     if (identifier == nullptr) {
         Log::panic("LHS of an expression is not an identifier");
@@ -109,26 +110,9 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 
     auto lhs = maybe_lhs.value();
 
-    // TODO: Here in the future we will have to check if is LHS
-    switch(lhs.getKind()) {
-    case Binding::SymbolDeclarationKind::FunctionDefinition:
-    case Binding::SymbolDeclarationKind::FunctionDeclaration:
-        Diagnostics::report(identifier->sourceSpan, Diag::assign_to_function);
-        expr.type = ErrorType::get();
-        return;
-    case Binding::SymbolDeclarationKind::LocalVariableDeclaration:
-    case Binding::SymbolDeclarationKind::GlobalVariableDeclaration:
-    case Binding::SymbolDeclarationKind::FunctionParamDeclaration:
-        /* We can continue */
-        break;
-    case Binding::SymbolDeclarationKind::Invalid:
-        ASSERT_NOT_REACHED();
-    default:
-        NOT_IMPLEMENTED();
-    }
-
     if (lhs.getConstness().kind != Constness::NonConst) {
         Diagnostics::report(expr.sourceSpan, Diag::assign_to_const, lhs.getId());
+        Diagnostics::report(lhs.getDeclarationNode()->sourceSpan, Diag::assign_to_const_note, lhs.getId());
     }
 
     visit(*expr.expressionRHS);

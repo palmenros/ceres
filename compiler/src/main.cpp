@@ -68,10 +68,6 @@ int main(int argc, char const* argv[])
 
         auto AST = std::unique_ptr<AST::CompilationUnit>(res);
 
-//         AST::ASTStringifierVisitor stringifierVisitor;
-//         auto str = stringifierVisitor.visit(*AST);
-//         Log::info("AST: {}", str);
-
         Binding::BindingVisitor bindingVisitor;
         bindingVisitor.visit(*AST);
         Log::info("Binding visitor run!");
@@ -79,6 +75,10 @@ int main(int argc, char const* argv[])
         Typing::TypeCheckVisitor typeCheckVisitor;
         typeCheckVisitor.visit(*AST);
         Log::info("Type check visitor run!");
+
+         AST::ASTStringifierVisitor stringifierVisitor;
+         auto str = stringifierVisitor.visit(*AST);
+         Log::info("AST: {}", str);
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def)

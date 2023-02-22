@@ -83,7 +83,8 @@ Typing::Constness SymbolDeclaration::getConstness() const
 
     case SymbolDeclarationKind::FunctionDefinition:
     case SymbolDeclarationKind::FunctionDeclaration:
-        Log::panic("Trying to check constness of function");
+        /* Function declarations and definitions are always const */
+        return Typing::Constness::Const;
     case SymbolDeclarationKind::LocalVariableDeclaration:
     case SymbolDeclarationKind::GlobalVariableDeclaration:
         return getVarDecl(*this)->constness;

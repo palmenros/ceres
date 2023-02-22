@@ -8,10 +8,12 @@ DIAG(parse_error, Error, "{}")
 DIAG(unknown_type, Error, "unknown type '{}'")
 
 // Binding
-DIAG(assign_to_const, Error, "assignment to constant variable: '{}'")
+DIAG(assign_to_const, Error, "assignment to constant value: '{}'")
+DIAG(assign_to_const_note, Note, "definition of const symbol '{}' here")
+
 DIAG(unresolved_identifier, Error, "unresolved identifier access: '{}'")
-DIAG(duplicate_symbol, Error, "The name '{}' is defined multiple times")
-DIAG(duplicate_symbol_note, Note, "Previous definition of symbol '{}' here")
+DIAG(duplicate_symbol, Error, "the name '{}' is defined multiple times")
+DIAG(duplicate_symbol_note, Note, "previous definition of symbol '{}' here")
 
 // Type check
 
@@ -20,7 +22,6 @@ DIAG(calling_a_non_function_type, Error, "expected function, found '{}'")
 
 DIAG(init_var_with_void, Error, "cannot initialize variable '{}' with value of type 'void'")
 DIAG(type_annotation_needed, Error, "variable '{}' must be given an explicit type")
-DIAG(assign_to_function, Error, "cannot assign to a function")
 
 DIAG(mismatched_type_on_bin_op, Error, "mismatched types on binary operation: operator '{}' cannot be applied to '{}' and '{}'")
 DIAG(mismatched_type_on_if_expr, Error, "if statements expect boolean conditions, got '{}'")

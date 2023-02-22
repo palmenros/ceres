@@ -1,0 +1,8 @@
+fn main() {
+    var a = test;
+    var b = 3;
+    a(b);
+}
+
+fn test(c : i32) {
+}
