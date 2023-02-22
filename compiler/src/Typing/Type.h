@@ -3,6 +3,7 @@
 
 #include "../utils/log.hpp"
 #include "llvm/Support/Casting.h"
+#include <optional>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -145,6 +146,8 @@ public:
 
     static NotYetInferredType* get(NotYetInferredKind kind);
     [[nodiscard]] std::string toString() const override;
+
+    std::optional<Type*> getDefaultType() const;
 };
 
 enum class PrimitiveIntegerKind {

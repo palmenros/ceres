@@ -127,6 +127,19 @@ NotYetInferredType* NotYetInferredType::get(NotYetInferredKind kind)
 
 void NotYetInferredType::accept(Typing::TypeVisitor& visitor) { visitor.visitNotYetInferredType(this); }
 
+std::optional<Type*> NotYetInferredType::getDefaultType() const {
+    switch(kind) {
+    case NotYetInferredKind::IntegerLiteral:
+        return PrimitiveIntegerType::get(PrimitiveIntegerKind::I32);
+    case NotYetInferredKind::FloatLiteral:
+        return PrimitiveFloatType::get(PrimitiveFloatKind::F32);
+    case NotYetInferredKind::VariableDeclaration:
+    case NotYetInferredKind::Expression:
+    default:
+        return {};
+    }
+}
+
 UnresolvedType::UnresolvedType(std::string typeIdentifier)
     : typeIdentifier(std::move(typeIdentifier))
     , Type(TypeKind::UnresolvedType)
@@ -217,7 +230,7 @@ ErrorType* ErrorType::get()
 
 std::string ErrorType::toString() const { return "<ErrorType>"; }
 
-// Return ErrorType if the coercion is not pssible
+// Return ErrorType if the coercion is not possible
 Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
 {
     // If same coercion is obvious
@@ -240,9 +253,14 @@ Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
     case TypeKind::NotYetInferredType: {
         auto* notYetInferredType = llvm::dyn_cast<NotYetInferredType>(a);
         ASSERT(notYetInferredType != nullptr);
-        if (auto* primitiveScalarType = llvm::dyn_cast<PrimitiveIntegerType>(b)) {
-            // TODO: Also handle FloatLiteral
+
+        // Handle coercion between literal types and integers
+        if (llvm::isa<PrimitiveIntegerType>(b)) {
             if (notYetInferredType->kind == NotYetInferredKind::IntegerLiteral) {
+                return b;
+            }
+        } else if (llvm::isa<PrimitiveFloatType>(b)) {
+            if (notYetInferredType->kind == NotYetInferredKind::FloatLiteral) {
                 return b;
             }
         }

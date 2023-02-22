@@ -1,0 +1,6 @@
+fn test() {
+}
+
+fn main() {
+    var a = test();
+}

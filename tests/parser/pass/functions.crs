@@ -10,7 +10,7 @@
 fn function_name(a: i32, b: i32) i16 {
 }
 
-fn mutable_parameters(var a: i32) i16 {
+fn mutable_parameters(var a: i32) i32 {
     a = a * 2;
     return a;
 }

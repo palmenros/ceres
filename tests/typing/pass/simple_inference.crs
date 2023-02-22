@@ -1,0 +1,10 @@
+fn main() i32 {
+    var a = 2;
+    return a + 3i32;
+}
+
+fn test(a : f32) f32 {
+    var b = a;
+    var c = 2.0;
+    return b * c;
+}

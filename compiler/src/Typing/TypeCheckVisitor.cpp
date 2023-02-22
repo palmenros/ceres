@@ -25,17 +25,52 @@ void expandCoercion(Type* coerced, AST::Expression& lhs)
 
 void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
 {
-    // TODO: Dont infer types yet
-    if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
-        Log::panic("We dont have type inference yet");
-    }
-
     if (decl.initializerExpression != nullptr) {
         visit(*decl.initializerExpression);
         auto* extype = decl.initializerExpression->type;
 
         if (llvm::isa<ErrorType>(extype)) {
+            if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
+                // Infer error type
+                decl.type = ErrorType::get();
+            }
             return;
+        }
+
+        if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
+            // Infer simple types
+
+            switch(extype->getKind()) {
+
+            case Type::TypeKind::UnitVoidType:
+                // TODO: Maybe allow for variables of type void?
+                Diagnostics::report(decl.sourceSpan, Diag::init_var_with_void, decl.id);
+                decl.type = ErrorType::get();
+                return;
+            case Type::TypeKind::PrimitiveIntegerType:
+            case Type::TypeKind::PrimitiveFloatType:
+            case Type::TypeKind::FunctionType:
+            case Type::TypeKind::Bool:
+                decl.type = extype;
+                break;
+            case Type::TypeKind::NotYetInferredType: {
+                /* Literals */
+                auto* notYetInferredType = llvm::dyn_cast<NotYetInferredType>(extype);
+                ASSERT(notYetInferredType != nullptr);
+
+                auto maybeType = notYetInferredType->getDefaultType();
+                ASSERT(maybeType.has_value());
+
+                decl.type = maybeType.value();
+                break;
+            }
+            case Type::TypeKind::UnresolvedType:
+            case Type::TypeKind::ErrorType:
+                ASSERT_NOT_REACHED();
+            default:
+                NOT_IMPLEMENTED();
+            }
+
         }
 
         // TODO: this should always be the variable type
@@ -48,6 +83,10 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
             Diagnostics::report(
                 decl.sourceSpan, Diag::mismatched_type_on_var_decl, decl.type->toString(), extype->toString());
         }
+    } else if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
+        // Variable does not have an assignment expression and doesn't have a type
+        Diagnostics::report(decl.sourceSpan, Diag::type_annotation_needed, decl.id);
+        decl.type = ErrorType::get();
     }
 }
 
