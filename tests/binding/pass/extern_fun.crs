@@ -1,0 +1,6 @@
+fn main() {
+    var a : i32 = test();
+    a *= 2;
+}
+
+extern fn test() i32;
