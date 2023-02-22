@@ -76,9 +76,9 @@ int main(int argc, char const* argv[])
         typeCheckVisitor.visit(*AST);
         Log::info("Type check visitor run!");
 
-         AST::ASTStringifierVisitor stringifierVisitor;
-         auto str = stringifierVisitor.visit(*AST);
-         Log::info("AST: {}", str);
+        AST::ASTStringifierVisitor stringifierVisitor;
+        auto str = stringifierVisitor.visit(*AST);
+        Log::info("AST: {}", str);
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def)

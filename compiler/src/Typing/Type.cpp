@@ -127,8 +127,9 @@ NotYetInferredType* NotYetInferredType::get(NotYetInferredKind kind)
 
 void NotYetInferredType::accept(Typing::TypeVisitor& visitor) { visitor.visitNotYetInferredType(this); }
 
-std::optional<Type*> NotYetInferredType::getDefaultType() const {
-    switch(kind) {
+std::optional<Type*> NotYetInferredType::getDefaultType() const
+{
+    switch (kind) {
     case NotYetInferredKind::IntegerLiteral:
         return PrimitiveIntegerType::get(PrimitiveIntegerKind::I32);
     case NotYetInferredKind::FloatLiteral:

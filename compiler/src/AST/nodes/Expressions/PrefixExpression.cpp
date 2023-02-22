@@ -16,7 +16,8 @@ void PrefixExpression::accept(AbstractASTVisitor& visitor) { visitor.visitPrefix
 
 std::vector<Node*> PrefixExpression::getChildren() const { return { expr.get() }; }
 
-std::string prefixOpToString(PrefixOp op) {
+std::string prefixOpToString(PrefixOp op)
+{
     std::string opStr;
     switch (op) {
     case PrefixOp::PrefixIncrement:

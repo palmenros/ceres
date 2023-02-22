@@ -1,5 +1,5 @@
 #ifndef DIAG
-#define DIAG(identifier, severity, formatString)
+#    define DIAG(identifier, severity, formatString)
 #endif
 
 // Severity can be one of the following: {Error, Note, Warning, Remark}
@@ -23,7 +23,8 @@ DIAG(calling_a_non_function_type, Error, "expected function, found '{}'")
 DIAG(init_var_with_void, Error, "cannot initialize variable '{}' with value of type 'void'")
 DIAG(type_annotation_needed, Error, "variable '{}' must be given an explicit type")
 
-DIAG(mismatched_type_on_bin_op, Error, "mismatched types on binary operation: operator '{}' cannot be applied to '{}' and '{}'")
+DIAG(mismatched_type_on_bin_op, Error,
+    "mismatched types on binary operation: operator '{}' cannot be applied to '{}' and '{}'")
 DIAG(mismatched_type_on_if_expr, Error, "if statements expect boolean conditions, got '{}'")
 DIAG(mismatched_type_on_while_expr, Error, "while statements expect boolean conditions, got '{}'")
 DIAG(mismatched_type_on_for_expr, Error, "for statements expect boolean conditions, got '{}'")

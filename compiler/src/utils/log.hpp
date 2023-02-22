@@ -42,7 +42,7 @@ template<typename... Args> [[noreturn]] inline void panic(Args&&... args)
 #define ASSERT_NOT_REACHED() \
     ::Ceres::Log::panic("Assert not reached: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
 
-    // Macro for NOT_IMPLEMENTED
+// Macro for NOT_IMPLEMENTED
 #define NOT_IMPLEMENTED() \
     ::Ceres::Log::panic("Not implemented: {} in {}, line {}", CERES_PRETTY_FUNCTION_NAME, __FILE__, __LINE__)
 #define TODO() \

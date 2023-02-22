@@ -1,9 +1,9 @@
 #include "SymbolDeclaration.h"
-#include "../AST/nodes/Statements/FunctionDefinition.h"
 #include "../AST/nodes/FunctionDeclaration.h"
+#include "../AST/nodes/Statements/FunctionDefinition.h"
 
 namespace Ceres::Binding {
-AST::FunctionParameter* getParam(const SymbolDeclaration& symbol)
+AST::FunctionParameter* getParam(SymbolDeclaration const& symbol)
 {
     ASSERT(symbol.getParamIdx().has_value());
 
@@ -16,7 +16,7 @@ AST::FunctionParameter* getParam(const SymbolDeclaration& symbol)
     return param;
 }
 
-AST::VariableDeclaration* getVarDecl(const SymbolDeclaration& symbol)
+AST::VariableDeclaration* getVarDecl(SymbolDeclaration const& symbol)
 {
     auto* node = dynamic_cast<AST::VariableDeclaration*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
@@ -24,7 +24,7 @@ AST::VariableDeclaration* getVarDecl(const SymbolDeclaration& symbol)
     return node;
 }
 
-AST::FunctionDefinition* getFunDef(const SymbolDeclaration& symbol)
+AST::FunctionDefinition* getFunDef(SymbolDeclaration const& symbol)
 {
     auto* node = dynamic_cast<AST::FunctionDefinition*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
@@ -32,7 +32,7 @@ AST::FunctionDefinition* getFunDef(const SymbolDeclaration& symbol)
     return node;
 }
 
-AST::FunctionDeclaration* getFunDec(const SymbolDeclaration& symbol)
+AST::FunctionDeclaration* getFunDec(SymbolDeclaration const& symbol)
 {
     auto* node = dynamic_cast<AST::FunctionDeclaration*>(symbol.getDeclarationNode());
     ASSERT(node != nullptr);
@@ -59,7 +59,7 @@ std::optional<size_t> SymbolDeclaration::getParamIdx() const { return paramIdx; 
 
 Type* SymbolDeclaration::getType() const
 {
-    switch(kind) {
+    switch (kind) {
 
     case SymbolDeclarationKind::FunctionDefinition:
         return getFunDef(*this)->functionType;
@@ -79,7 +79,7 @@ Type* SymbolDeclaration::getType() const
 
 Typing::Constness SymbolDeclaration::getConstness() const
 {
-    switch(kind) {
+    switch (kind) {
 
     case SymbolDeclarationKind::FunctionDefinition:
     case SymbolDeclarationKind::FunctionDeclaration:
@@ -116,6 +116,5 @@ std::string SymbolDeclaration::getId()
         NOT_IMPLEMENTED();
     }
 }
-
 
 } // namespace Ceres::Binding

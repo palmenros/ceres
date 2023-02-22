@@ -35,7 +35,7 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
         std::vector<Type*> parameterTypes;
         parameterTypes.reserve(funDec->parameters.size());
 
-        for(const auto& param : funDec->parameters) {
+        for (auto const& param : funDec->parameters) {
             parameterTypes.push_back(param.type);
         }
 
@@ -46,7 +46,7 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
         std::vector<Type*> parameterTypes;
         parameterTypes.reserve(funDef->parameters.size());
 
-        for(const auto& param : funDef->parameters) {
+        for (auto const& param : funDef->parameters) {
             parameterTypes.push_back(param.type);
         }
 
@@ -156,9 +156,6 @@ void BindingVisitor::visitReturnStatement(AST::ReturnStatement& stm)
     visitChildren(stm);
 }
 
-void BindingVisitor::visitForStatement(AST::ForStatement& stm)
-{
-    NOT_IMPLEMENTED();
-}
+void BindingVisitor::visitForStatement(AST::ForStatement& stm) { NOT_IMPLEMENTED(); }
 
 } // namespace Ceres::Binding

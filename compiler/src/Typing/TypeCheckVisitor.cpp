@@ -40,7 +40,7 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
         if (decl.type == NotYetInferredType::get(NotYetInferredKind::VariableDeclaration)) {
             // Infer simple types
 
-            switch(extype->getKind()) {
+            switch (extype->getKind()) {
 
             case Type::TypeKind::UnitVoidType:
                 // TODO: Maybe allow for variables of type void?
@@ -70,7 +70,6 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
             default:
                 NOT_IMPLEMENTED();
             }
-
         }
 
         // TODO: this should always be the variable type
@@ -117,7 +116,7 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 
     visit(*expr.expressionRHS);
 
-    if(llvm::isa<ErrorType>(expr.expressionRHS->type)) {
+    if (llvm::isa<ErrorType>(expr.expressionRHS->type)) {
         expr.type = ErrorType::get();
         return;
     }
@@ -144,7 +143,7 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
         visit(*expr.right);
         visit(*expr.left);
 
-        if(llvm::isa<ErrorType>(expr.left->type) || llvm::isa<ErrorType>(expr.right->type)) {
+        if (llvm::isa<ErrorType>(expr.left->type) || llvm::isa<ErrorType>(expr.right->type)) {
             expr.type = ErrorType::get();
             return;
         }
@@ -157,8 +156,8 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
         } else {
             Diagnostics::report(
                 expr.sourceSpan, Diag::mismatched_expr, expr.left->type->toString(), expr.right->type->toString());
-           expr.type = ErrorType::get();
-           return;
+            expr.type = ErrorType::get();
+            return;
         }
 
         auto* result = expr.op.resTy(expr.left->type);
@@ -179,7 +178,7 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
 
     // Check that the type of the callee is a function
     FunctionType* funType = llvm::dyn_cast<FunctionType>(expr.identifier->type);
-    if(funType == nullptr) {
+    if (funType == nullptr) {
         if (!llvm::isa<ErrorType>(expr.identifier->type)) {
             Diagnostics::report(expr.sourceSpan, Diag::calling_a_non_function_type, expr.identifier->type->toString());
         }
@@ -213,7 +212,7 @@ void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr
 {
     auto maybe_rhs = expr.decl;
 
-    if(!maybe_rhs.has_value()) {
+    if (!maybe_rhs.has_value()) {
         // Error on binding identifier
         expr.type = ErrorType::get();
         return;
@@ -230,7 +229,7 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
 
     Type* retType;
 
-    if(auto* funType = llvm::dyn_cast<FunctionType>(stm.decl->getType())) {
+    if (auto* funType = llvm::dyn_cast<FunctionType>(stm.decl->getType())) {
         retType = funType->returnType;
     } else {
         // Return should always point to a function
@@ -271,14 +270,16 @@ void TypeCheckVisitor::visitIfStatement(AST::IfStatement& stm)
     }
 
     if (!llvm::isa<BoolType>(stm.condition->type)) {
-        Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_if_expr, stm.condition->type->toString());
+        Diagnostics::report(
+            stm.condition->sourceSpan, Diag::mismatched_type_on_if_expr, stm.condition->type->toString());
     }
 }
 
-void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm) {
+void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm)
+{
     visitChildren(stm);
 
-    if(stm.maybeConditionExpr == nullptr) {
+    if (stm.maybeConditionExpr == nullptr) {
         return;
     }
 
@@ -287,11 +288,13 @@ void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm) {
     }
 
     if (!llvm::isa<BoolType>(stm.maybeConditionExpr->type)) {
-        Diagnostics::report(stm.maybeConditionExpr->sourceSpan, Diag::mismatched_type_on_for_expr, stm.maybeConditionExpr->type->toString());
+        Diagnostics::report(stm.maybeConditionExpr->sourceSpan, Diag::mismatched_type_on_for_expr,
+            stm.maybeConditionExpr->type->toString());
     }
 }
 
-void TypeCheckVisitor::visitWhileStatement(AST::WhileStatement& stm) {
+void TypeCheckVisitor::visitWhileStatement(AST::WhileStatement& stm)
+{
     visitChildren(stm);
 
     if (llvm::isa<ErrorType>(stm.condition->type)) {
@@ -299,11 +302,13 @@ void TypeCheckVisitor::visitWhileStatement(AST::WhileStatement& stm) {
     }
 
     if (!llvm::isa<BoolType>(stm.condition->type)) {
-        Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_while_expr, stm.condition->type->toString());
+        Diagnostics::report(
+            stm.condition->sourceSpan, Diag::mismatched_type_on_while_expr, stm.condition->type->toString());
     }
 }
 
-void TypeCheckVisitor::visitCommaExpression(AST::CommaExpression& expr) {
+void TypeCheckVisitor::visitCommaExpression(AST::CommaExpression& expr)
+{
     visitChildren(expr);
 
     expr.type = expr.expressions.back()->type;
@@ -318,13 +323,14 @@ void TypeCheckVisitor::visitPostfixExpression(AST::PostfixExpression& expr)
         return;
     }
 
-    switch(expr.op) {
+    switch (expr.op) {
     case AST::PostfixOp::PostfixIncrement:
     case AST::PostfixOp::PostfixDecrement: {
         if (llvm::isa<PrimitiveIntegerType>(expr.expr->type) || llvm::isa<PrimitiveFloatType>(expr.expr->type)) {
             expr.type = expr.expr->type;
         } else {
-            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_postfix_operator, postfixOpToString(expr.op), "integer or float", expr.expr->type->toString());
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_postfix_operator, postfixOpToString(expr.op),
+                "integer or float", expr.expr->type->toString());
             expr.type = ErrorType::get();
         }
         break;
@@ -343,7 +349,7 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
         return;
     }
 
-    switch(expr.op) {
+    switch (expr.op) {
     case AST::PrefixOp::PrefixIncrement:
     case AST::PrefixOp::PrefixDecrement:
     case AST::PrefixOp::UnaryPlus:
@@ -351,7 +357,8 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
         if (llvm::isa<PrimitiveIntegerType>(expr.expr->type) || llvm::isa<PrimitiveFloatType>(expr.expr->type)) {
             expr.type = expr.expr->type;
         } else {
-            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer or float", expr.expr->type->toString());
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op),
+                "integer or float", expr.expr->type->toString());
             expr.type = ErrorType::get();
         }
         break;
@@ -360,7 +367,8 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
         if (llvm::isa<BoolType>(expr.expr->type)) {
             expr.type = expr.expr->type;
         } else {
-            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "bool",  expr.expr->type->toString());
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op),
+                "bool", expr.expr->type->toString());
             expr.type = ErrorType::get();
         }
         break;
@@ -369,7 +377,8 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
         if (llvm::isa<PrimitiveIntegerType>(expr.expr->type)) {
             expr.type = expr.expr->type;
         } else {
-            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer", expr.expr->type->toString());
+            Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op),
+                "integer", expr.expr->type->toString());
             expr.type = ErrorType::get();
         }
         break;
@@ -379,7 +388,8 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
     }
 }
 
-void TypeCheckVisitor::visitCastExpression(AST::CastExpression& expr) {
+void TypeCheckVisitor::visitCastExpression(AST::CastExpression& expr)
+{
     visitChildren(expr);
 
     NOT_IMPLEMENTED();

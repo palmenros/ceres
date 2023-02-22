@@ -15,7 +15,8 @@ void PostfixExpression::accept(AbstractASTVisitor& visitor) { visitor.visitPostf
 
 std::vector<Node*> PostfixExpression::getChildren() const { return { expr.get() }; }
 
-std::string postfixOpToString(PostfixOp op) {
+std::string postfixOpToString(PostfixOp op)
+{
     std::string opStr;
 
     switch (op) {

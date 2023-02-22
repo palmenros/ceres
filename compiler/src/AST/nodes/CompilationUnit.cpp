@@ -20,15 +20,15 @@ std::vector<Node*> CompilationUnit::getChildren() const
     std::vector<Node*> v;
     v.reserve(functionDefinitions.size() + functionDeclarations.size() + globalVariableDeclarations.size());
 
-    for (const auto& ptr : functionDefinitions) {
+    for (auto const& ptr : functionDefinitions) {
         v.push_back(ptr.get());
     }
 
-    for(const auto& ptr : functionDeclarations) {
+    for (auto const& ptr : functionDeclarations) {
         v.push_back(ptr.get());
     }
 
-    for (const auto& ptr : globalVariableDeclarations) {
+    for (auto const& ptr : globalVariableDeclarations) {
         v.push_back(ptr.get());
     }
     return v;
