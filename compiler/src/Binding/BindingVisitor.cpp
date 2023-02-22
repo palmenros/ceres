@@ -24,10 +24,10 @@ void BindingVisitor::visitCompilationUnit(AST::CompilationUnit& unit)
 
         if (!resolved.has_value()) {
             Diagnostics::report(n->sourceSpan, Diag::unresolved_identifier, n->identifier);
-            Log::panic("Useless panic");
+            n->decl = {};
+        } else {
+            n->decl = resolved;
         }
-
-        n->decl = resolved;
     }
 }
 

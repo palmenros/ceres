@@ -34,6 +34,10 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
         visit(*decl.initializerExpression);
         auto* extype = decl.initializerExpression->type;
 
+        if (llvm::isa<ErrorType>(extype)) {
+            return;
+        }
+
         // TODO: this should always be the variable type
         auto* coerced = Type::getImplicitlyCoercedType(extype, decl.type);
 
@@ -41,10 +45,8 @@ void TypeCheckVisitor::visitVariableDeclaration(AST::VariableDeclaration& decl)
             // Assign variable type to all members of RHS
             expandCoercion(coerced, *decl.initializerExpression);
         } else {
-            // TODO: Better errors
             Diagnostics::report(
                 decl.sourceSpan, Diag::mismatched_type_on_var_decl, decl.type->toString(), extype->toString());
-            Log::panic("Useless panic");
         }
     }
 }
@@ -59,7 +61,12 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
     }
 
     auto maybe_lhs = identifier->decl;
-    ASSERT(maybe_lhs.has_value());
+
+    if (!maybe_lhs.has_value()) {
+        // Error on definition of identifier
+        expr.type = ErrorType::get();
+        return;
+    }
 
     auto lhs = maybe_lhs.value();
 
@@ -69,6 +76,11 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
 
     visit(*expr.expressionRHS);
 
+    if(llvm::isa<ErrorType>(expr.expressionRHS->type)) {
+        expr.type = ErrorType::get();
+        return;
+    }
+
     auto* coerced = Type::getImplicitlyCoercedType(lhs.getType(), expr.expressionRHS->type);
 
     if (coerced != ErrorType::get()) {
@@ -77,7 +89,8 @@ void TypeCheckVisitor::visitAssignmentExpression(AST::AssignmentExpression& expr
     } else {
         Diagnostics::report(expr.sourceSpan, Diag::mismatched_assign_stmt, lhs.getType()->toString(),
             expr.expressionRHS->type->toString());
-        Log::panic("Useless panic");
+        expr.type = ErrorType::get();
+        return;
     }
 
     expr.type = expr.expressionRHS->type;
@@ -90,6 +103,11 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
         visit(*expr.right);
         visit(*expr.left);
 
+        if(llvm::isa<ErrorType>(expr.left->type) || llvm::isa<ErrorType>(expr.right->type)) {
+            expr.type = ErrorType::get();
+            return;
+        }
+
         auto* coerced = Type::getImplicitlyCoercedType(expr.right->type, expr.left->type);
 
         if (coerced != ErrorType::get()) {
@@ -98,7 +116,8 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
         } else {
             Diagnostics::report(
                 expr.sourceSpan, Diag::mismatched_expr, expr.left->type->toString(), expr.right->type->toString());
-            Log::panic("Useless panic");
+           expr.type = ErrorType::get();
+           return;
         }
 
         auto* result = expr.op.resTy(expr.left->type);
@@ -106,7 +125,6 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
         if (llvm::isa<ErrorType>(result)) {
             Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_bin_op, expr.op.toString(),
                 expr.left->type->toString(), expr.right->type->toString());
-            Log::panic("Useless panic");
         }
 
         expr.type = result;
@@ -116,7 +134,12 @@ void TypeCheckVisitor::visitBinaryOperationExpression(AST::BinaryOperationExpres
 void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& expr)
 {
     auto maybe_rhs = expr.identifier->decl;
-    ASSERT(maybe_rhs.has_value());
+
+    if (!maybe_rhs.has_value()) {
+        // Error on binding function identifier
+        expr.type = ErrorType::get();
+        return;
+    }
 
     auto rhs = maybe_rhs.value();
 
@@ -128,6 +151,10 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
         visit(*expr.arguments[i]);
         auto* ty = decl->parameters[i].type;
 
+        if (llvm::isa<ErrorType>(ty)) {
+            continue;
+        }
+
         auto* coerced = Type::getImplicitlyCoercedType(ty, expr.arguments[i]->type);
         ASSERT(coerced != nullptr);
 
@@ -136,7 +163,6 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
         } else {
             Diagnostics::report(expr.arguments[i]->sourceSpan, Diag::mismatched_type_on_function_call, ty->toString(),
                 expr.arguments[i]->type->toString());
-            Log::panic("Useless panic");
         }
     }
 }
@@ -144,7 +170,12 @@ void TypeCheckVisitor::visitFunctionCallExpression(AST::FunctionCallExpression& 
 void TypeCheckVisitor::visitIdentifierExpression(AST::IdentifierExpression& expr)
 {
     auto maybe_rhs = expr.decl;
-    ASSERT(maybe_rhs.has_value());
+
+    if(!maybe_rhs.has_value()) {
+        // Error on binding identifier
+        expr.type = ErrorType::get();
+        return;
+    }
 
     auto rhs = maybe_rhs.value();
 
@@ -159,13 +190,16 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
     if (stm.expr == nullptr) {
         if (!llvm::isa<VoidType>(retType)) {
             Diagnostics::report(stm.sourceSpan, Diag::empty_return_non_void_function);
-            Log::panic("Useless panic");
         }
 
         return;
     }
 
     visit(*stm.expr);
+
+    if (llvm::isa<ErrorType>(stm.expr->type)) {
+        return;
+    }
 
     auto* coerced = Type::getImplicitlyCoercedType(retType, stm.expr->type);
 
@@ -175,7 +209,6 @@ void TypeCheckVisitor::visitReturnStatement(AST::ReturnStatement& stm)
     } else {
         Diagnostics::report(
             stm.sourceSpan, Diag::mismatched_return_stmt, retType->toString(), stm.expr->type->toString());
-        Log::panic("Useless panic");
     }
 }
 
@@ -183,9 +216,12 @@ void TypeCheckVisitor::visitIfStatement(AST::IfStatement& stm)
 {
     visitChildren(stm);
 
+    if (llvm::isa<ErrorType>(stm.condition->type)) {
+        return;
+    }
+
     if (!llvm::isa<BoolType>(stm.condition->type)) {
         Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_if_expr, stm.condition->type->toString());
-        Log::panic("Useless panic");
     }
 }
 
@@ -196,18 +232,24 @@ void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm) {
         return;
     }
 
+    if (llvm::isa<ErrorType>(stm.maybeConditionExpr->type)) {
+        return;
+    }
+
     if (!llvm::isa<BoolType>(stm.maybeConditionExpr->type)) {
         Diagnostics::report(stm.maybeConditionExpr->sourceSpan, Diag::mismatched_type_on_for_expr, stm.maybeConditionExpr->type->toString());
-        Log::panic("Useless panic");
     }
 }
 
 void TypeCheckVisitor::visitWhileStatement(AST::WhileStatement& stm) {
     visitChildren(stm);
 
+    if (llvm::isa<ErrorType>(stm.condition->type)) {
+        return;
+    }
+
     if (!llvm::isa<BoolType>(stm.condition->type)) {
         Diagnostics::report(stm.condition->sourceSpan, Diag::mismatched_type_on_while_expr, stm.condition->type->toString());
-        Log::panic("Useless panic");
     }
 }
 
@@ -221,6 +263,11 @@ void TypeCheckVisitor::visitPostfixExpression(AST::PostfixExpression& expr)
 {
     visitChildren(expr);
 
+    if (llvm::isa<ErrorType>(expr.expr->type)) {
+        expr.type = ErrorType::get();
+        return;
+    }
+
     switch(expr.op) {
     case AST::PostfixOp::PostfixIncrement:
     case AST::PostfixOp::PostfixDecrement: {
@@ -228,7 +275,7 @@ void TypeCheckVisitor::visitPostfixExpression(AST::PostfixExpression& expr)
             expr.type = expr.expr->type;
         } else {
             Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_postfix_operator, postfixOpToString(expr.op), "integer or float", expr.expr->type->toString());
-            Log::panic("Useless panic");
+            expr.type = ErrorType::get();
         }
         break;
     }
@@ -241,6 +288,11 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
 {
     visitChildren(expr);
 
+    if (llvm::isa<ErrorType>(expr.expr->type)) {
+        expr.type = ErrorType::get();
+        return;
+    }
+
     switch(expr.op) {
     case AST::PrefixOp::PrefixIncrement:
     case AST::PrefixOp::PrefixDecrement:
@@ -250,7 +302,7 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
             expr.type = expr.expr->type;
         } else {
             Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer or float", expr.expr->type->toString());
-            Log::panic("Useless panic");
+            expr.type = ErrorType::get();
         }
         break;
     }
@@ -259,7 +311,7 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
             expr.type = expr.expr->type;
         } else {
             Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "bool",  expr.expr->type->toString());
-            Log::panic("Useless panic");
+            expr.type = ErrorType::get();
         }
         break;
     }
@@ -268,7 +320,7 @@ void TypeCheckVisitor::visitPrefixExpression(AST::PrefixExpression& expr)
             expr.type = expr.expr->type;
         } else {
             Diagnostics::report(expr.sourceSpan, Diag::mismatched_type_on_prefix_operator, prefixOpToString(expr.op), "integer", expr.expr->type->toString());
-            Log::panic("Useless panic");
+            expr.type = ErrorType::get();
         }
         break;
     }

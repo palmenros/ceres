@@ -17,7 +17,6 @@ void SymbolTableScope::define(std::string const& name, SymbolDeclaration const& 
         // An element with that scopeName already existed
         Diagnostics::report(symbol.getDeclarationNode()->sourceSpan, Diag::duplicate_symbol, name);
         Diagnostics::report(it->second.getDeclarationNode()->sourceSpan, Diag::duplicate_symbol_note, name);
-        Log::panic("Useless panic");
     }
 };
 
