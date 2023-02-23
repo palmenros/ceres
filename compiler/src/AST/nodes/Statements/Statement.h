@@ -7,8 +7,6 @@
 namespace Ceres::AST {
 class Statement : public Node {
 public:
-    Type* type = nullptr;
-
     explicit Statement(SourceSpan const& sourceSpan);
 
     virtual ~Statement() = default;

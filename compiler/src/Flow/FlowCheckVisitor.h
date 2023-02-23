@@ -2,13 +2,26 @@
 #define COMPILER_FlowCheckVisitor_H
 
 #include "../AST/ASTVisitor.h"
+#include "../AST/ReturningASTVisitor.hpp"
 #include "../Binding/Scope.h"
 
 namespace Ceres::Typing {
 
-class FlowCheckVisitor : public AST::ASTVisitor {
+struct FlowData {
+    /* Default value */
+    bool allCodePathsHaveReturnStatements = false;
+};
+
+class FlowCheckVisitor : public AST::ReturningASTVisitor<FlowData> {
 public:
-    void visitFunctionDefinition(AST::FunctionDefinition& def) override;
+    FlowData doVisitFunctionDefinition(AST::FunctionDefinition& def) override;
+
+    FlowData doVisitBlockStatement(AST::BlockStatement& stm) override;
+    FlowData doVisitExpressionStatement(AST::ExpressionStatement& stm) override;
+    FlowData doVisitForStatement(AST::ForStatement& stm) override;
+    FlowData doVisitIfStatement(AST::IfStatement& stm) override;
+    FlowData doVisitReturnStatement(AST::ReturnStatement& stm) override;
+    FlowData doVisitWhileStatement(AST::WhileStatement& stm) override;
 };
 } // namespace Ceres::Typing
 

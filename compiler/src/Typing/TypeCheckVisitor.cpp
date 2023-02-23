@@ -273,13 +273,6 @@ void TypeCheckVisitor::visitIfStatement(AST::IfStatement& stm)
         Diagnostics::report(
             stm.condition->sourceSpan, Diag::mismatched_type_on_if_expr, stm.condition->type->toString());
     }
-
-    // If two branches return the same type then if returns that type
-    if (stm.maybeElseStatement != nullptr) {
-        if (stm.maybeElseStatement->type == stm.thenBlock->type) {
-            stm.type = stm.thenBlock->type;
-        }
-    }
 }
 
 void TypeCheckVisitor::visitForStatement(AST::ForStatement& stm)
@@ -400,19 +393,6 @@ void TypeCheckVisitor::visitCastExpression(AST::CastExpression& expr)
     visitChildren(expr);
 
     NOT_IMPLEMENTED();
-}
-
-void TypeCheckVisitor::visitBlockStatement(AST::BlockStatement& stm)
-{
-    visitChildren(stm);
-
-    for (auto const& c : stm.getChildren()) {
-        // Block has the type of the first return, following will be ignored either way
-        if (auto* ret = dynamic_cast<AST::ReturnStatement*>(c)) {
-            stm.type = ret->type;
-            break;
-        }
-    }
 }
 
 } // namespace Ceres::Typing
