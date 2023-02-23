@@ -1,0 +1,5 @@
+// Catched on type check
+
+fn test() {
+    return 443;
+}

@@ -37,4 +37,7 @@ DIAG(mismatched_return_stmt, Error, "mismatched types on return statement: expec
 DIAG(mismatched_assign_stmt, Error, "mismatched types on assignment: expected '{}' and got '{}'")
 DIAG(mismatched_expr, Error, "mismatched types on expression: mixed '{}' and '{}'")
 
+// Flow
+DIAG(no_return_on_non_void, Error, "non void function doesn't return anything")
+
 #undef DIAG

@@ -3,6 +3,7 @@
 
 #include "CeresLexer.h"
 #include "CeresParser.h"
+#include "Flow/FlowCheckVisitor.h"
 #include "Typing/TypeVisitor.h"
 #include "antlr4-runtime.h"
 
@@ -76,9 +77,13 @@ int main(int argc, char const* argv[])
         typeCheckVisitor.visit(*AST);
         Log::info("Type check visitor run!");
 
-        AST::ASTStringifierVisitor stringifierVisitor;
-        auto str = stringifierVisitor.visit(*AST);
-        Log::info("AST: {}", str);
+        Typing::FlowCheckVisitor flowCheckVisitor;
+        flowCheckVisitor.visit(*AST);
+        Log::info("Flow check visitor run!");
+
+        // AST::ASTStringifierVisitor stringifierVisitor;
+        // auto str = stringifierVisitor.visit(*AST);
+        // Log::info("AST: {}", str);
 
         //        class Test : public Ceres::AST::ASTVisitor {
         //            void visitFunctionDefinition(AST::FunctionDefinition &def)

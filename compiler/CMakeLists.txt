@@ -13,7 +13,10 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
-add_executable(compiler src/Typing/Type.cpp src/Typing/Type.h
+add_executable(compiler 
+        src/Flow/FlowCheckVisitor.cpp
+        src/Flow/FlowCheckVisitor.h
+        src/Typing/Type.cpp src/Typing/Type.h
         src/Typing/TypeCheckVisitor.cpp
         src/Typing/TypeCheckVisitor.h
         src/main.cpp src/utils/log.hpp src/AST/AntlrASTGeneratorVisitor.cpp src/AST/AntlrASTGeneratorVisitor.h
