@@ -24,6 +24,7 @@ public:
     void visitIfStatement(AST::IfStatement& stm) override;
     void visitForStatement(AST::ForStatement& stm) override;
     void visitWhileStatement(AST::WhileStatement& stm) override;
+    void visitBlockStatement(AST::BlockStatement& stm) override;
 };
 } // namespace Ceres::Typing
 

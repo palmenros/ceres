@@ -12,8 +12,6 @@ namespace Ceres::AST {
 class BlockStatement : public Statement {
 
 public:
-    bool always_returns = false;
-
     std::vector<std::unique_ptr<Statement>> statements;
 
     BlockStatement(SourceSpan const& sourceSpan, std::vector<std::unique_ptr<Statement>>&& statements);

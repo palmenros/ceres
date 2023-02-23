@@ -16,35 +16,9 @@ void FlowCheckVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     auto has_return = false;
     auto is_void = llvm::isa<VoidType>(def.returnType);
 
-    for (auto const& b : def.block->getChildren()) {
-        if (auto* ret = dynamic_cast<AST::ReturnStatement*>(b)) {
-            has_return = true;
-            break;
-        }
-    }
-
-    if (!has_return && !is_void) {
+    if (!is_void && llvm::isa<VoidType>(def.block->type)) {
         Diagnostics::report(def.sourceSpan, Diag::no_return_on_non_void);
     }
 }
-
-// void FlowCheckVisitor::visitIfStatement(AST::IfStatement& stm)
-// {
-//     for (auto const& b : stm.getChildren()) {
-//         if (auto* ret = dynamic_cast<AST::ReturnStatement*>(b)) {
-//             has_return = true;
-//             break;
-//         }
-//     }
-// }
-
-// void FlowCheckVisitor::visitBlockStatement(AST::BlockStatement& stm) { 
-//       for (auto const& b : stm.getChildren()) {
-//         if (auto* ret = dynamic_cast<AST::ReturnStatement*>(b)) {
-//             has_return = true;
-//             break;
-//         }
-//     }
-// }
 
 } // namespace Ceres::Typing

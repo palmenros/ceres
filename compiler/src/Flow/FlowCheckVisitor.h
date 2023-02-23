@@ -9,8 +9,6 @@ namespace Ceres::Typing {
 class FlowCheckVisitor : public AST::ASTVisitor {
 public:
     void visitFunctionDefinition(AST::FunctionDefinition& def) override;
-    // void visitIfStatement(AST::IfStatement& stm) override;
-    // void visitBlockStatement(AST::BlockStatement& stm) override;
 };
 } // namespace Ceres::Typing
 

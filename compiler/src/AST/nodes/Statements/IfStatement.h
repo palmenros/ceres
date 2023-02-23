@@ -12,7 +12,6 @@ class IfStatement : public Statement {
 public:
     std::unique_ptr<Expression> condition;
     std::unique_ptr<Ceres::AST::BlockStatement> thenBlock;
-    bool all_branches_return = false;
 
     // Currently: the else statement can only be a BlockStatement, another
     // IfStatement or a nullptr Note: maybeElseStatement can be a nullptr
