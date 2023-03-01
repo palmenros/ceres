@@ -9,6 +9,8 @@ class Statement : public Node {
 public:
     explicit Statement(SourceSpan const& sourceSpan);
 
+    virtual bool isTerminator() const;
+
     virtual ~Statement() = default;
 };
 

@@ -3,6 +3,7 @@
 
 #include "../../../Typing/Type.h"
 #include "Expression.h"
+#include <llvm/ADT/APFloat.h>
 #include <memory>
 #include <string>
 
@@ -24,6 +25,7 @@ public:
     void accept(AbstractASTVisitor& visitor) override;
 
     std::vector<Node*> getChildren() const override;
+    llvm::APFloat getLLVMAPFloat();
 };
 
 } // namespace Ceres::AST

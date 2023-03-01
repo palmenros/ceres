@@ -17,4 +17,6 @@ std::vector<Node*> ReturnStatement::getChildren() const
     }
     return { expr.get() };
 }
+bool ReturnStatement::isTerminator() const { return true; }
+
 } // namespace Ceres::AST

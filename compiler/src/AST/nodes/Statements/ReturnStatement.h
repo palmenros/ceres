@@ -19,6 +19,8 @@ public:
 
     void accept(AbstractASTVisitor& visitor) override;
 
+    bool isTerminator() const override;
+
     std::vector<Node*> getChildren() const override;
 };
 

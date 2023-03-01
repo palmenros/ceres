@@ -55,7 +55,12 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     visitChildren(def);
     currentFunction = oldCurrentFunction;
 
-    if (!llvm::verifyFunction(*function)) {
+    if (basicBlock->getTerminator() == nullptr) {
+        ASSERT(def.returnType == VoidType::get());
+        builder->CreateRetVoid();
+    }
+
+    if (llvm::verifyFunction(*function, &llvm::errs())) {
         Log::panic("Function verification error when verifying function '{}'", def.id);
     }
 
@@ -69,7 +74,17 @@ llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration
 llvm::Value* CodegenVisitor::doVisitBlockStatement(AST::BlockStatement& stm)
 {
     // TODO: Should block statement create a BasicBlock? For now we won't
-    visitChildren(stm);
+
+    for (auto& child : stm.statements) {
+        visit(*child);
+        // Stop generating instructions if we have reached a terminator (return, break, etc).
+        // LLVM will complain otherwise
+        // TODO: Check if this is enough
+        if (builder->GetInsertBlock()->getTerminator() != nullptr) {
+            break;
+        }
+    }
+
     return nullptr;
 }
 
@@ -79,7 +94,18 @@ llvm::Value* CodegenVisitor::doVisitForStatement(AST::ForStatement& stm) { NOT_I
 
 llvm::Value* CodegenVisitor::doVisitIfStatement(AST::IfStatement& stm) { NOT_IMPLEMENTED(); }
 
-llvm::Value* CodegenVisitor::doVisitReturnStatement(AST::ReturnStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitReturnStatement(AST::ReturnStatement& stm)
+{
+    if (stm.expr != nullptr) {
+        auto* value = visit(*stm.expr);
+        ASSERT(value != nullptr);
+        builder->CreateRet(value);
+    } else {
+        builder->CreateRetVoid();
+    }
+
+    return nullptr;
+}
 
 llvm::Value* CodegenVisitor::doVisitWhileStatement(AST::WhileStatement& stm) { NOT_IMPLEMENTED(); }
 
@@ -92,13 +118,32 @@ llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperati
     NOT_IMPLEMENTED();
 }
 
-llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
+{
+    // TODO: Add support for if shorthand
+    uint64_t val;
+    switch (lit.value) {
+    case AST::BoolLiteralValue::True:
+        val = 1;
+        break;
+    case AST::BoolLiteralValue::False:
+        val = 0;
+        break;
+    }
+    return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*context), llvm::APInt(1, val, false));
+}
 
 llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { NOT_IMPLEMENTED(); }
 
 llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr) { NOT_IMPLEMENTED(); }
 
-llvm::Value* CodegenVisitor::doVisitFloatLiteralExpression(AST::FloatLiteralExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitFloatLiteralExpression(AST::FloatLiteralExpression& expr)
+{
+    PrimitiveFloatType* type = llvm::dyn_cast<PrimitiveFloatType>(expr.type);
+    ASSERT(type != nullptr);
+
+    return llvm::ConstantFP::get(type->getLLVMType(), expr.getLLVMAPFloat());
+}
 
 llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpression& expr) { NOT_IMPLEMENTED(); }
 
