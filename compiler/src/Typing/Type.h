@@ -205,6 +205,7 @@ public:
     static PrimitiveIntegerType* get(std::string_view str);
 
     [[nodiscard]] std::string toString() const override;
+    unsigned int getNumBits() const;
 };
 
 enum class PrimitiveFloatKind {

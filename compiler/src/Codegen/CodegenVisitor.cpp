@@ -1,4 +1,5 @@
 #include "CodegenVisitor.h"
+#include "../utils/SourceManager.h"
 #include "llvm/IR/Verifier.h"
 
 namespace Ceres::Codegen {
@@ -21,6 +22,8 @@ llvm::Value* CodegenVisitor::doVisitCompilationUnit(AST::CompilationUnit& unit)
 
 llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& def)
 {
+    ASSERT(def.parentFunction == nullptr);
+
     // Generate the function
     llvm::FunctionType* functionType = llvm::cast<llvm::FunctionType>(def.functionType->getLLVMType());
 
@@ -42,10 +45,19 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     builder->SetInsertPoint(basicBlock);
 
     // TODO: Insert parameters to stack and save them on the function
+    for (auto& arg : def.parameters) {
+        llvm::AllocaInst* paramAlloca = builder->CreateAlloca(arg.type->getLLVMType(), nullptr, arg.id);
+        arg.llvmAlloca = paramAlloca;
+    }
 
+    auto* oldCurrentFunction = currentFunction;
+    currentFunction = function;
     visitChildren(def);
+    currentFunction = oldCurrentFunction;
 
-    llvm::verifyFunction(*function);
+    if (!llvm::verifyFunction(*function)) {
+        Log::panic("Function verification error when verifying function '{}'", def.id);
+    }
 
     return function;
 }
@@ -92,7 +104,14 @@ llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpr
 
 llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpression& expr) { NOT_IMPLEMENTED(); }
 
-llvm::Value* CodegenVisitor::doVisitIntLiteralExpression(AST::IntLiteralExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitIntLiteralExpression(AST::IntLiteralExpression& expr)
+{
+    PrimitiveIntegerType* type = llvm::dyn_cast<PrimitiveIntegerType>(expr.type);
+    ASSERT(type != nullptr);
+
+    // TODO: We should check in a previous pass that the literal indeed fits in the integer type
+    return llvm::ConstantInt::get(type->getLLVMType(), expr.getLLVMAPInt());
+}
 
 llvm::Value* CodegenVisitor::doVisitPostfixExpression(AST::PostfixExpression& expr) { NOT_IMPLEMENTED(); }
 
@@ -101,7 +120,25 @@ llvm::Value* CodegenVisitor::doVisitPrefixExpression(AST::PrefixExpression& expr
 llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration& decl)
 {
     // TODO: Handle global vs local variable declaration
-    NOT_IMPLEMENTED();
+    switch (decl.scope) {
+    case AST::VariableScope::Local: {
+        // Create an alloca instantiation at the beginning of the function block
+        llvm::IRBuilder<> tmpBuilder(&currentFunction->getEntryBlock(), currentFunction->getEntryBlock().begin());
+        llvm::AllocaInst* allocaInst = tmpBuilder.CreateAlloca(decl.type->getLLVMType(), nullptr, decl.id);
+        decl.allocaInst = allocaInst;
+
+        if (decl.initializerExpression != nullptr) {
+            llvm::Value* initializationValue = visit(*decl.initializerExpression);
+            builder->CreateStore(initializationValue, allocaInst);
+        }
+        return nullptr;
+    }
+    case AST::VariableScope::Global:
+        NOT_IMPLEMENTED();
+        break;
+    default:
+        NOT_IMPLEMENTED();
+    }
 }
 
 } // Codegen

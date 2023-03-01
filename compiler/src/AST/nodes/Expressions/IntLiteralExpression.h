@@ -21,9 +21,13 @@ public:
 
     IntLiteralExpression(SourceSpan const& sourceSpan, IntLiteralBase base, Type* type, std::string str);
 
+    llvm::APInt getLLVMAPInt();
+
     void accept(AbstractASTVisitor& visitor) override;
 
     std::vector<Node*> getChildren() const override;
+    bool doesLiteralFitInsideType();
+    uint8_t getRadix() const;
 };
 
 } // namespace Ceres::AST

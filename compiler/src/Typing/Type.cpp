@@ -125,6 +125,25 @@ llvm::Type* PrimitiveIntegerType::doGetLLVMType() const
         NOT_IMPLEMENTED();
     }
 }
+unsigned int PrimitiveIntegerType::getNumBits() const
+{
+    switch (kind) {
+    case PrimitiveIntegerKind::I8:
+    case PrimitiveIntegerKind::U8:
+        return 8;
+    case PrimitiveIntegerKind::I16:
+    case PrimitiveIntegerKind::U16:
+        return 16;
+    case PrimitiveIntegerKind::I32:
+    case PrimitiveIntegerKind::U32:
+        return 32;
+    case PrimitiveIntegerKind::I64:
+    case PrimitiveIntegerKind::U64:
+        return 64;
+    default:
+        NOT_IMPLEMENTED();
+    }
+}
 
 std::string NotYetInferredType::toString() const
 {

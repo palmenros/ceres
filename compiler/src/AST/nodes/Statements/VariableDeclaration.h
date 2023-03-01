@@ -6,6 +6,7 @@
 #include "../../../Typing/Visibility.h"
 #include "../Expressions/Expression.h"
 #include "Statement.h"
+#include <llvm/IR/Instructions.h>
 #include <memory>
 #include <string>
 
@@ -27,6 +28,8 @@ public:
 
     SourceSpan typeSourceSpan;
     SourceSpan identifierSourceSpan;
+
+    llvm::AllocaInst* allocaInst;
 
     // Can be nullptr if the variable doesn't have initializer expression
     std::unique_ptr<Expression> initializerExpression;

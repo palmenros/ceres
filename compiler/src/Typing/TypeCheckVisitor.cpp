@@ -13,6 +13,8 @@ namespace Ceres::Typing {
 // TODO: do this right, when we implement inference
 void expandCoercion(Type* coerced, AST::Expression& lhs)
 {
+    // TODO: Check if integer literals will fit using IntLiteralExpression::doesLiteralFitInsideType()
+
     // Assign variable type to all members of expression
     if (lhs.type != coerced) {
         lhs.type = coerced;

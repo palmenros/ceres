@@ -12,6 +12,7 @@ class CodegenVisitor : public AST::AbstractReturningASTVisitor<llvm::Value*> {
     llvm::LLVMContext* context;
     std::unique_ptr<llvm::IRBuilder<>> builder;
     std::unique_ptr<llvm::Module> module;
+    llvm::Function* currentFunction = nullptr;
 
 public:
     CodegenVisitor(llvm::LLVMContext* context);
