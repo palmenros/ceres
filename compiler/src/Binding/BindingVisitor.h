@@ -10,7 +10,7 @@ class BindingVisitor : public AST::ASTVisitor {
 public:
     std::vector<AST::IdentifierExpression*> unresolvedScope;
     Scope* currentScope = nullptr;
-    AST::FunctionDefinition* currentFunction;
+    AST::FunctionDefinition* currentFunction = nullptr;
 
     // Since we don't resolve anything in this pass we just have to add the
     // defined names to the tables

@@ -23,6 +23,10 @@ public:
 
     Type* functionType = nullptr;
 
+    // parentFunction will be a link to the FunctionDefinition AST node of the parent function, to support
+    //  nested functions
+    FunctionDefinition* parentFunction = nullptr;
+
     SourceSpan returnTypeSpan;
     SourceSpan functionNameSpan;
 

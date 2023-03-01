@@ -71,6 +71,9 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
     ASSERT(def.block != nullptr);
     ASSERT(currentScope != nullptr);
 
+    // Create link to parent function
+    def.parentFunction = currentFunction;
+
     // Define function
     auto fsymbol = SymbolDeclaration(SymbolDeclarationKind::FunctionDefinition, &def);
     currentScope->define(def.id, fsymbol);

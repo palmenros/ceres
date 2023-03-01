@@ -13,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_CXX_STANDARD 17)
 
 # Define Compiler executable and add our sources
-add_executable(compiler 
+add_executable(compiler
         src/Flow/FlowCheckVisitor.cpp
         src/Flow/FlowCheckVisitor.h
         src/Typing/Type.cpp src/Typing/Type.h
@@ -44,7 +44,7 @@ add_executable(compiler
         src/Diagnostics/FixItSpan.cpp src/Diagnostics/FixItSpan.h src/Diagnostics/ParserErrorListener.cpp
         src/Diagnostics/ParserErrorListener.h src/utils/InitCeres.cpp src/utils/InitCeres.h src/Typing/TypeVisitor.cpp
         src/Typing/TypeVisitor.h src/Binding/SymbolDeclaration.cpp src/Binding/SymbolDeclaration.h src/Binding/Scope.cpp src/Binding/Scope.h
-        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h src/AST/nodes/Expressions/CastExpression.cpp src/AST/nodes/Expressions/CastExpression.h)
+        src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h src/AST/nodes/Expressions/CastExpression.cpp src/AST/nodes/Expressions/CastExpression.h src/Codegen/CodegenVisitor.cpp src/Codegen/CodegenVisitor.h)
 
 ##########################################
 #          END MISCELLANEOUS LIBRARIES

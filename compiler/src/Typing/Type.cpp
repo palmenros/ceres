@@ -1,6 +1,7 @@
 #include "Type.h"
+#include "../utils/InitCeres.h"
 #include "TypeVisitor.h"
-
+#include "llvm/IR/DerivedTypes.h"
 #include <cstdint>
 #include <utility>
 
@@ -29,6 +30,8 @@ VoidType* VoidType::get()
 }
 
 void VoidType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnitVoidType(this); }
+
+llvm::Type* VoidType::doGetLLVMType() const { return llvm::Type::getVoidTy(*InitCeres::getLLVMContext()); }
 
 PrimitiveIntegerType::PrimitiveIntegerType(PrimitiveIntegerKind kind)
     : kind(kind)
@@ -100,6 +103,29 @@ PrimitiveIntegerType* PrimitiveIntegerType::get(PrimitiveIntegerKind kind)
 
 void PrimitiveIntegerType::accept(Typing::TypeVisitor& visitor) { visitor.visitPrimitiveIntegerType(this); }
 
+llvm::Type* PrimitiveIntegerType::doGetLLVMType() const
+{
+    // Note: LLVM does not have unsigned types, they are represented as signed integers too
+
+    llvm::LLVMContext& ctx = *InitCeres::getLLVMContext();
+    switch (kind) {
+    case PrimitiveIntegerKind::I8:
+    case PrimitiveIntegerKind::U8:
+        return llvm::Type::getInt8Ty(ctx);
+    case PrimitiveIntegerKind::U16:
+    case PrimitiveIntegerKind::I16:
+        return llvm::Type::getInt16Ty(ctx);
+    case PrimitiveIntegerKind::U32:
+    case PrimitiveIntegerKind::I32:
+        return llvm::Type::getInt32Ty(ctx);
+    case PrimitiveIntegerKind::I64:
+    case PrimitiveIntegerKind::U64:
+        return llvm::Type::getInt64Ty(ctx);
+    default:
+        NOT_IMPLEMENTED();
+    }
+}
+
 std::string NotYetInferredType::toString() const
 {
     switch (kind) {
@@ -140,6 +166,7 @@ std::optional<Type*> NotYetInferredType::getDefaultType() const
         return {};
     }
 }
+llvm::Type* NotYetInferredType::doGetLLVMType() const { ASSERT_NOT_REACHED(); }
 
 UnresolvedType::UnresolvedType(std::string typeIdentifier)
     : typeIdentifier(std::move(typeIdentifier))
@@ -159,6 +186,8 @@ UnresolvedType* UnresolvedType::get(std::string const& str)
 }
 
 void UnresolvedType::accept(Typing::TypeVisitor& visitor) { visitor.visitUnresolvedType(this); }
+
+llvm::Type* UnresolvedType::doGetLLVMType() const { ASSERT_NOT_REACHED(); }
 
 void FunctionType::accept(Typing::TypeVisitor& visitor) { visitor.visitFunctionType(this); }
 
@@ -192,6 +221,16 @@ std::string FunctionType::toString() const
     }
 
     return fmt::format("fn ({}) {}", arguments, returnType->toString());
+}
+
+llvm::Type* FunctionType::doGetLLVMType() const
+{
+    std::vector<llvm::Type*> argumentLLVMTypes;
+    std::transform(argumentTypes.begin(), argumentTypes.end(), std::back_inserter(argumentLLVMTypes),
+        [](Type* type) { return type->getLLVMType(); });
+
+    // TODO: Update when supporting vararg
+    return llvm::FunctionType::get(returnType->getLLVMType(), argumentLLVMTypes, false);
 }
 
 template<class T> inline void hash_combine(std::size_t& seed, T const& v)
@@ -230,6 +269,8 @@ ErrorType* ErrorType::get()
 }
 
 std::string ErrorType::toString() const { return "<ErrorType>"; }
+
+llvm::Type* ErrorType::doGetLLVMType() const { ASSERT_NOT_REACHED(); }
 
 // Return ErrorType if the coercion is not possible
 Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
@@ -292,6 +333,14 @@ Type* Type::getImplicitlyCoercedType(Type* a, Type* b)
     NOT_IMPLEMENTED();
 }
 
+llvm::Type* Type::getLLVMType() const
+{
+    if (llvmType == nullptr) {
+        llvmType = doGetLLVMType();
+    }
+    return llvmType;
+}
+
 BoolType::BoolType()
     : Type(TypeKind::Bool)
 {
@@ -310,6 +359,8 @@ BoolType* BoolType::get()
 }
 
 void BoolType::accept(Typing::TypeVisitor& visitor) { visitor.visitBoolType(this); }
+
+llvm::Type* BoolType::doGetLLVMType() const { return llvm::Type::getInt1Ty(*InitCeres::getLLVMContext()); }
 
 PrimitiveFloatType::PrimitiveFloatType(PrimitiveFloatKind kind)
     : Type(TypeKind::PrimitiveFloatType)
@@ -351,6 +402,19 @@ PrimitiveFloatKind PrimitiveFloatType::primitiveFloatKindFromString(std::string_
         return PrimitiveFloatKind::F64;
     } else {
         Log::panic("Primitive Float Kind Not implemented");
+    }
+}
+
+llvm::Type* PrimitiveFloatType::doGetLLVMType() const
+{
+    llvm::LLVMContext& ctx = *InitCeres::getLLVMContext();
+    switch (kind) {
+    case PrimitiveFloatKind::F32:
+        return llvm::Type::getFloatTy(ctx);
+    case PrimitiveFloatKind::F64:
+        return llvm::Type::getDoubleTy(ctx);
+    default:
+        NOT_IMPLEMENTED();
     }
 }
 

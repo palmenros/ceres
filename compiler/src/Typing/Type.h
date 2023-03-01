@@ -3,6 +3,7 @@
 
 #include "../utils/log.hpp"
 #include "llvm/Support/Casting.h"
+#include <llvm/IR/Type.h>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -40,12 +41,19 @@ public:
 private:
     const TypeKind kind;
 
+    mutable llvm::Type* llvmType = nullptr;
+
+protected:
+    virtual llvm::Type* doGetLLVMType() const = 0;
+
 public:
     explicit Type(TypeKind kind)
         : kind(kind)
     {
     }
     [[nodiscard]] TypeKind getKind() const { return kind; }
+
+    [[nodiscard]] llvm::Type* getLLVMType() const;
 
     virtual void accept(Typing::TypeVisitor& visitor) = 0;
     [[nodiscard]] virtual std::string toString() const = 0;
@@ -61,6 +69,9 @@ private:
         : Type(TypeKind::UnitVoidType)
     {
     }
+
+protected:
+    llvm::Type* doGetLLVMType() const override;
 
 public:
     // Static function needed for fast LLVM RTTI
@@ -80,6 +91,9 @@ private:
     {
     }
 
+protected:
+    llvm::Type* doGetLLVMType() const override;
+
 public:
     // Static function needed for fast LLVM RTTI
     static bool classof(Type const* type) { return type->getKind() == TypeKind::ErrorType; }
@@ -98,6 +112,9 @@ class UnresolvedType : public Type {
 private:
     static std::unordered_map<std::string, std::unique_ptr<UnresolvedType>> instances;
     explicit UnresolvedType(std::string typeIdentifier);
+
+protected:
+    llvm::Type* doGetLLVMType() const override;
 
 public:
     // Static function needed for fast LLVM RTTI
@@ -136,6 +153,9 @@ private:
     {
     }
 
+protected:
+    llvm::Type* doGetLLVMType() const override;
+
 public:
     // Static function needed for fast LLVM RTTI
     static bool classof(Type const* type) { return type->getKind() == TypeKind::NotYetInferredType; }
@@ -168,6 +188,9 @@ private:
     static std::unordered_map<PrimitiveIntegerKind, std::unique_ptr<PrimitiveIntegerType>> instances;
     explicit PrimitiveIntegerType(PrimitiveIntegerKind kind);
 
+protected:
+    llvm::Type* doGetLLVMType() const override;
+
 public:
     // Static function needed for fast LLVM RTTI
     static bool classof(Type const* type) { return type->getKind() == TypeKind::PrimitiveIntegerType; }
@@ -192,6 +215,9 @@ enum class PrimitiveFloatKind {
 class PrimitiveFloatType : public Type {
     static std::unordered_map<PrimitiveFloatKind, std::unique_ptr<PrimitiveFloatType>> instances;
     explicit PrimitiveFloatType(PrimitiveFloatKind kind);
+
+protected:
+    llvm::Type* doGetLLVMType() const override;
 
 public:
     // Static function needed for fast LLVM RTTI
@@ -221,6 +247,9 @@ private:
 
     explicit FunctionType(Type* returnType, std::vector<Type*> argumentTypes);
 
+protected:
+    llvm::Type* doGetLLVMType() const override;
+
 public:
     // Static function needed for fast LLVM RTTI
     static bool classof(Type const* type) { return type->getKind() == TypeKind::FunctionType; }
@@ -241,6 +270,9 @@ private:
     static std::unique_ptr<BoolType> instance;
 
     BoolType();
+
+protected:
+    llvm::Type* doGetLLVMType() const override;
 
 public:
     // Static function needed for fast LLVM RTTI
