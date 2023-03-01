@@ -100,6 +100,8 @@ public:
             break;
         }
     }
+
+    static unsigned getNumErrors() { return numErrors; }
 };
 
 } // namespace Ceres

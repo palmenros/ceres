@@ -19,6 +19,7 @@
 #include "AST/AntlrASTGeneratorVisitor.h"
 #include "AST/nodes/CompilationUnit.h"
 #include "Binding/BindingVisitor.h"
+#include "Codegen/CodeGenerator.h"
 #include "Diagnostics/Diagnostics.h"
 #include "Diagnostics/ParserErrorListener.h"
 #include "Typing/TypeCheckVisitor.h"
@@ -71,15 +72,24 @@ int main(int argc, char const* argv[])
 
         Binding::BindingVisitor bindingVisitor;
         bindingVisitor.visit(*AST);
-        Log::info("Binding visitor run!");
+        //        Log::info("Binding visitor run!");
 
         Typing::TypeCheckVisitor typeCheckVisitor;
         typeCheckVisitor.visit(*AST);
-        Log::info("Type check visitor run!");
+        //        Log::info("Type check visitor run!");
 
         Typing::FlowCheckVisitor flowCheckVisitor;
         flowCheckVisitor.visit(*AST);
-        Log::info("Flow check visitor run!");
+        //        Log::info("Flow check visitor run!");
+
+        // If there's any errors, bail out
+        if (Diagnostics::getNumErrors() != 0) {
+            return 1;
+        }
+
+        Codegen::CodeGenerator codeGenerator(InitCeres::getLLVMContext());
+        codeGenerator.generateCode(*AST);
+        //        Log::info("Code generation run!");
 
         // AST::ASTStringifierVisitor stringifierVisitor;
         // auto str = stringifierVisitor.visit(*AST);

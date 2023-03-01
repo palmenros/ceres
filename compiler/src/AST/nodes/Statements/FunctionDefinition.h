@@ -5,6 +5,7 @@
 #include "../../FunctionParameter.h"
 #include "../Expressions/Expression.h"
 #include "BlockStatement.h"
+#include <llvm/IR/Function.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -26,6 +27,8 @@ public:
     // parentFunction will be a link to the FunctionDefinition AST node of the parent function, to support
     //  nested functions
     FunctionDefinition* parentFunction = nullptr;
+
+    llvm::Function* llvmFunction = nullptr;
 
     SourceSpan returnTypeSpan;
     SourceSpan functionNameSpan;

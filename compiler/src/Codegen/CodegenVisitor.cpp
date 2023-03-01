@@ -1,4 +1,5 @@
 #include "CodegenVisitor.h"
+#include "llvm/IR/Verifier.h"
 
 namespace Ceres::Codegen {
 
@@ -18,16 +19,47 @@ llvm::Value* CodegenVisitor::doVisitCompilationUnit(AST::CompilationUnit& unit)
     return nullptr;
 }
 
-llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& def) {
+llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& def)
+{
     // Generate the function
-    NOT_IMPLEMENTED();
+    llvm::FunctionType* functionType = llvm::cast<llvm::FunctionType>(def.functionType->getLLVMType());
+
+    // TODO: For now, all functions will be defined as external linkage
+    // TODO: Add function name mangling
+    llvm::Function* function
+        = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, def.id, module.get());
+
+    // Set readable name for all variables in prototype
+    unsigned int index = 0;
+    for (auto& arg : function->args()) {
+        arg.setName(def.parameters[index].id);
+        index++;
+    }
+
+    def.llvmFunction = function;
+
+    llvm::BasicBlock* basicBlock = llvm::BasicBlock::Create(*context, "entry", function);
+    builder->SetInsertPoint(basicBlock);
+
+    // TODO: Insert parameters to stack and save them on the function
+
+    visitChildren(def);
+
+    llvm::verifyFunction(*function);
+
+    return function;
 }
 
 llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration& def) { NOT_IMPLEMENTED(); }
 
 /* Statements */
 
-llvm::Value* CodegenVisitor::doVisitBlockStatement(AST::BlockStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitBlockStatement(AST::BlockStatement& stm)
+{
+    // TODO: Should block statement create a BasicBlock? For now we won't
+    visitChildren(stm);
+    return nullptr;
+}
 
 llvm::Value* CodegenVisitor::doVisitExpressionStatement(AST::ExpressionStatement& stm) { NOT_IMPLEMENTED(); }
 

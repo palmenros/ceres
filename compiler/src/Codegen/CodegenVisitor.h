@@ -38,6 +38,8 @@ public:
     llvm::Value* doVisitVariableDeclaration(AST::VariableDeclaration& decl) override;
     llvm::Value* doVisitWhileStatement(AST::WhileStatement& stm) override;
     llvm::Value* doVisitFunctionDeclaration(AST::FunctionDeclaration& def) override;
+
+    friend class CodeGenerator;
 };
 
 } // Codegen
