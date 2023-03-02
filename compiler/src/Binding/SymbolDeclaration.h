@@ -8,6 +8,15 @@
 #include <optional>
 #include <string>
 
+// Forward declarations
+namespace Ceres::AST {
+
+struct FunctionParameter;
+class FunctionDefinition;
+class FunctionDeclaration;
+
+}
+
 namespace Ceres::Binding {
 
 enum class SymbolDeclarationKind {
@@ -40,6 +49,11 @@ public:
     Type* getType() const;
     // TODO: string view
     std::string getId();
+
+    Ceres::AST::FunctionParameter* getParam() const;
+    Ceres::AST::VariableDeclaration* getVarDecl() const;
+    Ceres::AST::FunctionDefinition* getFunDef() const;
+    Ceres::AST::FunctionDeclaration* getFunDec() const;
 };
 
 } // namespace Ceres::Binding

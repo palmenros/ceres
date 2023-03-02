@@ -20,6 +20,8 @@ std::vector<Node*> IntLiteralExpression::getChildren() const { return {}; }
 bool IntLiteralExpression::doesLiteralFitInsideType()
 {
     // TODO: Call this function where appropriate in TypingVisitor
+
+    // TODO: This function is not accurate enough. Only checks for some condition. We should improve it
     auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type);
     ASSERT(intType != nullptr);
 
@@ -49,6 +51,8 @@ bool IntLiteralExpression::doesLiteralFitInsideType()
 
 llvm::APInt IntLiteralExpression::getLLVMAPInt()
 {
+    ASSERT(doesLiteralFitInsideType());
+
     uint8_t radix = getRadix();
     auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type);
     ASSERT(intType != nullptr);

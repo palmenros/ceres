@@ -46,8 +46,7 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
 
     // TODO: Insert parameters to stack and save them on the function
     for (auto& arg : def.parameters) {
-        llvm::AllocaInst* paramAlloca = builder->CreateAlloca(arg.type->getLLVMType(), nullptr, arg.id);
-        arg.llvmAlloca = paramAlloca;
+        arg.llvmAlloca = allocateLocalVariable(arg.type, arg.id, builder.get());
     }
 
     auto* oldCurrentFunction = currentFunction;
@@ -88,7 +87,11 @@ llvm::Value* CodegenVisitor::doVisitBlockStatement(AST::BlockStatement& stm)
     return nullptr;
 }
 
-llvm::Value* CodegenVisitor::doVisitExpressionStatement(AST::ExpressionStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitExpressionStatement(AST::ExpressionStatement& stm)
+{
+    visitChildren(stm);
+    return nullptr;
+}
 
 llvm::Value* CodegenVisitor::doVisitForStatement(AST::ForStatement& stm) { NOT_IMPLEMENTED(); }
 
@@ -145,9 +148,60 @@ llvm::Value* CodegenVisitor::doVisitFloatLiteralExpression(AST::FloatLiteralExpr
     return llvm::ConstantFP::get(type->getLLVMType(), expr.getLLVMAPFloat());
 }
 
-llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpression& expr)
+{
+    // TODO: Check if this works well with both function definitions, declarations and function pointers
+    llvm::Value* callee = visit(*expr.identifier);
 
-llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpression& expr) { NOT_IMPLEMENTED(); }
+    std::vector<llvm::Value*> args;
+    args.reserve(expr.arguments.size());
+
+    for (auto const& arg : expr.arguments) {
+        args.push_back(visit(*arg));
+    }
+
+    llvm::FunctionType* functionType = llvm::dyn_cast<llvm::FunctionType>(expr.identifier->type->getLLVMType());
+    ASSERT(functionType != nullptr);
+
+    return builder->CreateCall(functionType, callee, args);
+}
+
+llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpression& expr)
+{
+    ASSERT(expr.decl.has_value());
+
+    auto createLoad = [&](Type* type, llvm::Value* value, std::string const& name) {
+        llvm::Type* llvmType = type->getLLVMType();
+        // Note: If we are trying to load a function pointer, we have to take a pointer
+        if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
+            llvmType = llvmType->getPointerTo();
+        }
+        return builder->CreateLoad(llvmType, value, name);
+    };
+
+    switch (expr.decl->getKind()) {
+    case Binding::SymbolDeclarationKind::FunctionDefinition: {
+        auto* funDef = expr.decl->getFunDef();
+        return funDef->llvmFunction;
+    }
+    case Binding::SymbolDeclarationKind::FunctionDeclaration:
+        NOT_IMPLEMENTED();
+    case Binding::SymbolDeclarationKind::LocalVariableDeclaration: {
+        // TODO: Check if we are in an LHS context and return a pointer instead
+        auto* varDec = expr.decl->getVarDecl();
+        return createLoad(varDec->type, varDec->allocaInst, varDec->id);
+    }
+    case Binding::SymbolDeclarationKind::GlobalVariableDeclaration:
+        NOT_IMPLEMENTED();
+    case Binding::SymbolDeclarationKind::FunctionParamDeclaration: {
+        // TODO: Check if we are in an LHS context and return a pointer instead
+        auto* funParam = expr.decl->getParam();
+        return createLoad(funParam->type, funParam->llvmAlloca, funParam->id);
+    }
+    case Binding::SymbolDeclarationKind::Invalid:
+        NOT_IMPLEMENTED();
+    }
+}
 
 llvm::Value* CodegenVisitor::doVisitIntLiteralExpression(AST::IntLiteralExpression& expr)
 {
@@ -168,13 +222,11 @@ llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration
     switch (decl.scope) {
     case AST::VariableScope::Local: {
         // Create an alloca instantiation at the beginning of the function block
-        llvm::IRBuilder<> tmpBuilder(&currentFunction->getEntryBlock(), currentFunction->getEntryBlock().begin());
-        llvm::AllocaInst* allocaInst = tmpBuilder.CreateAlloca(decl.type->getLLVMType(), nullptr, decl.id);
-        decl.allocaInst = allocaInst;
+        decl.allocaInst = allocateLocalVariable(decl.type, decl.id);
 
         if (decl.initializerExpression != nullptr) {
             llvm::Value* initializationValue = visit(*decl.initializerExpression);
-            builder->CreateStore(initializationValue, allocaInst);
+            builder->CreateStore(initializationValue, decl.allocaInst);
         }
         return nullptr;
     }
@@ -184,6 +236,27 @@ llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration
     default:
         NOT_IMPLEMENTED();
     }
+}
+
+llvm::AllocaInst* CodegenVisitor::allocateLocalVariable(
+    Type* type, std::string const& name, llvm::IRBuilder<>* builderToUse)
+{
+    llvm::Type* llvmType = type->getLLVMType();
+
+    if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
+        // TODO: How should we handle allocas of function pointers?
+
+        // If we are a function type, we need to create a pointer to function
+        llvmType = llvmType->getPointerTo();
+    }
+
+    auto createAlloca = [&](llvm::IRBuilder<>* bld) { return bld->CreateAlloca(llvmType, nullptr, name); };
+
+    if (builderToUse == nullptr) {
+        llvm::IRBuilder<> tmpBuilder(&currentFunction->getEntryBlock(), currentFunction->getEntryBlock().begin());
+        return createAlloca(&tmpBuilder);
+    }
+    return createAlloca(builderToUse);
 }
 
 } // Codegen

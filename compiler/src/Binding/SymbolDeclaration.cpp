@@ -3,38 +3,39 @@
 #include "../AST/nodes/Statements/FunctionDefinition.h"
 
 namespace Ceres::Binding {
-AST::FunctionParameter* getParam(SymbolDeclaration const& symbol)
+
+AST::FunctionParameter* SymbolDeclaration::getParam() const
 {
-    ASSERT(symbol.getParamIdx().has_value());
+    ASSERT(getParamIdx().has_value());
 
-    auto* node = dynamic_cast<AST::FunctionDefinition*>(symbol.getDeclarationNode());
+    auto* node = dynamic_cast<AST::FunctionDefinition*>(getDeclarationNode());
     ASSERT(node != nullptr);
-    ASSERT(symbol.getParamIdx().value() < node->parameters.size());
+    ASSERT(getParamIdx().value() < node->parameters.size());
 
-    auto* param = &node->parameters[symbol.getParamIdx().value()];
+    auto* param = &node->parameters[getParamIdx().value()];
 
     return param;
 }
 
-AST::VariableDeclaration* getVarDecl(SymbolDeclaration const& symbol)
+AST::VariableDeclaration* SymbolDeclaration::getVarDecl() const
 {
-    auto* node = dynamic_cast<AST::VariableDeclaration*>(symbol.getDeclarationNode());
+    auto* node = dynamic_cast<AST::VariableDeclaration*>(getDeclarationNode());
     ASSERT(node != nullptr);
 
     return node;
 }
 
-AST::FunctionDefinition* getFunDef(SymbolDeclaration const& symbol)
+AST::FunctionDefinition* SymbolDeclaration::getFunDef() const
 {
-    auto* node = dynamic_cast<AST::FunctionDefinition*>(symbol.getDeclarationNode());
+    auto* node = dynamic_cast<AST::FunctionDefinition*>(getDeclarationNode());
     ASSERT(node != nullptr);
 
     return node;
 }
 
-AST::FunctionDeclaration* getFunDec(SymbolDeclaration const& symbol)
+AST::FunctionDeclaration* SymbolDeclaration::getFunDec() const
 {
-    auto* node = dynamic_cast<AST::FunctionDeclaration*>(symbol.getDeclarationNode());
+    auto* node = dynamic_cast<AST::FunctionDeclaration*>(getDeclarationNode());
     ASSERT(node != nullptr);
 
     return node;
@@ -62,14 +63,14 @@ Type* SymbolDeclaration::getType() const
     switch (kind) {
 
     case SymbolDeclarationKind::FunctionDefinition:
-        return getFunDef(*this)->functionType;
+        return getFunDef()->functionType;
     case SymbolDeclarationKind::FunctionDeclaration:
-        return getFunDec(*this)->functionType;
+        return getFunDec()->functionType;
     case SymbolDeclarationKind::LocalVariableDeclaration:
     case SymbolDeclarationKind::GlobalVariableDeclaration:
-        return getVarDecl(*this)->type;
+        return getVarDecl()->type;
     case SymbolDeclarationKind::FunctionParamDeclaration:
-        return getParam(*this)->type;
+        return getParam()->type;
     case SymbolDeclarationKind::Invalid:
         ASSERT_NOT_REACHED();
     default:
@@ -87,9 +88,9 @@ Typing::Constness SymbolDeclaration::getConstness() const
         return Typing::Constness::Const;
     case SymbolDeclarationKind::LocalVariableDeclaration:
     case SymbolDeclarationKind::GlobalVariableDeclaration:
-        return getVarDecl(*this)->constness;
+        return getVarDecl()->constness;
     case SymbolDeclarationKind::FunctionParamDeclaration:
-        return getParam(*this)->constness;
+        return getParam()->constness;
     case SymbolDeclarationKind::Invalid:
         ASSERT_NOT_REACHED();
     default:
@@ -102,14 +103,14 @@ std::string SymbolDeclaration::getId()
     switch (kind) {
 
     case SymbolDeclarationKind::FunctionDefinition:
-        return getFunDef(*this)->id;
+        return getFunDef()->id;
     case SymbolDeclarationKind::FunctionDeclaration:
-        return getFunDec(*this)->functionName;
+        return getFunDec()->functionName;
     case SymbolDeclarationKind::LocalVariableDeclaration:
     case SymbolDeclarationKind::GlobalVariableDeclaration:
-        return getVarDecl(*this)->id;
+        return getVarDecl()->id;
     case SymbolDeclarationKind::FunctionParamDeclaration:
-        return getParam(*this)->id;
+        return getParam()->id;
     case SymbolDeclarationKind::Invalid:
         ASSERT_NOT_REACHED();
     default:

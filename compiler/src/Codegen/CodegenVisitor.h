@@ -14,6 +14,9 @@ class CodegenVisitor : public AST::AbstractReturningASTVisitor<llvm::Value*> {
     std::unique_ptr<llvm::Module> module;
     llvm::Function* currentFunction = nullptr;
 
+    llvm::AllocaInst* allocateLocalVariable(
+        Type* type, std::string const& name, llvm::IRBuilder<>* builderToUse = nullptr);
+
 public:
     CodegenVisitor(llvm::LLVMContext* context);
 

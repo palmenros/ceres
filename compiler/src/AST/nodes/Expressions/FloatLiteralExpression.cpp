@@ -20,6 +20,7 @@ std::vector<Node*> FloatLiteralExpression::getChildren() const { return {}; }
 
 llvm::APFloat FloatLiteralExpression::getLLVMAPFloat()
 {
+    // TODO: Check if float string is well formed
     if (base != FloatLiteralBase::Dec) {
         NOT_IMPLEMENTED();
     }

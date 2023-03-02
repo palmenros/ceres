@@ -48,6 +48,21 @@ public:
         auto& srcMgr = SourceManager::get().getLLVMSourceMgr();
 
         srcMgr.PrintMessage(loc, kind, msg);
+
+        switch (kind) {
+        case llvm::SourceMgr::DK_Error:
+            numErrors++;
+            break;
+        case llvm::SourceMgr::DK_Warning:
+            numWarnings++;
+            break;
+        case llvm::SourceMgr::DK_Remark:
+            numRemarks++;
+            break;
+        case llvm::SourceMgr::DK_Note:
+            numNotes++;
+            break;
+        }
     }
 
     template<typename... Args>

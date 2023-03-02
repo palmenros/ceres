@@ -91,6 +91,7 @@ void BindingVisitor::visitFunctionDefinition(AST::FunctionDefinition& def)
 
     visitChildren(*def.block);
 
+    currentFunction = def.parentFunction;
     currentScope = currentScope->getEnclosingScope();
 }
 
