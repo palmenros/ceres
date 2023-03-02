@@ -1,0 +1,23 @@
+/* Test driver library functions */
+extern fn assert(cond: bool);
+
+extern fn printI8(x: i8);
+extern fn printI16(x : i16);
+extern fn printI32(x : i32);
+extern fn printI64(x : i64);
+extern fn printU8(x : u8);
+extern fn printU16(x : u16);
+extern fn printU32(x : u32);
+extern fn printU64(x : u64);
+
+extern fn printF32(x : f32);
+extern fn printF64(x : f64 );
+
+fn average(a : f32, b : f32) f32 {
+    return (a + b)/2.;
+}
+
+fn testMain() i32 {
+    printF32(average(3., 22.));
+    return 0;
+}

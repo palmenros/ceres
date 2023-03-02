@@ -87,8 +87,17 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     llvm::BasicBlock* basicBlock = llvm::BasicBlock::Create(*context, "entry", function);
     builder->SetInsertPoint(basicBlock);
 
+    // Create alloca for arguments
     for (auto& arg : def.parameters) {
         arg.llvmAlloca = allocateLocalVariable(arg.type, arg.id, builder.get());
+    }
+
+    // Create store for arguments
+    unsigned paramIndex = 0;
+    for (auto& llvmArg : def.llvmFunction->args()) {
+        auto const& arg = def.parameters[paramIndex];
+        generateStore(arg.llvmAlloca, &llvmArg);
+        paramIndex++;
     }
 
     auto* oldCurrentFunction = currentFunction;
@@ -170,19 +179,22 @@ llvm::Value* CodegenVisitor::doVisitAssignmentExpression(AST::AssignmentExpressi
 
     llvm::Value* right = visit(*expr.expressionRHS);
 
+    llvm::Value* returnVal = nullptr;
+
     if (expr.binaryOp.has_value()) {
         llvm::Value* left = generateLoad(expr.type, ptr);
         llvm::Value* value = generateBinaryOperation(left, right, *expr.binaryOp, expr.type);
         // TODO: Handle volatile
         builder->CreateStore(value, ptr, false);
-        return value;
+        returnVal = value;
     } else {
         // TODO: Handle volatile
         builder->CreateStore(right, ptr, false);
-        return right;
+        returnVal = right;
     }
 
     LHSVisitingMode = oldLHSVisitingMode;
+    return returnVal;
 }
 
 llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperationExpression& expr)
@@ -329,7 +341,14 @@ llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
 
 llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { TODO(); }
 
-llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr) { TODO(); }
+llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr)
+{
+    llvm::Value* value = nullptr;
+    for (auto& e : expr.expressions) {
+        value = visit(*e);
+    }
+    return value;
+}
 
 llvm::Value* CodegenVisitor::doVisitFloatLiteralExpression(AST::FloatLiteralExpression& expr)
 {

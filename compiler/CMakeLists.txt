@@ -47,7 +47,7 @@ add_executable(compiler
         src/Binding/BindingVisitor.cpp src/Binding/BindingVisitor.h src/AST/nodes/FunctionDeclaration.cpp src/AST/nodes/FunctionDeclaration.h src/Typing/Visibility.cpp src/Typing/Visibility.h src/AST/nodes/Expressions/CastExpression.cpp src/AST/nodes/Expressions/CastExpression.h src/Codegen/CodegenVisitor.cpp src/Codegen/CodegenVisitor.h src/Codegen/CodeGenerator.cpp src/Codegen/CodeGenerator.h)
 
 ##########################################
-#          END MISCELLANEOUS LIBRARIES
+#       START MISCELLANEOUS LIBRARIES
 ##########################################
 
 # SPDLog: Fast, header-only logging library
@@ -57,10 +57,6 @@ target_include_directories(compiler SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/thirdpa
 #       END MISCELLANEOUS LIBRARIES
 ##########################################
 
-
-##########################################
-#           END LLVM
-##########################################
 
 ##########################################
 #           START LLVM
@@ -78,7 +74,10 @@ add_definitions(${LLVM_DEFINITIONS_LIST})
 # Find the libraries that correspond to the LLVM components that we wish to use
 
 # A list of components can be found by executing "llvm-config --components"
-llvm_map_components_to_libnames(llvm_libs support core irreader)
+llvm_map_components_to_libnames(llvm_libs support core irreader
+        # all targets
+        XCoreDisassembler XCoreCodeGen XCoreDesc XCoreInfo X86TargetMCA X86Disassembler X86AsmParser X86CodeGen X86Desc X86Info WebAssemblyDisassembler WebAssemblyAsmParser WebAssemblyCodeGen WebAssemblyDesc WebAssemblyUtils WebAssemblyInfo VEDisassembler VEAsmParser VECodeGen VEDesc VEInfo SystemZDisassembler SystemZAsmParser SystemZCodeGen SystemZDesc SystemZInfo SparcDisassembler SparcAsmParser SparcCodeGen SparcDesc SparcInfo RISCVDisassembler RISCVAsmParser RISCVCodeGen RISCVDesc RISCVInfo PowerPCDisassembler PowerPCAsmParser PowerPCCodeGen PowerPCDesc PowerPCInfo NVPTXCodeGen NVPTXDesc NVPTXInfo MSP430Disassembler MSP430AsmParser MSP430CodeGen MSP430Desc MSP430Info MipsDisassembler MipsAsmParser MipsCodeGen MipsDesc MipsInfo LanaiDisassembler LanaiCodeGen LanaiAsmParser LanaiDesc LanaiInfo HexagonDisassembler HexagonCodeGen HexagonAsmParser HexagonDesc HexagonInfo BPFDisassembler BPFAsmParser BPFCodeGen BPFDesc BPFInfo AVRDisassembler AVRAsmParser AVRCodeGen AVRDesc AVRInfo ARMDisassembler ARMAsmParser ARMCodeGen ARMDesc ARMUtils ARMInfo AMDGPUTargetMCA MCA AMDGPUDisassembler AMDGPUAsmParser AMDGPUCodeGen MIRParser AMDGPUDesc AMDGPUUtils AMDGPUInfo Passes ObjCARCOpts Coroutines ipo Instrumentation Vectorize Linker AsmParser FrontendOpenMP AArch64Disassembler MCDisassembler AArch64AsmParser AArch64CodeGen CFGuard GlobalISel SelectionDAG AsmPrinter CodeGen Target ScalarOpts InstCombine AggressiveInstCombine TransformUtils BitWriter Analysis ProfileData Symbolize DebugInfoPDB DebugInfoMSF DebugInfoDWARF Object TextAPI MCParser BitReader Remarks BitstreamReader AArch64Desc AArch64Utils AArch64Info MC DebugInfoCodeView BinaryFormat Demangle
+        )
 
 # Link against LLVM libraries
 target_link_libraries(compiler ${llvm_libs})
