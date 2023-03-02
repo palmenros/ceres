@@ -16,14 +16,26 @@ llvm::Value* CodegenVisitor::doVisitCompilationUnit(AST::CompilationUnit& unit)
     // TODO: Change module name to something meaningful
     module = std::make_unique<llvm::Module>("CeresModule", *context);
 
+    //  First visit all function declarations and definitions (before visiting children),
+    //      to setup adequate pointers.
+    for (auto& def : unit.functionDefinitions) {
+        generateFunctionDefinitionPrototype(*def);
+    }
+
+    for (auto& dec : unit.functionDeclarations) {
+        generateFunctionDeclarationPrototype(*dec);
+    }
+
+    for (auto& globalVar : unit.globalVariableDeclarations) {
+        generateGlobalVariablePrototype(*globalVar);
+    }
+
     visitChildren(unit);
     return nullptr;
 }
 
-llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& def)
+void CodegenVisitor::generateFunctionDefinitionPrototype(AST::FunctionDefinition& def)
 {
-    ASSERT(def.parentFunction == nullptr);
-
     // Generate the function
     llvm::FunctionType* functionType = llvm::cast<llvm::FunctionType>(def.functionType->getLLVMType());
 
@@ -40,11 +52,41 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     }
 
     def.llvmFunction = function;
+}
+
+void CodegenVisitor::generateFunctionDeclarationPrototype(AST::FunctionDeclaration& dec)
+{
+    // Generate the function
+    llvm::FunctionType* functionType = llvm::cast<llvm::FunctionType>(dec.functionType->getLLVMType());
+
+    // TODO: For now, all functions will be defined as external linkage
+    // TODO: Add function name mangling
+    llvm::Function* function
+        = llvm::Function::Create(functionType, llvm::Function::ExternalLinkage, dec.functionName, module.get());
+
+    // Set readable name for all variables in prototype
+    unsigned int index = 0;
+    for (auto& arg : function->args()) {
+        arg.setName(dec.parameters[index].id);
+        index++;
+    }
+
+    dec.llvmFunction = function;
+}
+
+void CodegenVisitor::generateGlobalVariablePrototype(AST::VariableDeclaration& dec) { NOT_IMPLEMENTED(); }
+
+llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& def)
+{
+    // TODO: Add support for nested functions
+    ASSERT(def.parentFunction == nullptr);
+    ASSERT(def.llvmFunction != nullptr);
+
+    auto* function = def.llvmFunction;
 
     llvm::BasicBlock* basicBlock = llvm::BasicBlock::Create(*context, "entry", function);
     builder->SetInsertPoint(basicBlock);
 
-    // TODO: Insert parameters to stack and save them on the function
     for (auto& arg : def.parameters) {
         arg.llvmAlloca = allocateLocalVariable(arg.type, arg.id, builder.get());
     }
@@ -66,7 +108,11 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     return function;
 }
 
-llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration& def) { TODO(); }
+llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration& dec)
+{
+    ASSERT(dec.llvmFunction != nullptr);
+    return dec.llvmFunction;
+}
 
 /* Statements */
 
@@ -114,20 +160,49 @@ llvm::Value* CodegenVisitor::doVisitWhileStatement(AST::WhileStatement& stm) { T
 
 /* Expressions */
 
-llvm::Value* CodegenVisitor::doVisitAssignmentExpression(AST::AssignmentExpression& expr) { TODO(); }
+llvm::Value* CodegenVisitor::doVisitAssignmentExpression(AST::AssignmentExpression& expr)
+{
+    bool oldLHSVisitingMode = LHSVisitingMode;
+    LHSVisitingMode = true;
+
+    llvm::Value* ptr = visit(*expr.expressionLHS);
+    LHSVisitingMode = false;
+
+    llvm::Value* right = visit(*expr.expressionRHS);
+
+    if (expr.binaryOp.has_value()) {
+        llvm::Value* left = generateLoad(expr.type, ptr);
+        llvm::Value* value = generateBinaryOperation(left, right, *expr.binaryOp, expr.type);
+        // TODO: Handle volatile
+        builder->CreateStore(value, ptr, false);
+        return value;
+    } else {
+        // TODO: Handle volatile
+        builder->CreateStore(right, ptr, false);
+        return right;
+    }
+
+    LHSVisitingMode = oldLHSVisitingMode;
+}
 
 llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperationExpression& expr)
 {
     ASSERT(expr.left->type == expr.right->type);
     Type* type = expr.left->type;
 
-    switch (expr.op.kind) {
+    return generateBinaryOperation(visit(*expr.left), visit(*expr.right), expr.op, type);
+}
+
+llvm::Value* CodegenVisitor::generateBinaryOperation(
+    llvm::Value* left, llvm::Value* right, Typing::BinaryOperation op, Type* type)
+{
+    switch (op.kind) {
     case Typing::BinaryOperation::Mult: {
         if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
             // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
-            return builder->CreateMul(visit(*expr.left), visit(*expr.right), "mul");
+            return builder->CreateMul(left, right, "mul");
         } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
-            return builder->CreateFMul(visit(*expr.left), visit(*expr.right), "fmul");
+            return builder->CreateFMul(left, right, "fmul");
         } else {
             NOT_IMPLEMENTED();
         }
@@ -138,12 +213,12 @@ llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperati
         if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
             // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
             if (intType->isSigned()) {
-                return builder->CreateSDiv(visit(*expr.left), visit(*expr.right), "sdiv");
+                return builder->CreateSDiv(left, right, "sdiv");
             } else {
-                return builder->CreateUDiv(visit(*expr.left), visit(*expr.right), "udiv");
+                return builder->CreateUDiv(left, right, "udiv");
             }
         } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
-            return builder->CreateFDiv(visit(*expr.left), visit(*expr.right), "fdiv");
+            return builder->CreateFDiv(left, right, "fdiv");
         } else {
             NOT_IMPLEMENTED();
         }
@@ -154,13 +229,13 @@ llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperati
         if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
             // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
             if (intType->isSigned()) {
-                return builder->CreateSRem(visit(*expr.left), visit(*expr.right), "srem");
+                return builder->CreateSRem(left, right, "srem");
             } else {
-                return builder->CreateURem(visit(*expr.left), visit(*expr.right), "urem");
+                return builder->CreateURem(left, right, "urem");
             }
         } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
             // TODO: Check semantics of floating point modulo
-            return builder->CreateFRem(visit(*expr.left), visit(*expr.right), "frem");
+            return builder->CreateFRem(left, right, "frem");
         } else {
             NOT_IMPLEMENTED();
         }
@@ -169,9 +244,9 @@ llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperati
     case Typing::BinaryOperation::Sum: {
         if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
             // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
-            return builder->CreateAdd(visit(*expr.left), visit(*expr.right), "add");
+            return builder->CreateAdd(left, right, "add");
         } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
-            return builder->CreateFAdd(visit(*expr.left), visit(*expr.right), "fadd");
+            return builder->CreateFAdd(left, right, "fadd");
         } else {
             NOT_IMPLEMENTED();
         }
@@ -180,9 +255,9 @@ llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperati
     case Typing::BinaryOperation::Subtraction: {
         if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
             // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
-            return builder->CreateSub(visit(*expr.left), visit(*expr.right), "sub");
+            return builder->CreateSub(left, right, "sub");
         } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
-            return builder->CreateFSub(visit(*expr.left), visit(*expr.right), "fsub");
+            return builder->CreateFSub(left, right, "fsub");
         } else {
             NOT_IMPLEMENTED();
         }
@@ -278,41 +353,56 @@ llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpr
 
     llvm::FunctionType* functionType = llvm::dyn_cast<llvm::FunctionType>(expr.identifier->type->getLLVMType());
     ASSERT(functionType != nullptr);
+    ASSERT(callee != nullptr);
 
     return builder->CreateCall(functionType, callee, args);
+}
+
+llvm::Value* CodegenVisitor::generateLoad(Type* type, llvm::Value* ptr, std::string const& name)
+{
+    llvm::Type* llvmType = type->getLLVMType();
+    // Note: If we are trying to load a function pointer, we have to take a pointer
+    if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
+        llvmType = llvmType->getPointerTo();
+    }
+    return builder->CreateLoad(llvmType, ptr, name);
 }
 
 llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpression& expr)
 {
     ASSERT(expr.decl.has_value());
 
-    auto createLoad = [&](Type* type, llvm::Value* value, std::string const& name) {
-        llvm::Type* llvmType = type->getLLVMType();
-        // Note: If we are trying to load a function pointer, we have to take a pointer
-        if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
-            llvmType = llvmType->getPointerTo();
-        }
-        return builder->CreateLoad(llvmType, value, name);
-    };
-
     switch (expr.decl->getKind()) {
     case Binding::SymbolDeclarationKind::FunctionDefinition: {
         auto* funDef = expr.decl->getFunDef();
+        ASSERT(funDef != nullptr);
+        ASSERT(funDef->llvmFunction != nullptr);
         return funDef->llvmFunction;
     }
-    case Binding::SymbolDeclarationKind::FunctionDeclaration:
-        TODO();
+    case Binding::SymbolDeclarationKind::FunctionDeclaration: {
+        auto* funDec = expr.decl->getFunDec();
+        ASSERT(funDec != nullptr);
+        ASSERT(funDec->llvmFunction != nullptr);
+        return funDec->llvmFunction;
+    }
     case Binding::SymbolDeclarationKind::LocalVariableDeclaration: {
-        // TODO: Check if we are in an LHS context and return a pointer instead
         auto* varDec = expr.decl->getVarDecl();
-        return createLoad(varDec->type, varDec->allocaInst, varDec->id);
+        if (LHSVisitingMode) {
+            return varDec->allocaInst;
+        } else {
+            return generateLoad(varDec->type, varDec->allocaInst, varDec->id);
+        }
     }
     case Binding::SymbolDeclarationKind::GlobalVariableDeclaration:
+        // TODO: Check if we are in an LHS context and return a pointer instead
         TODO();
     case Binding::SymbolDeclarationKind::FunctionParamDeclaration: {
-        // TODO: Check if we are in an LHS context and return a pointer instead
         auto* funParam = expr.decl->getParam();
-        return createLoad(funParam->type, funParam->llvmAlloca, funParam->id);
+        if (LHSVisitingMode) {
+            return funParam->llvmAlloca;
+        } else {
+            return generateLoad(funParam->type, funParam->llvmAlloca, funParam->id);
+        }
     }
     case Binding::SymbolDeclarationKind::Invalid:
     default:
@@ -343,7 +433,7 @@ llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration
 
         if (decl.initializerExpression != nullptr) {
             llvm::Value* initializationValue = visit(*decl.initializerExpression);
-            builder->CreateStore(initializationValue, decl.allocaInst);
+            generateStore(decl.allocaInst, initializationValue);
         }
         return nullptr;
     }
@@ -374,6 +464,16 @@ llvm::AllocaInst* CodegenVisitor::allocateLocalVariable(
         return createAlloca(&tmpBuilder);
     }
     return createAlloca(builderToUse);
+}
+
+void CodegenVisitor::generateStore(llvm::AllocaInst* allocaInst, llvm::Value* value)
+{
+    if (auto* function = llvm::dyn_cast<llvm::Function>(value)) {
+        // TODO: Is this the right way of casting function pointers?
+        //        value = builder->CreateBitCast(value, function->getFunctionType()->getPointerTo());
+    }
+
+    builder->CreateStore(value, allocaInst);
 }
 
 } // Codegen

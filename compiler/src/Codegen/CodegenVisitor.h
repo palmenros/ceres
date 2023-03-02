@@ -17,6 +17,20 @@ class CodegenVisitor : public AST::AbstractReturningASTVisitor<llvm::Value*> {
     llvm::AllocaInst* allocateLocalVariable(
         Type* type, std::string const& name, llvm::IRBuilder<>* builderToUse = nullptr);
 
+    void generateStore(llvm::AllocaInst* allocaInst, llvm::Value* value);
+
+    void generateFunctionDefinitionPrototype(AST::FunctionDefinition& def);
+    void generateFunctionDeclarationPrototype(AST::FunctionDeclaration& dec);
+    void generateGlobalVariablePrototype(AST::VariableDeclaration& dec);
+
+    llvm::Value* generateLoad(Type* type, llvm::Value* ptr, std::string const& name = "");
+
+    llvm::Value* generateBinaryOperation(llvm::Value* left, llvm::Value* right, Typing::BinaryOperation op, Type* type);
+
+    /* True when we are looking for an LHS expression, that is, we need the pointer of a variable instead of the
+     * variable itself*/
+    bool LHSVisitingMode = false;
+
 public:
     CodegenVisitor(llvm::LLVMContext* context);
 

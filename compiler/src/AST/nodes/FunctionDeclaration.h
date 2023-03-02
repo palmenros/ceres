@@ -25,6 +25,7 @@ public:
     void accept(AbstractASTVisitor& visitor) override;
 
     std::vector<Node*> getChildren() const override;
+    llvm::Value* llvmFunction = nullptr;
 };
 }
 #endif // COMPILER_FUNCTIONDECLARATION_H
