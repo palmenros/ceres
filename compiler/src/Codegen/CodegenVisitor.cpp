@@ -66,7 +66,7 @@ llvm::Value* CodegenVisitor::doVisitFunctionDefinition(AST::FunctionDefinition& 
     return function;
 }
 
-llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration& def) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitFunctionDeclaration(AST::FunctionDeclaration& def) { TODO(); }
 
 /* Statements */
 
@@ -93,9 +93,9 @@ llvm::Value* CodegenVisitor::doVisitExpressionStatement(AST::ExpressionStatement
     return nullptr;
 }
 
-llvm::Value* CodegenVisitor::doVisitForStatement(AST::ForStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitForStatement(AST::ForStatement& stm) { TODO(); }
 
-llvm::Value* CodegenVisitor::doVisitIfStatement(AST::IfStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitIfStatement(AST::IfStatement& stm) { TODO(); }
 
 llvm::Value* CodegenVisitor::doVisitReturnStatement(AST::ReturnStatement& stm)
 {
@@ -110,15 +110,131 @@ llvm::Value* CodegenVisitor::doVisitReturnStatement(AST::ReturnStatement& stm)
     return nullptr;
 }
 
-llvm::Value* CodegenVisitor::doVisitWhileStatement(AST::WhileStatement& stm) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitWhileStatement(AST::WhileStatement& stm) { TODO(); }
 
 /* Expressions */
 
-llvm::Value* CodegenVisitor::doVisitAssignmentExpression(AST::AssignmentExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitAssignmentExpression(AST::AssignmentExpression& expr) { TODO(); }
 
 llvm::Value* CodegenVisitor::doVisitBinaryOperationExpression(AST::BinaryOperationExpression& expr)
 {
-    NOT_IMPLEMENTED();
+    ASSERT(expr.left->type == expr.right->type);
+    Type* type = expr.left->type;
+
+    switch (expr.op.kind) {
+    case Typing::BinaryOperation::Mult: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
+            return builder->CreateMul(visit(*expr.left), visit(*expr.right), "mul");
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            return builder->CreateFMul(visit(*expr.left), visit(*expr.right), "fmul");
+        } else {
+            NOT_IMPLEMENTED();
+        }
+        break;
+    }
+    case Typing::BinaryOperation::Div: {
+        // TODO: Check the semantics of division
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
+            if (intType->isSigned()) {
+                return builder->CreateSDiv(visit(*expr.left), visit(*expr.right), "sdiv");
+            } else {
+                return builder->CreateUDiv(visit(*expr.left), visit(*expr.right), "udiv");
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            return builder->CreateFDiv(visit(*expr.left), visit(*expr.right), "fdiv");
+        } else {
+            NOT_IMPLEMENTED();
+        }
+        break;
+    }
+    case Typing::BinaryOperation::Modulo: {
+        // TODO: Check the semantics of modulo
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
+            if (intType->isSigned()) {
+                return builder->CreateSRem(visit(*expr.left), visit(*expr.right), "srem");
+            } else {
+                return builder->CreateURem(visit(*expr.left), visit(*expr.right), "urem");
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Check semantics of floating point modulo
+            return builder->CreateFRem(visit(*expr.left), visit(*expr.right), "frem");
+        } else {
+            NOT_IMPLEMENTED();
+        }
+        break;
+    }
+    case Typing::BinaryOperation::Sum: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
+            return builder->CreateAdd(visit(*expr.left), visit(*expr.right), "add");
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            return builder->CreateFAdd(visit(*expr.left), visit(*expr.right), "fadd");
+        } else {
+            NOT_IMPLEMENTED();
+        }
+        break;
+    }
+    case Typing::BinaryOperation::Subtraction: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            // TODO: Check the semantics of signed overflow (NSW) and unsigned overflow (NUW)
+            return builder->CreateSub(visit(*expr.left), visit(*expr.right), "sub");
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            return builder->CreateFSub(visit(*expr.left), visit(*expr.right), "fsub");
+        } else {
+            NOT_IMPLEMENTED();
+        }
+        break;
+    }
+    // TODO: Check semantics of bitwise operations on signed-unsigned
+    case Typing::BinaryOperation::BitshiftLeft:
+        TODO();
+        break;
+    case Typing::BinaryOperation::BitshiftRight:
+        TODO();
+        break;
+    case Typing::BinaryOperation::BitwiseAnd:
+        TODO();
+        break;
+    case Typing::BinaryOperation::BitwiseOr:
+        TODO();
+        break;
+    case Typing::BinaryOperation::BitwiseXor:
+        TODO();
+        break;
+    // TODO: Add support for short-circuit in all relational operators
+    case Typing::BinaryOperation::Equals:
+        TODO();
+        break;
+    case Typing::BinaryOperation::NotEquals:
+        TODO();
+        break;
+    case Typing::BinaryOperation::LessOrEqual:
+        TODO();
+        break;
+    case Typing::BinaryOperation::GreaterOrEqual:
+        TODO();
+        break;
+    case Typing::BinaryOperation::GreaterThan:
+        TODO();
+        break;
+    case Typing::BinaryOperation::LessThan:
+        TODO();
+        break;
+    case Typing::BinaryOperation::LogicalAnd:
+        // TODO: Add support for Logical And using short-circuit
+        TODO();
+        break;
+    case Typing::BinaryOperation::LogicalOr:
+        // TODO: Add support for Logical Or using short-circuit
+        TODO();
+        break;
+    case Typing::BinaryOperation::Invalid:
+    default:
+        NOT_IMPLEMENTED();
+    }
 }
 
 llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
@@ -136,9 +252,9 @@ llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
     return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*context), llvm::APInt(1, val, false));
 }
 
-llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { TODO(); }
 
-llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr) { TODO(); }
 
 llvm::Value* CodegenVisitor::doVisitFloatLiteralExpression(AST::FloatLiteralExpression& expr)
 {
@@ -185,20 +301,21 @@ llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpressi
         return funDef->llvmFunction;
     }
     case Binding::SymbolDeclarationKind::FunctionDeclaration:
-        NOT_IMPLEMENTED();
+        TODO();
     case Binding::SymbolDeclarationKind::LocalVariableDeclaration: {
         // TODO: Check if we are in an LHS context and return a pointer instead
         auto* varDec = expr.decl->getVarDecl();
         return createLoad(varDec->type, varDec->allocaInst, varDec->id);
     }
     case Binding::SymbolDeclarationKind::GlobalVariableDeclaration:
-        NOT_IMPLEMENTED();
+        TODO();
     case Binding::SymbolDeclarationKind::FunctionParamDeclaration: {
         // TODO: Check if we are in an LHS context and return a pointer instead
         auto* funParam = expr.decl->getParam();
         return createLoad(funParam->type, funParam->llvmAlloca, funParam->id);
     }
     case Binding::SymbolDeclarationKind::Invalid:
+    default:
         NOT_IMPLEMENTED();
     }
 }
@@ -212,9 +329,9 @@ llvm::Value* CodegenVisitor::doVisitIntLiteralExpression(AST::IntLiteralExpressi
     return llvm::ConstantInt::get(type->getLLVMType(), expr.getLLVMAPInt());
 }
 
-llvm::Value* CodegenVisitor::doVisitPostfixExpression(AST::PostfixExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitPostfixExpression(AST::PostfixExpression& expr) { TODO(); }
 
-llvm::Value* CodegenVisitor::doVisitPrefixExpression(AST::PrefixExpression& expr) { NOT_IMPLEMENTED(); }
+llvm::Value* CodegenVisitor::doVisitPrefixExpression(AST::PrefixExpression& expr) { TODO(); }
 
 llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration& decl)
 {
@@ -231,7 +348,7 @@ llvm::Value* CodegenVisitor::doVisitVariableDeclaration(AST::VariableDeclaration
         return nullptr;
     }
     case AST::VariableScope::Global:
-        NOT_IMPLEMENTED();
+        TODO();
         break;
     default:
         NOT_IMPLEMENTED();

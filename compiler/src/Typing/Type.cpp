@@ -144,6 +144,23 @@ unsigned int PrimitiveIntegerType::getNumBits() const
         NOT_IMPLEMENTED();
     }
 }
+bool PrimitiveIntegerType::isSigned() const
+{
+    switch (kind) {
+    case PrimitiveIntegerKind::I8:
+    case PrimitiveIntegerKind::I16:
+    case PrimitiveIntegerKind::I32:
+    case PrimitiveIntegerKind::I64:
+        return true;
+    case PrimitiveIntegerKind::U8:
+    case PrimitiveIntegerKind::U16:
+    case PrimitiveIntegerKind::U32:
+    case PrimitiveIntegerKind::U64:
+        return false;
+    default:
+        NOT_IMPLEMENTED();
+    }
+}
 
 std::string NotYetInferredType::toString() const
 {

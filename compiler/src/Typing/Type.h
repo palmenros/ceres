@@ -204,6 +204,8 @@ public:
     static PrimitiveIntegerType* get(PrimitiveIntegerKind kind);
     static PrimitiveIntegerType* get(std::string_view str);
 
+    bool isSigned() const;
+
     [[nodiscard]] std::string toString() const override;
     unsigned int getNumBits() const;
 };
