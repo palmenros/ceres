@@ -73,10 +73,94 @@ add_definitions(${LLVM_DEFINITIONS_LIST})
 
 # Find the libraries that correspond to the LLVM components that we wish to use
 
+# Handle LLVM Targets (targets our compiler will be able to build for)
+set(TARGET_WebAssembly WebAssemblyCodeGen WebAssemblyAsmParser WebAssemblyDesc WebAssemblyInfo)
+set(TARGET_XCore XCoreCodeGen XCoreDesc XCoreInfo)
+set(TARGET_SystemZ SystemZCodeGen SystemZAsmParser SystemZDesc SystemZInfo)
+set(TARGET_Sparc SparcCodeGen SparcAsmParser SparcDesc SparcInfo)
+set(TARGET_RISCV RISCVCodeGen RISCVAsmParser RISCVDesc RISCVInfo)
+set(TARGET_PowerPC PowerPCCodeGen PowerPCAsmParser PowerPCDesc PowerPCInfo)
+set(TARGET_NVPTX NVPTXCodeGen NVPTXDesc NVPTXInfo)
+set(TARGET_MSP430 MSP430CodeGen MSP430AsmParser MSP430Desc MSP430Info)
+set(TARGET_Mips MipsCodeGen MipsAsmParser MipsDesc MipsInfo)
+set(TARGET_Lanai LanaiCodeGen LanaiAsmParser LanaiDesc LanaiInfo)
+set(TARGET_Hexagon HexagonCodeGen HexagonAsmParser HexagonDesc HexagonInfo)
+set(TARGET_BPF BPFCodeGen BPFAsmParser BPFDesc BPFInfo)
+set(TARGET_ARM ARMCodeGen ARMAsmParser ARMDesc ARMUtils ARMInfo)
+set(TARGET_AMDGPU AMDGPUCodeGen AMDGPUAsmParser AMDGPUDesc AMDGPUUtils AMDGPUInfo)
+set(TARGET_X86 X86CodeGen X86AsmParser X86Desc X86Info)
+set(TARGET_AArch64 AArch64CodeGen AArch64AsmParser AArch64Desc AArch64Utils AArch64Info)
+set(TARGET_AVR AVRCodeGen AVRAsmParser AVRDesc AVRInfo)
+set(TARGET_VE VECodeGen VEAsmParser VEDesc VEInfo)
+
+# Set the list of targets we want our compiler to build for (a subset of the previously design targets)
+set(TARGETS_TO_BUILD "VE" "WebAssembly" "XCore" "SystemZ" "Sparc" "RISCV" "PowerPC" "NVPTX" "MSP430" "Mips" "Lanai" "Hexagon" "BPF" "ARM" "AMDGPU" "X86" "AArch64" "AVR")
+
+set(LLVM_TARGETS)
+foreach (target IN ITEMS ${TARGETS_TO_BUILD})
+    list(APPEND LLVM_TARGETS "${TARGET_${target}}")
+endforeach (target)
+
 # A list of components can be found by executing "llvm-config --components"
-llvm_map_components_to_libnames(llvm_libs support core irreader
-        # all targets
-        XCoreDisassembler XCoreCodeGen XCoreDesc XCoreInfo X86TargetMCA X86Disassembler X86AsmParser X86CodeGen X86Desc X86Info WebAssemblyDisassembler WebAssemblyAsmParser WebAssemblyCodeGen WebAssemblyDesc WebAssemblyUtils WebAssemblyInfo VEDisassembler VEAsmParser VECodeGen VEDesc VEInfo SystemZDisassembler SystemZAsmParser SystemZCodeGen SystemZDesc SystemZInfo SparcDisassembler SparcAsmParser SparcCodeGen SparcDesc SparcInfo RISCVDisassembler RISCVAsmParser RISCVCodeGen RISCVDesc RISCVInfo PowerPCDisassembler PowerPCAsmParser PowerPCCodeGen PowerPCDesc PowerPCInfo NVPTXCodeGen NVPTXDesc NVPTXInfo MSP430Disassembler MSP430AsmParser MSP430CodeGen MSP430Desc MSP430Info MipsDisassembler MipsAsmParser MipsCodeGen MipsDesc MipsInfo LanaiDisassembler LanaiCodeGen LanaiAsmParser LanaiDesc LanaiInfo HexagonDisassembler HexagonCodeGen HexagonAsmParser HexagonDesc HexagonInfo BPFDisassembler BPFAsmParser BPFCodeGen BPFDesc BPFInfo AVRDisassembler AVRAsmParser AVRCodeGen AVRDesc AVRInfo ARMDisassembler ARMAsmParser ARMCodeGen ARMDesc ARMUtils ARMInfo AMDGPUTargetMCA MCA AMDGPUDisassembler AMDGPUAsmParser AMDGPUCodeGen MIRParser AMDGPUDesc AMDGPUUtils AMDGPUInfo Passes ObjCARCOpts Coroutines ipo Instrumentation Vectorize Linker AsmParser FrontendOpenMP AArch64Disassembler MCDisassembler AArch64AsmParser AArch64CodeGen CFGuard GlobalISel SelectionDAG AsmPrinter CodeGen Target ScalarOpts InstCombine AggressiveInstCombine TransformUtils BitWriter Analysis ProfileData Symbolize DebugInfoPDB DebugInfoMSF DebugInfoDWARF Object TextAPI MCParser BitReader Remarks BitstreamReader AArch64Desc AArch64Utils AArch64Info MC DebugInfoCodeView BinaryFormat Demangle
+llvm_map_components_to_libnames(llvm_libs
+        TextAPI
+        OrcJIT
+        JITLink
+        ObjectYAML
+        WindowsManifest
+        Coverage
+        TableGen
+        LTO
+        Passes
+        ObjCARCOpts
+        Coroutines
+        LibDriver
+        XRay
+        ${LLVM_TARGETS}
+        MIRParser
+        ipo
+        Instrumentation
+        Vectorize
+        Linker
+        IRReader
+        AsmParser
+        Symbolize
+        DebugInfoPDB
+        FuzzMutate
+        LineEditor
+        MCA
+        DebugInfoGSYM
+        GlobalISel
+        SelectionDAG
+        AsmPrinter
+        DebugInfoDWARF
+        MCJIT
+        Interpreter
+        ExecutionEngine
+        RuntimeDyld
+        CodeGen
+        Target
+        ScalarOpts
+        InstCombine
+        AggressiveInstCombine
+        TransformUtils
+        BitWriter
+        Analysis
+        ProfileData
+        DlltoolDriver
+        Option
+        Object
+        MCParser
+        MC
+        DebugInfoCodeView
+        DebugInfoMSF
+        BitReader
+        Core
+        Remarks
+        BinaryFormat
+        BitstreamReader
+        Support
+        Demangle
         )
 
 # Link against LLVM libraries
