@@ -14,10 +14,26 @@ std::vector<Node*> BoolLiteralExpression::getChildren() const { return {}; }
 
 std::string BoolLiteralExpression::toStringBoolLiteralValue(BoolLiteralValue value)
 {
-    if (value == BoolLiteralValue::True) {
+    switch (value) {
+    case BoolLiteralValue::True:
         return "true";
-    } else {
+    case BoolLiteralValue::False:
         return "false";
+    default:
+        ASSERT_NOT_REACHED();
     }
 }
+
+bool BoolLiteralExpression::getLiteralBool() const
+{
+    switch (value) {
+    case BoolLiteralValue::True:
+        return true;
+    case BoolLiteralValue::False:
+        return false;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
 } // namespace Ceres::AST

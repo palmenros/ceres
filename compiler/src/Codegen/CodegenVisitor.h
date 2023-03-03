@@ -23,6 +23,9 @@ class CodegenVisitor : public AST::AbstractReturningASTVisitor<llvm::Value*> {
     void generateFunctionDeclarationPrototype(AST::FunctionDeclaration& dec);
     void generateGlobalVariablePrototype(AST::VariableDeclaration& dec);
 
+    /* Also handles if short-circuit */
+    llvm::Value* generateRelationalCmp(llvm::CmpInst::Predicate pred, llvm::Value* left, llvm::Value* right);
+
     llvm::Value* generateLoad(Type* type, llvm::Value* ptr, std::string const& name = "");
 
     llvm::Value* generateBinaryOperation(llvm::Value* left, llvm::Value* right, Typing::BinaryOperation op, Type* type);
@@ -30,6 +33,18 @@ class CodegenVisitor : public AST::AbstractReturningASTVisitor<llvm::Value*> {
     /* True when we are looking for an LHS expression, that is, we need the pointer of a variable instead of the
      * variable itself*/
     bool LHSVisitingMode = false;
+
+    /*
+     True when inside an if expression or inside an && or || assignation. Should use jumps to labels
+     */
+    bool shouldGenerateShortCircuitBooleanCode = false;
+
+    void enableBooleanShortCircuit(llvm::BasicBlock* newTrueLabel, llvm::BasicBlock* newFalseLabel);
+    void disableBooleanShortCircuit();
+
+    /* If generating short circuit code, these labels are the labels to jump in case the condition is true or false */
+    llvm::BasicBlock* trueLabel = nullptr;
+    llvm::BasicBlock* falseLabel = nullptr;
 
 public:
     CodegenVisitor(llvm::LLVMContext* context);

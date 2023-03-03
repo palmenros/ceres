@@ -6,12 +6,11 @@ extern "C" {
 int32_t testMain();
 }
 
-static int num_failed = 0;
-
+// Signal a fail message and bail (exit)
 static void failed(std::string const& msg)
 {
-    num_failed++;
     std::cerr << "Test failed: " << msg << std::endl;
+    exit(1);
 }
 
 static void passed() { std::cout << "Test passed!" << std::endl; }
@@ -27,7 +26,11 @@ void assert(bool cond)
 }
 
 // Printing ints
-void printI8(int8_t x) { std::cout << x << std::endl; }
+void printI8(int8_t x)
+{
+    /* Print as number instead of char */
+    std::cout << +x << std::endl;
+}
 void printI16(int16_t x) { std::cout << x << std::endl; }
 void printI32(int32_t x) { std::cout << x << std::endl; }
 void printI64(int64_t x) { std::cout << x << std::endl; }
@@ -48,10 +51,7 @@ int main(int argc, char** argv)
         failed("testMain() returned non-zero value '" + std::to_string(res) + "'");
     }
 
-    if (num_failed != 0) {
-        return 1;
-    } else {
-        passed();
-        return 0;
-    }
+    // If control reaches here, we have passed
+    passed();
+    return 0;
 }

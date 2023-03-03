@@ -13,11 +13,25 @@ extern fn printU64(x: u64);
 extern fn printF32(x: f32);
 extern fn printF64(x: f64);
 
-fn average(a : f32, b : f32) f32 {
-    return (a + b)/2.;
-}
-
 fn testMain() i32 {
-    printF32(average(3., 22.));
+
+    if false {
+        assert(false);
+    }
+
+    var a = true;
+    if a {
+        printI8(14);
+    } else {
+        assert(false);
+    }
+
+    var b : i32 = 3;
+    if b == 2i32 * 2 {
+        assert(false);
+    } else {
+        printU32(5);
+    }
+
     return 0;
 }

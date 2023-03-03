@@ -19,6 +19,7 @@ public:
     std::vector<Node*> getChildren() const override;
 
     static std::string toStringBoolLiteralValue(BoolLiteralValue value);
+    bool getLiteralBool() const;
 };
 
 } // namespace Ceres::AST

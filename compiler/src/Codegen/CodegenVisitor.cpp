@@ -150,7 +150,69 @@ llvm::Value* CodegenVisitor::doVisitExpressionStatement(AST::ExpressionStatement
 
 llvm::Value* CodegenVisitor::doVisitForStatement(AST::ForStatement& stm) { TODO(); }
 
-llvm::Value* CodegenVisitor::doVisitIfStatement(AST::IfStatement& stm) { TODO(); }
+llvm::Value* CodegenVisitor::doVisitIfStatement(AST::IfStatement& stm)
+{
+    ASSERT(!shouldGenerateShortCircuitBooleanCode);
+
+    auto* thenBasicBlock = llvm::BasicBlock::Create(*context, "then", currentFunction);
+
+    // Generate elseBasicBlock first (sooner than contBasicBlock) for better LLVM-IR visualization
+    auto* elseBasicBlock
+        = stm.maybeElseStatement != nullptr ? llvm::BasicBlock::Create(*context, "else", currentFunction) : nullptr;
+
+    auto* contBasicBlock = llvm::BasicBlock::Create(*context, "ifcont", currentFunction);
+
+    if (stm.maybeElseStatement != nullptr) {
+        // There is an else statement
+
+        /* Visit conditional expression*/
+        enableBooleanShortCircuit(thenBasicBlock, elseBasicBlock);
+        visit(*stm.condition);
+        disableBooleanShortCircuit();
+
+        /* Visit then block */
+        builder->SetInsertPoint(thenBasicBlock);
+        visit(*stm.thenBlock);
+        builder->CreateBr(contBasicBlock);
+
+        /* Visit else block */
+        builder->SetInsertPoint(elseBasicBlock);
+        visit(*stm.maybeElseStatement);
+        builder->CreateBr(contBasicBlock);
+
+    } else {
+        // There is no else
+
+        /*Visit conditional expression */
+        enableBooleanShortCircuit(thenBasicBlock, contBasicBlock);
+        visit(*stm.condition);
+        disableBooleanShortCircuit();
+
+        /*Visit then block*/
+        builder->SetInsertPoint(thenBasicBlock);
+        visit(*stm.thenBlock);
+        builder->CreateBr(contBasicBlock);
+    }
+
+    builder->SetInsertPoint(contBasicBlock);
+    return nullptr;
+}
+
+void CodegenVisitor::enableBooleanShortCircuit(llvm::BasicBlock* newTrueLabel, llvm::BasicBlock* newFalseLabel)
+{
+    shouldGenerateShortCircuitBooleanCode = true;
+    trueLabel = newTrueLabel;
+    falseLabel = newFalseLabel;
+}
+
+void CodegenVisitor::disableBooleanShortCircuit()
+{
+    ASSERT(shouldGenerateShortCircuitBooleanCode);
+
+    shouldGenerateShortCircuitBooleanCode = false;
+    trueLabel = nullptr;
+    falseLabel = nullptr;
+}
 
 llvm::Value* CodegenVisitor::doVisitReturnStatement(AST::ReturnStatement& stm)
 {
@@ -291,31 +353,93 @@ llvm::Value* CodegenVisitor::generateBinaryOperation(
     case Typing::BinaryOperation::BitwiseXor:
         TODO();
         break;
-    // TODO: Add support for short-circuit in all relational operators
-    case Typing::BinaryOperation::Equals:
-        TODO();
+    case Typing::BinaryOperation::Equals: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            return generateRelationalCmp(llvm::CmpInst::ICMP_EQ, left, right);
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_OEQ, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
-    case Typing::BinaryOperation::NotEquals:
-        TODO();
+    }
+    case Typing::BinaryOperation::NotEquals: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            return generateRelationalCmp(llvm::CmpInst::ICMP_NE, left, right);
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_ONE, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
-    case Typing::BinaryOperation::LessOrEqual:
-        TODO();
+    }
+    case Typing::BinaryOperation::LessOrEqual: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            if (intType->isSigned()) {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_SLE, left, right);
+            } else {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_ULE, left, right);
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_OLE, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
-    case Typing::BinaryOperation::GreaterOrEqual:
-        TODO();
+    }
+    case Typing::BinaryOperation::GreaterOrEqual: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            if (intType->isSigned()) {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_SGE, left, right);
+            } else {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_UGE, left, right);
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_OGE, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
-    case Typing::BinaryOperation::GreaterThan:
-        TODO();
+    }
+    case Typing::BinaryOperation::GreaterThan: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            if (intType->isSigned()) {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_SGT, left, right);
+            } else {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_UGT, left, right);
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_OGT, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
-    case Typing::BinaryOperation::LessThan:
-        TODO();
+    }
+    case Typing::BinaryOperation::LessThan: {
+        if (auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type)) {
+            if (intType->isSigned()) {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_SGT, left, right);
+            } else {
+                return generateRelationalCmp(llvm::CmpInst::ICMP_UGT, left, right);
+            }
+        } else if (auto* floatType = llvm::dyn_cast<PrimitiveFloatType>(type)) {
+            // TODO: Review semantics of float comparison (oeq vs ueq)
+            return generateRelationalCmp(llvm::CmpInst::FCMP_OGT, left, right);
+        } else {
+            NOT_IMPLEMENTED();
+        }
         break;
+    }
+    // TODO: Add support for && and || using short-circuit
     case Typing::BinaryOperation::LogicalAnd:
-        // TODO: Add support for Logical And using short-circuit
         TODO();
         break;
     case Typing::BinaryOperation::LogicalOr:
-        // TODO: Add support for Logical Or using short-circuit
         TODO();
         break;
     case Typing::BinaryOperation::Invalid:
@@ -324,19 +448,38 @@ llvm::Value* CodegenVisitor::generateBinaryOperation(
     }
 }
 
+llvm::Value* CodegenVisitor::generateRelationalCmp(llvm::CmpInst::Predicate pred, llvm::Value* left, llvm::Value* right)
+{
+    llvm::Value* value = builder->CreateCmp(pred, left, right);
+
+    if (shouldGenerateShortCircuitBooleanCode) {
+        ASSERT(trueLabel != nullptr);
+        ASSERT(falseLabel != nullptr);
+
+        builder->CreateCondBr(value, trueLabel, falseLabel);
+    }
+
+    return value;
+}
+
 llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
 {
-    // TODO: Add support for if shorthand
-    uint64_t val;
-    switch (lit.value) {
-    case AST::BoolLiteralValue::True:
-        val = 1;
-        break;
-    case AST::BoolLiteralValue::False:
-        val = 0;
-        break;
+    bool literalValue = lit.getLiteralBool();
+
+    uint64_t intVal = literalValue ? 1 : 0;
+    llvm::Value* boolValue = llvm::ConstantInt::get(llvm::Type::getInt1Ty(*context), llvm::APInt(1, intVal, false));
+
+    if (!shouldGenerateShortCircuitBooleanCode) {
+        /* Return a normal value */
+        return boolValue;
+    } else {
+        /* Generate a branch depending of the value */
+        ASSERT(trueLabel != nullptr);
+        ASSERT(falseLabel != nullptr);
+
+        builder->CreateCondBr(boolValue, trueLabel, falseLabel);
+        return boolValue;
     }
-    return llvm::ConstantInt::get(llvm::Type::getInt1Ty(*context), llvm::APInt(1, val, false));
 }
 
 llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { TODO(); }
@@ -384,7 +527,18 @@ llvm::Value* CodegenVisitor::generateLoad(Type* type, llvm::Value* ptr, std::str
     if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
         llvmType = llvmType->getPointerTo();
     }
-    return builder->CreateLoad(llvmType, ptr, name);
+
+    llvm::Value* loadedValue = builder->CreateLoad(llvmType, ptr, name);
+
+    // If we are loading a boolean, we have to check for short circuit
+    if (type == BoolType::get() && shouldGenerateShortCircuitBooleanCode) {
+        // Generate short-circuit branches
+        ASSERT(trueLabel != nullptr);
+        ASSERT(falseLabel != nullptr);
+        builder->CreateCondBr(loadedValue, trueLabel, falseLabel);
+    }
+
+    return loadedValue;
 }
 
 llvm::Value* CodegenVisitor::doVisitIdentifierExpression(AST::IdentifierExpression& expr)
@@ -470,8 +624,7 @@ llvm::AllocaInst* CodegenVisitor::allocateLocalVariable(
     llvm::Type* llvmType = type->getLLVMType();
 
     if (auto* functionType = llvm::dyn_cast<FunctionType>(type)) {
-        // TODO: How should we handle allocas of function pointers?
-
+        // TODO: Check that this is the correct way of handling allocas of function pointers
         // If we are a function type, we need to create a pointer to function
         llvmType = llvmType->getPointerTo();
     }
@@ -487,11 +640,6 @@ llvm::AllocaInst* CodegenVisitor::allocateLocalVariable(
 
 void CodegenVisitor::generateStore(llvm::AllocaInst* allocaInst, llvm::Value* value)
 {
-    if (auto* function = llvm::dyn_cast<llvm::Function>(value)) {
-        // TODO: Is this the right way of casting function pointers?
-        //        value = builder->CreateBitCast(value, function->getFunctionType()->getPointerTo());
-    }
-
     builder->CreateStore(value, allocaInst);
 }
 
