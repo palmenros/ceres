@@ -27,11 +27,9 @@ void CodeGenerator::generateCode(AST::CompilationUnit& compilationUnit)
     auto targetTriple = llvm::sys::getDefaultTargetTriple();
 
     // Initialize all targets for emitting code
-    llvm::InitializeAllTargetInfos();
-    llvm::InitializeAllTargets();
-    llvm::InitializeAllTargetMCs();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllAsmPrinters();
+    llvm::InitializeNativeTarget();
+    llvm::InitializeNativeTargetAsmParser();
+    llvm::InitializeNativeTargetAsmPrinter();
 
     std::string error;
     auto const* target = llvm::TargetRegistry::lookupTarget(targetTriple, error);

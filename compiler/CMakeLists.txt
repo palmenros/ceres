@@ -94,7 +94,8 @@ set(TARGET_AVR AVRCodeGen AVRAsmParser AVRDesc AVRInfo)
 set(TARGET_VE VECodeGen VEAsmParser VEDesc VEInfo)
 
 # Set the list of targets we want our compiler to build for (a subset of the previously design targets)
-set(TARGETS_TO_BUILD "VE" "WebAssembly" "XCore" "SystemZ" "Sparc" "RISCV" "PowerPC" "NVPTX" "MSP430" "Mips" "Lanai" "Hexagon" "BPF" "ARM" "AMDGPU" "X86" "AArch64" "AVR")
+# set(TARGETS_TO_BUILD "VE" "WebAssembly" "XCore" "SystemZ" "Sparc" "RISCV" "PowerPC" "NVPTX" "MSP430" "Mips" "Lanai" "Hexagon" "BPF" "ARM" "AMDGPU" "X86" "AArch64" "AVR")
+set(TARGETS_TO_BUILD "X86")
 
 set(LLVM_TARGETS)
 foreach (target IN ITEMS ${TARGETS_TO_BUILD})
@@ -103,64 +104,8 @@ endforeach (target)
 
 # A list of components can be found by executing "llvm-config --components"
 llvm_map_components_to_libnames(llvm_libs
-        TextAPI
-        OrcJIT
-        JITLink
-        ObjectYAML
-        WindowsManifest
-        Coverage
-        TableGen
-        LTO
-        Passes
-        ObjCARCOpts
-        Coroutines
-        LibDriver
-        XRay
+        support core irreader
         ${LLVM_TARGETS}
-        MIRParser
-        ipo
-        Instrumentation
-        Vectorize
-        Linker
-        IRReader
-        AsmParser
-        Symbolize
-        DebugInfoPDB
-        FuzzMutate
-        LineEditor
-        MCA
-        DebugInfoGSYM
-        GlobalISel
-        SelectionDAG
-        AsmPrinter
-        DebugInfoDWARF
-        MCJIT
-        Interpreter
-        ExecutionEngine
-        RuntimeDyld
-        CodeGen
-        Target
-        ScalarOpts
-        InstCombine
-        AggressiveInstCombine
-        TransformUtils
-        BitWriter
-        Analysis
-        ProfileData
-        DlltoolDriver
-        Option
-        Object
-        MCParser
-        MC
-        DebugInfoCodeView
-        DebugInfoMSF
-        BitReader
-        Core
-        Remarks
-        BinaryFormat
-        BitstreamReader
-        Support
-        Demangle
         )
 
 # Link against LLVM libraries
