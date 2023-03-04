@@ -102,11 +102,19 @@ foreach (target IN ITEMS ${TARGETS_TO_BUILD})
     list(APPEND LLVM_TARGETS "${TARGET_${target}}")
 endforeach (target)
 
-# A list of components can be found by executing "llvm-config --components"
-llvm_map_components_to_libnames(llvm_libs
-        support core irreader
-        ${LLVM_TARGETS}
-        )
+if (LLVM_LINK_LLVM_DYLIB)
+    set(llvm_libs "LLVM")
+    message("Linking with LLVM using shared libraries")
+else ()
+    # LLVM is built statically
+    message("Linking with LLVM using static libraries")
+
+    # A list of components can be found by executing "llvm-config --components"
+    llvm_map_components_to_libnames(llvm_libs
+            support core irreader
+            ${LLVM_TARGETS}
+            )
+endif ()
 
 # Link against LLVM libraries
 target_link_libraries(compiler ${llvm_libs})

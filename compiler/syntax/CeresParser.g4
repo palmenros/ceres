@@ -40,7 +40,7 @@ type
     | INTEGER_LITERAL_SUFFIX
     | FLOAT_LITERAL_SUFFIX
     | BOOL
-    | VOID
+    | UNIT_TYPE
     | FN OPEN_PARENS ( type (COMMA type)* )? CLOSE_PARENS return_type=type?
     ;
 

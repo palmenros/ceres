@@ -17,7 +17,7 @@ CAST: 'cast';
 // Type keywords
 
 BOOL: 'bool';
-VOIOD: 'void';
+UNIT_TYPE: 'void';
 
 // Literals
 

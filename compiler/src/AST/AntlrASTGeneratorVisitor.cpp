@@ -370,7 +370,7 @@ std::any AntlrASTGeneratorVisitor::visitType(CeresParser::TypeContext* ctx)
         return static_cast<Type*>(BoolType::get());
 // On some platforms, VOID is defined as a preprocessor macro that we need to undefine
 #undef VOID
-    } else if (ctx->VOID() != nullptr) {
+    } else if (ctx->UNIT_TYPE() != nullptr) {
         // How do we handle VOID in variable definitions? And in parameters? How do we instantiate the void unit type?
         NOT_IMPLEMENTED();
         return static_cast<Type*>(VoidType::get());
