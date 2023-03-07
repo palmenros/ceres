@@ -87,8 +87,8 @@ int main(int argc, char const* argv[])
             return 1;
         }
 
-        Codegen::CodeGenerator codeGenerator(InitCeres::getLLVMContext());
-        codeGenerator.generateCode(*AST);
+        // Codegen::CodeGenerator codeGenerator(InitCeres::getLLVMContext());
+        // codeGenerator.generateCode(*AST);
         //        Log::info("Code generation run!");
 
         // AST::ASTStringifierVisitor stringifierVisitor;

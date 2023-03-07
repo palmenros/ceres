@@ -3,6 +3,8 @@
 #include "../Diagnostics/Diagnostics.h"
 #include "BinaryOperation.h"
 #include "Type.h"
+#include <cassert>
+#include <charconv>
 #include <cstddef>
 #include <llvm/Support/Casting.h>
 #include <optional>
@@ -20,6 +22,7 @@ void expandCoercion(Type* coerced, AST::Expression& lhs)
         lhs.type = coerced;
         for (auto* const e : lhs.getChildren()) {
             auto* ee = dynamic_cast<AST::Expression*>(e);
+            assert(ee != nullptr);
             ee->type = coerced;
         }
     }

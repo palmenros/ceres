@@ -1,5 +1,7 @@
 #include "IntLiteralExpression.h"
 #include "../../AbstractASTVisitor.h"
+#include <cstddef>
+#include <cstdlib>
 #include <llvm/ADT/APInt.h>
 #include <unordered_map>
 
@@ -24,26 +26,48 @@ bool IntLiteralExpression::doesLiteralFitInsideType()
     // TODO: This function is not accurate enough. Only checks for some condition. We should improve it
     auto* intType = llvm::dyn_cast<PrimitiveIntegerType>(type);
     ASSERT(intType != nullptr);
+    auto base = getRadix();
 
-    unsigned numBits = intType->getNumBits();
-    uint8_t radix = getRadix();
+    // TODO: should be correct or caught in parser
+    char* end = nullptr;
 
-    size_t stringLength = str.size();
+    if (intType->isSigned()) {
+        auto res = std::strtoll(str.c_str(), &end, base);
 
-    if (!(stringLength <= numBits || radix != 2)) {
-        return false;
-    }
+        if (errno == ERANGE) {
+            errno = 0;
+            return false;
+        }
 
-    if (!((stringLength - 1) * 3 <= numBits || radix != 8)) {
-        return false;
-    }
+        // check bits fit
+        auto width = intType->getNumBits();
+        long long mask = ~0 << width;
+        long long last_bit = 1 << (width - 1);
 
-    if (!((stringLength - 1) * 4 <= numBits || radix != 16)) {
-        return false;
-    }
+        // assume 2 complement
+        if ((res & last_bit) == 0 && (res & mask) != 0) {
+            return false;
+        }
 
-    if (!(((stringLength - 1) * 64) / 22 <= numBits || radix != 10)) {
-        return false;
+        if ((res & last_bit) == 1 && (res | ~mask) != ~0) {
+            return false;
+        }
+    } else {
+        auto res = std::strtoull(str.c_str(), &end, base);
+
+        if (errno == ERANGE) {
+            errno = 0;
+            return false;
+        }
+
+        // check bits fit
+        auto width = intType->getNumBits();
+
+        unsigned long long mask = ~0 << width;
+
+        if ((res & mask) != 0) {
+            return false;
+        }
     }
 
     return true;
