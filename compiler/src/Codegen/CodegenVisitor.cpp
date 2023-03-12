@@ -482,10 +482,15 @@ llvm::Value* CodegenVisitor::doVisitBoolLiteral(AST::BoolLiteralExpression& lit)
     }
 }
 
-llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr) { TODO(); }
+llvm::Value* CodegenVisitor::doVisitCastExpression(AST::CastExpression& expr)
+{
+    // TODO: Do not forget to handle operator && and || when casting to bool
+    TODO();
+}
 
 llvm::Value* CodegenVisitor::doVisitCommaExpression(AST::CommaExpression& expr)
 {
+    // TODO: Check how we handle operator && and || short-circuit within comma expressions
     llvm::Value* value = nullptr;
     for (auto& e : expr.expressions) {
         value = visit(*e);
@@ -516,6 +521,9 @@ llvm::Value* CodegenVisitor::doVisitFunctionCallExpression(AST::FunctionCallExpr
     llvm::FunctionType* functionType = llvm::dyn_cast<llvm::FunctionType>(expr.identifier->type->getLLVMType());
     ASSERT(functionType != nullptr);
     ASSERT(callee != nullptr);
+
+    // TODO: Handle short circuit boolean code
+    ASSERT(!shouldGenerateShortCircuitBooleanCode);
 
     return builder->CreateCall(functionType, callee, args);
 }
