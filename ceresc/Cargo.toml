@@ -1,0 +1,11 @@
+[package]
+name = "ceresc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = "*"
+anyhow = "*"
+pest = "2.4.0"
+pest_derive = "2.4.0"
+lazy_static = "1.4.0"

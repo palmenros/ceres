@@ -1,0 +1,50 @@
+integer = @{ NUMBER+ }
+ident = @{ (LETTER | "_") ~ (LETTER | NUMBER | "_")* }
+ty = _{ tyu8 | tyu16 | tyu32 | tyi8 | tyi16 | tyi32 | tybool }
+	tyu8 = { "u8" }
+	tyu16 = { "u16" }
+	tyu32 = { "u32" }
+	tyi8 = { "i8" }
+	tyi16 = { "i16" }
+	tyi32 = { "i32" }
+	tybool = { "bool" }
+
+expr = { atom_expr ~ (bin_op ~ atom_expr)* }
+	atom_expr = _{ unary_op? ~ primary_expr }
+
+	primary_expr = _{ fn_call | ident | integer | "(" ~ expr ~ ")" }
+
+	unary_op = _{ unary_minus | unary_not } 
+		unary_minus = { "-" }
+		unary_not = { "!" }
+
+	bin_op = _{ add | subtract | multiply | divide | modulo | eqeq }
+		add = { "+" }
+		subtract = { "-" }
+		multiply = { "*" }
+		divide = { "/" }
+		modulo = { "%" }
+		eqeq = { "==" }
+	
+	fn_call = { ident ~ "(" ~ fn_call_args ~ ")" }
+	fn_call_args = { ((expr) ~ ("," ~ expr)*)? }
+
+in_type = _{ ":" ~ ty }
+var_decl = { ident ~ in_type }
+stmt = { expr ~ ";" | var_decl_stmt | block_stmt | ret_stmt | if_stmt }
+	var_decl_stmt = { "let" ~ var_decl ~ ("=" ~ expr)? ~ ";" }
+	block_stmt = { "{" ~ stmt* ~ "}" }
+	ret_stmt = { "return" ~ expr ~ ";" }
+	if_stmt = { "if" ~ expr ~ block_stmt ~ ("else" ~ block_stmt)?}
+
+
+top_level_stmt = { fn_def_top }
+	fn_def_top = { "fn" ~ ident ~ "(" ~ fn_args ~ ")" ~ fn_ret ~ block_stmt }
+		fn_args = { ((var_decl) ~ ("," ~ var_decl)*)? }
+		fn_ret = { ty? }
+
+
+
+trans_unit = { SOI ~ top_level_stmt* ~ EOI }
+
+WHITESPACE = _{ WHITE_SPACE }
